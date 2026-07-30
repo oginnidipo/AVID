@@ -1,0 +1,49 @@
+---
+import { DONATE } from "../data/site";
+
+/**
+ * Every "give" call to action on the site goes through this component, so the
+ * destination is a one-line change in src/data/site.ts when the donation
+ * platform is confirmed.
+ *
+ * While DONATE.url is empty it routes to /get-involved#give, which explains
+ * how to give by direct arrangement. Nothing is ever a dead link.
+ */
+interface Props {
+  label?: string;
+  variant?: "primary" | "on-dark" | "ghost-dark" | "secondary";
+  class?: string;
+}
+const { label = "Donate", variant = "primary", class: className = "" } = Astro.props;
+
+const external = DONATE.url !== "";
+const href = external ? DONATE.url : "/get-involved#give";
+const variantClass = {
+  primary: "btn-primary",
+  "on-dark": "btn-on-dark",
+  "ghost-dark": "btn-ghost-dark",
+  secondary: "btn-secondary",
+}[variant];
+---
+
+<a
+  href={href}
+  class={`btn ${variantClass} ${className}`}
+  {...external ? { target: "_blank", rel: "noopener noreferrer" } : {}}
+  data-donate
+>
+  {label}
+  {external && (
+    <>
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+        <path
+          d="M4 2h6v6M10 2 2.5 9.5"
+          stroke="currentColor"
+          stroke-width="1.6"
+          stroke-linecap="round"
+          stroke-linejoin="round"></path>
+      </svg>
+      <span class="sr-only-text">(opens in a new tab)</span>
+    </>
+  )}
+</a>

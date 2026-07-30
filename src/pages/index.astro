@@ -1,0 +1,301 @@
+---
+import Base from "../layouts/Base.astro";
+import Hero from "../components/Hero.astro";
+import FiveComponents from "../components/FiveComponents.astro";
+import ImpactFigures from "../components/ImpactFigures.astro";
+import GivingTiles from "../components/GivingTiles.astro";
+import LibraryCard from "../components/LibraryCard.astro";
+import DonateButton from "../components/DonateButton.astro";
+import PhotoCarousel from "../components/PhotoCarousel.astro";
+import { DELIVERY_STEPS } from "../data/programme";
+import { getCollection } from "astro:content";
+import { sortLibraries } from "../lib/libraries";
+import { galleryFor } from "../lib/gallery";
+
+/* Featured libraries for the transparency wall preview. Empty at launch — the
+   section below handles that state deliberately rather than disappearing. */
+const libraries = sortLibraries(await getCollection("libraries")).slice(0, 3);
+
+/* Photographs. Empty until AVID adds them via /admin, in which case the band
+   below renders nothing rather than an empty frame. */
+const photos = await galleryFor("home");
+---
+
+<Base
+  title="Home"
+  description="The AVID Foundation refurbishes and restocks libraries in under-resourced Nigerian schools, and supports the teachers who bring them to life. We begin in Lagos."
+>
+  <Hero />
+
+  <!-- ══ THE NEED ═══════════════════════════════════════════════════════ -->
+  <section class="section grain" aria-labelledby="need-heading">
+    <div class="shell grid gap-x-16 gap-y-10 md:grid-cols-12">
+      <div class="md:col-span-5">
+        <p class="eyebrow"><span>The need</span></p>
+        <h2 id="need-heading" class="sr-only-text">The need</h2>
+        <p class="text-figure mt-6 text-ochre-700">26%</p>
+        <p class="mt-4 max-w-sm text-lead font-display" style="font-variation-settings:'opsz' 40">
+          of Nigerian children aged 7–14 have basic reading and numeracy skills.
+        </p>
+        <p class="muted mt-3 text-tag">UNICEF, 2024</p>
+      </div>
+
+      <div class="md:col-span-7 md:pt-14">
+        <p class="text-lead">
+          Across Nigeria, and clearly so in Lagos, the effort to get children
+          into classrooms is being won. The next is to get them reading — and to
+          ensure that pupils whose families can't afford the required textbooks
+          can borrow them from the library.
+        </p>
+
+        <div class="shelf-rule mt-10"></div>
+
+        <div class="mt-8 grid gap-6 sm:grid-cols-2">
+          <div>
+            <p class="nums text-h2 font-display text-teal">3%</p>
+            <p class="muted mt-1 text-small">
+              Out-of-school rate at primary level in Lagos — far below the
+              national figure. The children are already in the classroom.
+            </p>
+          </div>
+          <div>
+            <p class="nums text-h2 font-display text-teal">5–8%</p>
+            <p class="muted mt-1 text-small">
+              Of Nigerian government spending goes to education, against the
+              15–20% UNESCO recommends. School libraries are among the first
+              things to disappear.
+            </p>
+          </div>
+        </div>
+
+        <p class="muted mt-8 text-small">
+          What they lack is behind the classroom.{" "}
+          <a class="link" href="/our-work#case">Read the full case for action →</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ WHAT WE DO ════════════════════════════════════════════════════ -->
+  <section
+    id="how-it-works"
+    class="section border-y border-teal/12 bg-cream"
+    aria-labelledby="what-heading"
+  >
+    <div class="shell">
+      <div class="max-w-3xl">
+        <p class="eyebrow"><span>What we do</span></p>
+        <h2 id="what-heading" class="text-h2 mt-5 font-display">
+          Five parts. A library is not one of them — it is all five.
+        </h2>
+        <p class="muted mt-5 text-lead">
+          Books alone do not build readers. A room, a shelf, a trained adult and
+          a timetable that gives children time to read — together, these build
+          readers. Every school we take on receives the complete package, not a
+          partial donation.
+        </p>
+      </div>
+
+      <div class="mt-12">
+        <FiveComponents variant="cards" />
+      </div>
+
+      <p class="mt-8">
+        <a class="link font-semibold" href="/our-work">See the programme in full →</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- ══ PHOTOGRAPHS ═══════════════════════════════════════════════════
+       Placed where the page turns from explaining the model to showing
+       evidence for it. Renders nothing until there are photographs. -->
+  {
+    photos.length > 0 && (
+      <section class="section" aria-labelledby="photos-heading">
+        <div class="shell">
+          <div class="flex flex-wrap items-end justify-between gap-6">
+            <div class="max-w-2xl">
+              <p class="eyebrow"><span>From the schools</span></p>
+              <h2 id="photos-heading" class="text-h2 mt-5 font-display">
+                The rooms, and the children reading in them.
+              </h2>
+            </div>
+            <a href="/our-work#libraries" class="btn btn-secondary">
+              See the full records
+            </a>
+          </div>
+        </div>
+
+        <div class="mt-12">
+          <PhotoCarousel
+            photos={photos}
+            perView={3}
+            label="Photographs from the schools we work with"
+          />
+        </div>
+      </section>
+    )
+  }
+
+  <!-- ══ IMPACT ════════════════════════════════════════════════════════ -->
+  <section class="section on-dark bg-teal" aria-labelledby="impact-heading">
+    <div class="shell">
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <div class="max-w-2xl">
+          <p class="eyebrow"><span>Where we stand today</span></p>
+          <h2 id="impact-heading" class="text-h2 mt-5 font-display">
+            We publish the number before we have earned it.
+          </h2>
+          <p class="muted mt-4 max-w-xl">
+            A new organisation asking for money should show its books. These are
+            our first-cohort goals and our verified progress against them,
+            updated as each library opens.
+          </p>
+        </div>
+        <a href="/impact" class="btn btn-ghost-dark">Impact &amp; reporting</a>
+      </div>
+
+      <div class="mt-12">
+        <ImpactFigures />
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ THE TRANSPARENCY WALL ═════════════════════════════════════════ -->
+  <section class="section" aria-labelledby="wall-heading">
+    <div class="shell">
+      <div class="max-w-3xl">
+        <p class="eyebrow"><span>Named schools</span></p>
+        <h2 id="wall-heading" class="text-h2 mt-5 font-display">
+          Every library we build, named — with what changed.
+        </h2>
+        <p class="muted mt-5">
+          Not "trust us". See for yourself. Each school appears here with its
+          name, its photographs and one specific result.
+        </p>
+      </div>
+
+      {
+        libraries.length > 0 ? (
+          <>
+            <ul class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {libraries.map((entry, i) => (
+                <LibraryCard entry={entry} delay={i * 80} />
+              ))}
+            </ul>
+            <p class="mt-8">
+              <a class="link font-semibold" href="/our-work#libraries">
+                See every library →
+              </a>
+            </p>
+          </>
+        ) : (
+          /* Graceful launch state. An empty grid would read as a broken page;
+             an honest placeholder reads as an organisation that has not
+             started pretending. */
+          <div class="checkout-card mt-12 p-8 pl-14 md:p-12 md:pl-20">
+            <span class="card-stamp inline-block">First cohort in progress</span>
+            <p class="mt-6 max-w-2xl text-h3 font-display">
+              This wall is empty, and we have left it that way on purpose.
+            </p>
+            <p class="muted mt-4 max-w-2xl">
+              We are selecting our first schools in Lagos now. The moment the
+              first library opens, it appears here — school name, photographs,
+              what it cost and what changed. Nothing goes on this wall before it
+              is true.
+            </p>
+            <div class="mt-7 flex flex-wrap gap-3">
+              <DonateButton label="Fund the first one" />
+              <a href="/for-schools" class="btn btn-secondary">
+                Apply for a library
+              </a>
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <!-- ══ HOW WE WORK ═══════════════════════════════════════════════════ -->
+  <section class="section border-y border-teal/12 bg-cream" aria-labelledby="how-heading">
+    <div class="shell grid gap-x-16 gap-y-10 md:grid-cols-12">
+      <div class="md:col-span-4">
+        <p class="eyebrow"><span>How we work</span></p>
+        <h2 id="how-heading" class="text-h2 mt-5 font-display">
+          Canadian governance. Local delivery. Money that moves in stages.
+        </h2>
+        <p class="muted mt-5 text-small">
+          We are incorporated and governed in Canada and hold no separate
+          Nigerian entity — by design. It keeps our accounting and our
+          accountability in one jurisdiction, and puts delivery in the hands of
+          people who live in the communities we serve.
+        </p>
+        <p class="mt-5">
+          <a class="link font-semibold" href="/about#governance">
+            Governance and accountability →
+          </a>
+        </p>
+      </div>
+
+      <ol class="md:col-span-8">
+        {
+          DELIVERY_STEPS.map((step, i) => (
+            <li
+              class="reveal flex gap-5 border-t border-teal/12 py-5 first:border-t-0 first:pt-0"
+              data-reveal-delay={i * 50}
+            >
+              <span class="card-field mt-1 flex-none text-ochre-800">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <div>
+                <h3 class="font-display text-h4">{step.title}</h3>
+                <p class="muted mt-1 text-small">{step.body}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- ══ WAYS TO GIVE ══════════════════════════════════════════════════ -->
+  <section class="section" aria-labelledby="give-heading">
+    <div class="shell">
+      <div class="max-w-3xl">
+        <p class="eyebrow"><span>Ways to give</span></p>
+        <h2 id="give-heading" class="text-h2 mt-5 font-display">
+          Fund something specific, and get the report on exactly that.
+        </h2>
+        <p class="muted mt-5">
+          A shelf, a collection, or a whole library. Whatever you fund is tied
+          to a named school, and you receive the record for it.
+        </p>
+      </div>
+
+      <div class="mt-12">
+        <GivingTiles variant="preview" />
+      </div>
+
+      <p class="mt-8">
+        <a class="link font-semibold" href="/get-involved">All the ways to help →</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- ══ CLOSING BAND ══════════════════════════════════════════════════ -->
+  <section class="on-dark relative overflow-hidden bg-teal-mid" aria-labelledby="cta-heading">
+    <div class="shell relative py-20 text-center md:py-28">
+      <h2 id="cta-heading" class="text-h1 mx-auto max-w-3xl font-display">
+        A generation of Nigerian readers, one library at a time.
+      </h2>
+      <p class="muted mx-auto mt-6 max-w-xl">
+        We begin with one school in Lagos. If our approach interests you, we
+        would welcome a conversation about the first cohort.
+      </p>
+      <div class="mt-9 flex flex-wrap justify-center gap-3">
+        <DonateButton label="Start with one school" variant="on-dark" />
+        <a href="/get-involved#partner" class="btn btn-ghost-dark">Partner with us</a>
+      </div>
+    </div>
+  </section>
+</Base>

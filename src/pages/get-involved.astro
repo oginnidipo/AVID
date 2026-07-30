@@ -1,0 +1,217 @@
+---
+import Base from "../layouts/Base.astro";
+import PageHeader from "../components/PageHeader.astro";
+import GivingTiles from "../components/GivingTiles.astro";
+import EnquiryForm from "../components/EnquiryForm.astro";
+import DonateButton from "../components/DonateButton.astro";
+import { SITE, DONATE } from "../data/site";
+
+const VOLUNTEER_SKILLS = [
+  "Education and library science",
+  "Logistics and procurement",
+  "Law and governance",
+  "Accounting and audit",
+  "Design, photography and film",
+  "Translation (Yorùbá, Igbo, Hausa)",
+];
+---
+
+<Base
+  title="Get Involved"
+  description="Sponsor a library, fund a collection, adopt a shelf, give monthly, or partner with us. Every contribution is applied to programme delivery and reported against a named school."
+>
+  <PageHeader
+    eyebrow="Get involved"
+    title="Fund something specific. Get the report on exactly that."
+    lead="Support at any level is applied directly to programme delivery, and every contribution is reported against a named school."
+  />
+
+  <!-- ══ RECEIPTING CLARITY ════════════════════════════════════════════
+       The brief is explicit that the site must not imply tax receipts before
+       registration is granted, and that a donor should know exactly what they
+       receive now versus later. This band says it plainly and up front, rather
+       than in small print after the card details. -->
+  <section class="border-b border-teal/12 bg-cream" aria-labelledby="receipt-heading">
+    <div class="shell py-10">
+      <div class="checkout-card p-6 pl-12 md:p-8 md:pl-16">
+        <h2 id="receipt-heading" class="text-h4 font-display">
+          What you receive for a gift today
+        </h2>
+        {
+          DONATE.taxReceiptsAvailable ? (
+            <p class="mt-3 max-w-3xl text-small">
+              The AVID Foundation is a registered Canadian charity
+              {SITE.charitableRegistrationNumber && (
+                <>
+                  {" "}
+                  (registration no.{" "}
+                  <span class="nums">{SITE.charitableRegistrationNumber}</span>)
+                </>
+              )}. You will receive an official donation receipt for income tax
+              purposes, plus a project report naming the school your gift
+              supported.
+            </p>
+          ) : (
+            <>
+              <p class="mt-3 max-w-3xl text-small">
+                <strong>An acknowledgement, and a report — not a tax receipt.</strong>{" "}
+                AVID's charitable registration with the Canada Revenue Agency is
+                in progress. Until it is granted we cannot issue official
+                donation receipts for income tax purposes, and we will not imply
+                otherwise. What you do receive: written acknowledgement of your
+                gift, and a report naming the school it funded and what it paid
+                for.
+              </p>
+              <p class="muted mt-3 max-w-3xl text-tag">
+                If a tax receipt matters to you, we would rather you waited and
+                gave later than gave now on a false expectation. Ask us to let
+                you know when registration is granted —{" "}
+                <a class="link" href={`mailto:${SITE.email.donate}`}>
+                  {SITE.email.donate}
+                </a>.
+              </p>
+            </>
+          )
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ GIVING TIERS ══════════════════════════════════════════════════ -->
+  <section id="give" class="section grain" aria-labelledby="tiers-heading">
+    <div class="shell">
+      <div class="max-w-3xl">
+        <p class="eyebrow"><span>Ways to give</span></p>
+        <h2 id="tiers-heading" class="text-h2 mt-5 font-display">
+          Specific beats general.
+        </h2>
+        <p class="muted mt-5 text-lead">
+          A shelf, a collection, the systems, or a whole library. Choose the
+          thing you want to exist, and we will tell you where it went.
+        </p>
+      </div>
+
+      <div class="mt-12">
+        <GivingTiles variant="full" />
+      </div>
+
+      {
+        !DONATE.url && (
+          /* No platform wired up yet. Rather than a button that goes nowhere,
+             give a willing donor a route that actually works today. */
+          <div class="card mt-8 p-6">
+            <h3 class="text-h4 font-display">Giving online, right now</h3>
+            <p class="muted mt-3 max-w-2xl text-small">
+              We are finalising our donation platform so that card and bank
+              giving works in Canadian, US, British and Nigerian currency. In the
+              meantime, gifts are arranged directly — email{" "}
+              <a class="link" href={`mailto:${SITE.email.donate}`}>
+                {SITE.email.donate}
+              </a>{" "}
+              and we will send transfer details and confirm exactly which school
+              your gift is assigned to.
+            </p>
+          </div>
+        )
+      }
+
+      {
+        DONATE.url && (
+          <p class="muted mt-8 text-small">
+            Card and bank giving is handled by{" "}
+            <strong>{DONATE.platformName || "our donation platform"}</strong>, which
+            accepts {DONATE.currencies.join(", ")}. AVID never sees or stores your
+            card details.
+          </p>
+        )
+      }
+    </div>
+  </section>
+
+  <!-- ══ PARTNER WITH US ═══════════════════════════════════════════════ -->
+  <section
+    id="partner"
+    class="section on-dark bg-teal"
+    aria-labelledby="partner-heading"
+  >
+    <div class="shell grid gap-x-16 gap-y-10 md:grid-cols-12">
+      <div class="md:col-span-5">
+        <p class="eyebrow"><span>Partner with us</span></p>
+        <h2 id="partner-heading" class="text-h2 mt-5 font-display">
+          For organisations, foundations and companies.
+        </h2>
+        <p class="muted mt-5">
+          Multi-school programmes with formal reporting, monitoring and
+          evaluation. We are set up for the due diligence: staged disbursement
+          against milestones, written partner agreements, retained documentation
+          and board-level authority over every allocation.
+        </p>
+        <p class="muted mt-4 text-small">
+          Tell us roughly what you are considering and we will reply with a real
+          answer about fit — including if the answer is no.
+        </p>
+        <p class="mt-6">
+          <a class="link font-semibold" href="/about#governance">
+            Read our governance summary →
+          </a>
+        </p>
+      </div>
+
+      <div class="md:col-span-7">
+        <!-- A Paper card inside a Deep Teal section: `on-light` restores the
+             light-surface text colours that `.on-dark` would otherwise impose. -->
+        <div class="on-light rounded border border-paper/20 bg-paper p-6 md:p-8">
+          <h3 class="text-h4 font-display">Start a conversation</h3>
+          <div class="mt-6">
+            <EnquiryForm kind="partnership" id="partner-form" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ BEYOND MONEY ══════════════════════════════════════════════════ -->
+  <section class="section border-b border-teal/12 bg-cream" aria-labelledby="volunteer-heading">
+    <div class="shell grid gap-x-16 gap-y-10 md:grid-cols-12">
+      <div class="md:col-span-5">
+        <p class="eyebrow"><span>In-kind and pro bono</span></p>
+        <h2 id="volunteer-heading" class="text-h2 mt-5 font-display">
+          Not everything we need is money.
+        </h2>
+        <p class="muted mt-5">
+          A small organisation moves faster with the right professional in the
+          room. If you have expertise in any of these and a few hours to give,
+          we would like to hear from you.
+        </p>
+        <p class="mt-6">
+          <a class="btn btn-primary" href={`mailto:${SITE.email.general}?subject=Offering%20pro%20bono%20help`}>
+            Offer your skills
+          </a>
+        </p>
+      </div>
+
+      <ul class="grid gap-3 sm:grid-cols-2 md:col-span-7">
+        {
+          VOLUNTEER_SKILLS.map((skill, i) => (
+            <li class="reveal card flex items-center gap-3 p-4" data-reveal-delay={i * 50}>
+              <span class="block h-6 w-1.5 flex-none rounded-sm bg-ochre-500" aria-hidden="true" />
+              <span class="text-small font-semibold">{skill}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="on-dark bg-teal-mid">
+    <div class="shell py-16 text-center">
+      <h2 class="text-h2 mx-auto max-w-2xl font-display">
+        A generation of Nigerian readers, one library at a time.
+      </h2>
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <DonateButton label="Start with one school" variant="on-dark" />
+        <a href="/our-work" class="btn btn-ghost-dark">See how it works</a>
+      </div>
+    </div>
+  </section>
+</Base>

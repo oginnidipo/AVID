@@ -1,0 +1,257 @@
+# ═══════════════════════════════════════════════════════════════════════════
+#  THE AVID FOUNDATION — CONTENT EDITOR CONFIGURATION
+# ═══════════════════════════════════════════════════════════════════════════
+#  This file tells the editor at /admin what AVID can edit and which fields
+#  each content type has. It mirrors the validation rules in
+#  src/content.config.ts, so anything the editor accepts will also build.
+#
+#  SETUP (once, at handover — see docs/HANDOVER.md §4):
+#    1. Change `repo` below to AVID's GitHub repository.
+#    2. Connect authentication so staff can sign in. Two options, both documented
+#       in HANDOVER.md. Until then, content can still be edited directly on
+#       GitHub — the editor is a convenience, not a dependency.
+# ═══════════════════════════════════════════════════════════════════════════
+
+backend:
+  name: github
+  # TODO(AVID): set this to your repository, e.g. avid-foundation/website
+  repo: AVID-FOUNDATION/website
+  branch: main
+
+# Where uploaded photographs are stored.
+media_folder: src/assets/uploads
+# How the saved markdown refers to them. This is deliberately a RELATIVE path:
+# every content folder sits at src/content/<collection>/, so "../../assets/uploads"
+# reaches the upload folder from any entry. Astro resolves image paths relative
+# to the markdown file, which is what lets it optimise and resize each photo at
+# build time. An absolute /src/... path here would silently fail to resolve.
+public_folder: ../../assets/uploads
+
+# Save as a draft, review, then publish — rather than every save going live.
+publish_mode: editorial_workflow
+
+site_url: https://theavidfoundation.org
+display_url: https://theavidfoundation.org
+logo_url: /logo-mark.svg
+
+collections:
+  # ─────────────────────────────────────────────────────────────────────────
+  #  LIBRARIES — the transparency wall
+  # ─────────────────────────────────────────────────────────────────────────
+  - name: libraries
+    label: Libraries
+    label_singular: Library
+    description: >-
+      One entry per school library. This is the transparency wall — the most
+      persuasive thing on the site. Be specific, and only publish what is true.
+    folder: src/content/libraries
+    create: true
+    slug: "{{fields.school | lower | replace(' ', '-')}}"
+    identifier_field: school
+    summary: "{{school}} — {{location}} ({{status}})"
+    sortable_fields: [date, school, pupils]
+    fields:
+      - { name: school, label: School name, widget: string, hint: "Exactly as the school writes it." }
+      - { name: location, label: Location, widget: string, hint: "For example: Surulere, Lagos" }
+      - name: status
+        label: Status
+        widget: select
+        default: committed
+        options:
+          - { label: "Open — the library is finished and in use", value: complete }
+          - { label: "In progress — work has started", value: "in-progress" }
+          - { label: "Committed — funded, not yet started", value: committed }
+      - name: date
+        label: Month
+        widget: string
+        pattern: ['^\d{4}-\d{2}$', "Use YYYY-MM, for example 2026-09"]
+        hint: "The month it opened, or is due to open. Format: YYYY-MM"
+      - { name: pupils, label: Pupils with access, widget: number, value_type: int, min: 1 }
+      - name: booksPlaced
+        label: Books placed
+        widget: number
+        value_type: int
+        min: 0
+        default: 0
+        required: false
+      - name: result
+        label: The one-line result
+        widget: string
+        hint: >-
+          The sentence that earns trust. Specific and checkable — "The library
+          now opens five days a week and 380 pupils have borrowing cards" beats
+          "the pupils are delighted." Maximum 200 characters.
+      - name: components
+        label: Which of the five components this project included
+        widget: select
+        multiple: true
+        default: [space, furniture, collection, systems, people]
+        options:
+          - { label: "1 — The space", value: space }
+          - { label: "2 — The furniture", value: furniture }
+          - { label: "3 — The collection", value: collection }
+          - { label: "4 — The systems", value: systems }
+          - { label: "5 — The people", value: people }
+      - name: sponsor
+        label: Sponsor credit
+        widget: string
+        required: false
+        hint: "Only fill this in if the donor has asked to be named."
+      - { name: cover, label: Main photograph, widget: image, required: false }
+      - name: coverAlt
+        label: Description of the main photograph
+        widget: string
+        required: false
+        hint: >-
+          Describe what is in the photograph, for readers using a screen reader
+          and for anyone whose connection did not load the image.
+      - name: gallery
+        label: More photographs
+        widget: list
+        required: false
+        fields:
+          - { name: src, label: Photograph, widget: image }
+          - { name: alt, label: Description, widget: string }
+      - name: photoConsentOnFile
+        label: Written photo consent is on file
+        widget: boolean
+        default: false
+        hint: >-
+          REQUIRED before any photograph can be published. Tick only when you
+          hold written consent from the school, and from guardians for any
+          identifiable child. The site will refuse to build otherwise.
+      - { name: featured, label: Feature on the home page, widget: boolean, default: false }
+      - name: body
+        label: The full record
+        widget: markdown
+        hint: >-
+          What the school was like before, what was done, and what changed.
+          Two or three paragraphs is plenty.
+
+  # ─────────────────────────────────────────────────────────────────────────
+  #  NEWS
+  # ─────────────────────────────────────────────────────────────────────────
+  - name: stories
+    label: News
+    label_singular: News story
+    description: Library openings, school visits and updates.
+    folder: src/content/stories
+    create: true
+    slug: "{{year}}-{{month}}-{{slug}}"
+    summary: "{{title}} — {{date | date('yyyy-MM-dd')}}"
+    sortable_fields: [date, title]
+    fields:
+      - { name: title, label: Headline, widget: string }
+      - name: summary
+        label: Summary
+        widget: text
+        hint: >-
+          One or two sentences. Appears in the news listing and as the
+          description shown when the page is shared. Maximum 300 characters.
+      - { name: date, label: Date, widget: datetime, date_format: yyyy-MM-dd, time_format: false }
+      - { name: author, label: Author, widget: string, default: The AVID Foundation }
+      - { name: cover, label: Main photograph, widget: image, required: false }
+      - { name: coverAlt, label: Description of the photograph, widget: string, required: false }
+      - { name: tags, label: Tags, widget: list, required: false, default: [] }
+      - name: draft
+        label: Draft — hide from the site
+        widget: boolean
+        default: false
+        hint: "Tick to keep this unpublished without deleting it."
+      - { name: body, label: Story, widget: markdown }
+
+  # ─────────────────────────────────────────────────────────────────────────
+  #  PHOTOS — the carousels on the home page and For Schools
+  # ─────────────────────────────────────────────────────────────────────────
+  - name: gallery
+    label: Photos
+    label_singular: Photo
+    description: >-
+      Photographs for the sliding galleries on the home page and the For Schools
+      page. Add as many as you like and set the order. Nothing publishes until
+      you confirm written consent is on file.
+    folder: src/content/gallery
+    create: true
+    slug: "{{year}}-{{month}}-{{slug}}"
+    summary: "{{alt}}"
+    sortable_fields: [order, alt]
+    fields:
+      - { name: image, label: Photograph, widget: image }
+      - name: alt
+        label: Description of the photograph
+        widget: string
+        hint: >-
+          What is in the picture. Read aloud to blind visitors and shown if the
+          image fails to load, so write it as you would describe it to someone
+          on the phone. Please do not name individual children.
+      - name: caption
+        label: Caption
+        widget: text
+        required: false
+        hint: "Optional. Shown under the photograph on the page."
+      - name: credit
+        label: School or place
+        widget: string
+        required: false
+        hint: "For example: St Mary's Primary, Surulere."
+      - name: order
+        label: Order
+        widget: number
+        value_type: int
+        default: 50
+        hint: "Lower numbers appear first."
+      - name: shownOn
+        label: Where it appears
+        widget: select
+        multiple: true
+        default: [home]
+        options:
+          - { label: "Home page gallery", value: home }
+          - { label: "For Schools gallery", value: "for-schools" }
+      - name: photoConsentOnFile
+        label: Written photo consent is on file
+        widget: boolean
+        default: false
+        hint: >-
+          REQUIRED. Tick only when you hold written consent from the school, and
+          from guardians for any identifiable child. The site will refuse to
+          build otherwise. See docs/PHOTO-CONSENT.md.
+      - name: draft
+        label: Draft — hide from the site
+        widget: boolean
+        default: false
+
+  # ─────────────────────────────────────────────────────────────────────────
+  #  TEAM
+  # ─────────────────────────────────────────────────────────────────────────
+  - name: team
+    label: Board & Team
+    label_singular: Person
+    description: >-
+      Directors, the founder and key volunteers. Funders read this section
+      closely, so keep it current.
+    folder: src/content/team
+    create: true
+    slug: "{{fields.name | lower | replace(' ', '-')}}"
+    identifier_field: name
+    summary: "{{name}} — {{role}}"
+    sortable_fields: [order, name]
+    fields:
+      - { name: name, label: Full name, widget: string }
+      - { name: role, label: Role, widget: string, hint: "For example: Founder, Director, Treasurer" }
+      - name: order
+        label: Order on the page
+        widget: number
+        value_type: int
+        default: 50
+        hint: "Lower numbers appear first. The founder is 1."
+      - { name: photo, label: Photograph, widget: image, required: false }
+      - name: highlight
+        label: The memorable line
+        widget: string
+        required: false
+        hint: >-
+          One short line that makes this person stick. Shown large. If there is
+          no photograph yet, this stands in for the portrait.
+      - { name: linkedin, label: LinkedIn URL, widget: string, required: false }
+      - { name: body, label: Biography, widget: markdown }

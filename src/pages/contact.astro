@@ -1,0 +1,152 @@
+---
+import Base from "../layouts/Base.astro";
+import PageHeader from "../components/PageHeader.astro";
+import EnquiryForm from "../components/EnquiryForm.astro";
+import { SITE } from "../data/site";
+
+/* Three clearly signposted routes, as the brief requires — so a head teacher
+   never has to guess whether the general enquiry form is the right one. */
+const ROUTES = [
+  {
+    title: "I'm a school",
+    body: "Applying for a library refurbishment in Lagos.",
+    action: { label: "Go to the application", href: "/for-schools#apply" },
+    email: SITE.email.applications,
+    featured: true,
+  },
+  {
+    title: "I want to give or partner",
+    body: "Sponsorship, institutional grants, in-kind and pro bono support.",
+    action: { label: "Ways to give", href: "/get-involved" },
+    email: SITE.email.partnerships,
+  },
+  {
+    title: "Something else",
+    body: "Press, general questions, or you're not sure who to ask.",
+    action: { label: "Use the form below", href: "#enquiry" },
+    email: SITE.email.general,
+  },
+];
+---
+
+<Base
+  title="Contact"
+  description="Reach The AVID Foundation: separate routes for school applications, giving and partnerships, and general enquiries. Based in Toronto, Ontario, Canada."
+>
+  <PageHeader
+    eyebrow="Contact"
+    title="Three doors, so you don't have to guess."
+    lead="Pick the one that matches why you're writing and it will reach the right person faster."
+  />
+
+  <!-- ══ ROUTES ════════════════════════════════════════════════════════ -->
+  <section class="section grain" aria-labelledby="routes-heading">
+    <div class="shell">
+      <h2 id="routes-heading" class="sr-only-text">How to reach us</h2>
+      <ul class="grid gap-4 md:grid-cols-3">
+        {
+          ROUTES.map((route, i) => (
+            <li
+              class:list={[
+                "reveal card flex flex-col p-6",
+                route.featured && "ring-1 ring-ochre-500/50",
+              ]}
+              data-reveal-delay={i * 70}
+            >
+              <h3 class="text-h4 font-display">{route.title}</h3>
+              <p class="muted mt-2 flex-1 text-small">{route.body}</p>
+              <a
+                href={route.action.href}
+                class:list={[
+                  "btn mt-5",
+                  route.featured ? "btn-primary" : "btn-secondary",
+                ]}
+              >
+                {route.action.label}
+              </a>
+              <p class="muted mt-3 text-tag">
+                Or email{" "}
+                <a class="link" href={`mailto:${route.email}`}>
+                  {route.email}
+                </a>
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- ══ ENQUIRY FORM ══════════════════════════════════════════════════ -->
+  <section
+    id="enquiry"
+    class="section border-y border-teal/12 bg-cream"
+    aria-labelledby="enquiry-heading"
+  >
+    <div class="shell grid gap-x-16 gap-y-10 md:grid-cols-12">
+      <div class="md:col-span-5">
+        <p class="eyebrow"><span>General enquiries</span></p>
+        <h2 id="enquiry-heading" class="text-h2 mt-5 font-display">Send us a message</h2>
+        <p class="muted mt-5 text-small">
+          We read everything and reply by email, usually within a few working
+          days. We are a small volunteer team in different time zones, so please
+          bear with us.
+        </p>
+
+        <dl class="mt-8 space-y-5">
+          <div>
+            <dt class="card-field">Email</dt>
+            <dd class="mt-1 text-small">
+              <a class="link" href={`mailto:${SITE.email.general}`}>{SITE.email.general}</a>
+            </dd>
+          </div>
+          {
+            SITE.phone && (
+              <div>
+                <dt class="card-field">Telephone</dt>
+                <dd class="nums mt-1 text-small">
+                  <a class="link" href={`tel:${SITE.phone.replace(/[^+\d]/g, "")}`}>
+                    {SITE.phone}
+                  </a>
+                </dd>
+              </div>
+            )
+          }
+          <div>
+            <dt class="card-field">Where we are</dt>
+            <dd class="mt-1 text-small">
+              {SITE.location.line}
+              <span class="muted block text-tag">
+                Programme delivery: Lagos, Nigeria
+              </span>
+            </dd>
+          </div>
+          <div>
+            <dt class="card-field">Legal status</dt>
+            <dd class="mt-1 text-small">
+              {SITE.legalStatus}, incorporated {SITE.founded}.
+              {
+                SITE.charitableRegistrationNumber ? (
+                  <span class="nums block">
+                    CRA charitable registration no. {SITE.charitableRegistrationNumber}
+                  </span>
+                ) : (
+                  <span class="muted block text-tag">
+                    Charitable registration in progress. We cannot yet issue tax
+                    receipts.
+                  </span>
+                )
+              }
+            </dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="md:col-span-7">
+        <div class="card p-6 md:p-8">
+          <EnquiryForm kind="general" id="contact-form" />
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

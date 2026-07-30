@@ -1,0 +1,31 @@
+{
+  "name": "avid-foundation-website",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The AVID Foundation \u2014 where every classroom has a library behind it.",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "brand": "node scripts/build-brand.mjs"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
+    "astro": "^7.1.6",
+    "sharp": "^0.35.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@tailwindcss/vite": "^4.3.3",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^6.0.3"
+  },
+  "allowScripts": {
+    "sharp@0.34.5": true,
+    "esbuild@0.28.1": true,
+    "fsevents@2.3.3": true
+  }
+}

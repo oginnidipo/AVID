@@ -1,0 +1,17 @@
+---
+interface Props {
+  eyebrow: string;
+  title: string;
+  /** The standfirst: one or two sentences below the title. */
+  lead?: string;
+}
+const { eyebrow, title, lead } = Astro.props;
+---
+
+<section class="on-dark grain bg-teal">
+  <div class="shell py-16 md:py-20">
+    <p class="eyebrow"><span>{eyebrow}</span></p>
+    <h1 class="text-h1 mt-5 max-w-4xl font-display">{title}</h1>
+    {lead && <p class="mt-6 max-w-2xl text-lead text-paper/88">{lead}</p>}
+  </div>
+</section>

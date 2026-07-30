@@ -1,0 +1,90 @@
+---
+import { ANALYTICS } from "../data/site";
+
+/**
+ * Consent notice, rendered only when a cookie-setting tool is configured.
+ *
+ * This is a real consent gate, not a dismiss button: Google Analytics is not
+ * loaded at all until the visitor accepts. Declining is a single click and is
+ * remembered. If AVID uses Plausible instead (cookieless), this component
+ * never renders and there is no banner to dismiss — which is the better
+ * outcome for a site whose visitors are often on metered mobile data.
+ */
+const gaId = ANALYTICS.googleAnalyticsId;
+---
+
+<div
+  id="cookie-notice"
+  hidden
+  role="dialog"
+  aria-modal="false"
+  aria-labelledby="cookie-notice-heading"
+  class="on-dark fixed inset-x-3 bottom-3 z-60 mx-auto max-w-2xl rounded border border-paper/20 bg-teal-deep p-5 shadow-card sm:inset-x-6 sm:bottom-6"
+>
+  <h2 id="cookie-notice-heading" class="text-h4 font-display">Analytics cookies</h2>
+  <p class="muted mt-2 text-small">
+    We would like to measure how many people visit and which pages help. That
+    uses cookies. The site works exactly the same either way, and we never sell
+    or share what we collect.
+    <a class="link" href="/privacy">Read our privacy policy</a>.
+  </p>
+  <div class="mt-4 flex flex-wrap gap-2">
+    <button type="button" class="btn btn-on-dark" data-cookie-accept>Accept</button>
+    <button type="button" class="btn btn-ghost-dark" data-cookie-decline>Decline</button>
+  </div>
+</div>
+
+<script is:inline define:vars={{ gaId }}>
+  (function () {
+    const KEY = "avid:analytics-consent";
+    const notice = document.getElementById("cookie-notice");
+    if (!notice) return;
+
+    function loadAnalytics() {
+      if (!gaId || window.__avidGaLoaded) return;
+      window.__avidGaLoaded = true;
+      const s = document.createElement("script");
+      s.async = true;
+      s.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(gaId);
+      document.head.appendChild(s);
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        window.dataLayer.push(arguments);
+      }
+      window.gtag = gtag;
+      gtag("js", new Date());
+      gtag("config", gaId, { anonymize_ip: true });
+    }
+
+    let stored = null;
+    try {
+      stored = localStorage.getItem(KEY);
+    } catch {
+      /* Private browsing or storage disabled: treat as undecided, show notice,
+         and simply don't remember the answer. */
+    }
+
+    if (stored === "granted") {
+      loadAnalytics();
+      return;
+    }
+    if (stored === "denied") return;
+
+    notice.hidden = false;
+
+    function decide(value) {
+      try {
+        localStorage.setItem(KEY, value);
+      } catch {}
+      notice.hidden = true;
+      if (value === "granted") loadAnalytics();
+    }
+
+    notice
+      .querySelector("[data-cookie-accept]")
+      ?.addEventListener("click", () => decide("granted"));
+    notice
+      .querySelector("[data-cookie-decline]")
+      ?.addEventListener("click", () => decide("denied"));
+  })();
+</script>

@@ -1,0 +1,133 @@
+---
+/**
+ * The classroom, seen from the back of the room: desks in silhouette, pupils'
+ * heads, a blackboard on the far wall.
+ *
+ * This is the "classroom" half of the signature idea. It sits in front of
+ * <BookWall />; as the reader scrolls, this layer travels down and out of the
+ * frame while the shelves behind it hold position — so the library is
+ * literally revealed behind the classroom. Used once, on the home page.
+ */
+interface Props {
+  class?: string;
+}
+const { class: className = "" } = Astro.props;
+
+/* Desk rows, back to front. Each row is wider, lower and darker than the one
+   behind it, which is what produces the sense of depth. */
+const ROWS = [
+  { y: 300, scale: 0.62, opacity: 0.82, seats: 5 },
+  { y: 348, scale: 0.78, opacity: 0.9, seats: 4 },
+  { y: 408, scale: 1.0, opacity: 1, seats: 3 },
+];
+---
+
+<div class={className} aria-hidden="true">
+  <svg
+    viewBox="0 0 1200 520"
+    preserveAspectRatio="xMidYMax slice"
+    class="block h-full w-full"
+    role="presentation"
+    focusable="false"
+  >
+    <defs>
+      <linearGradient id="cr-floor" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#16272E"></stop>
+        <stop offset="1" stop-color="#0A171C"></stop>
+      </linearGradient>
+      <linearGradient id="cr-fade" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#0A171C" stop-opacity="0"></stop>
+        <stop offset="0.55" stop-color="#0A171C" stop-opacity="0.55"></stop>
+        <stop offset="1" stop-color="#0A171C" stop-opacity="0.95"></stop>
+      </linearGradient>
+      <!-- Chalk dust in the window light. -->
+      <radialGradient id="cr-glow" cx="0.22" cy="0.3" r="0.6">
+        <stop offset="0" stop-color="#E8B87C" stop-opacity="0.16"></stop>
+        <stop offset="1" stop-color="#E8B87C" stop-opacity="0"></stop>
+      </radialGradient>
+    </defs>
+
+    <!-- Blackboard on the far wall. Held well back: at narrow widths this sits
+         behind the hero's buttons, and a crisp frame there reads as a stray
+         rectangle rather than as a room. -->
+    <g opacity="0.5">
+      <rect x="238" y="96" width="500" height="176" rx="3" fill="#12312B"></rect>
+      <rect x="238" y="96" width="500" height="176" rx="3" fill="none" stroke="#6E4E2C" stroke-width="7"></rect>
+      <!-- Chalk marks. Deliberately abstract: the headline already says the
+           words, and repeating them here would fight it. What we want is the
+           read of "a lesson is happening", nothing more. -->
+      <g stroke="#E4E9DF" stroke-linecap="round" fill="none" opacity="0.3">
+        <!-- Ruled lines of writing, suggested rather than spelled out -->
+        <path d="M272 138h286M272 158h214M272 178h258M272 198h150" stroke-width="3"></path>
+        <!-- A book drawn open on the board, as a teacher would sketch it -->
+        <g transform="translate(600 132)" stroke-width="3">
+          <path d="M0 44 L44 30 L88 44"></path>
+          <path d="M0 44 L0 6 L44 -8 L88 6 L88 44"></path>
+          <path d="M44 -8 L44 30"></path>
+        </g>
+        <!-- Tally marks: children counted, or books counted -->
+        <g transform="translate(604 206)" stroke-width="3">
+          <path d="M0 0v20M10 0v20M20 0v20M30 0v20M-4 20L34 0"></path>
+        </g>
+      </g>
+      <!-- Chalk ledge -->
+      <rect x="232" y="272" width="512" height="7" rx="2" fill="#6E4E2C"></rect>
+    </g>
+
+    <!-- Window, left, with light spilling in -->
+    <g opacity="0.45">
+      <rect x="44" y="72" width="122" height="196" rx="2" fill="#1B4D5C"></rect>
+      <rect x="44" y="72" width="122" height="196" rx="2" fill="#E8B87C" opacity="0.22"></rect>
+      <rect x="102" y="72" width="4" height="196" fill="#0A171C" opacity="0.5"></rect>
+      <rect x="44" y="166" width="122" height="4" fill="#0A171C" opacity="0.5"></rect>
+      <rect x="40" y="68" width="130" height="204" rx="3" fill="none" stroke="#6E4E2C" stroke-width="6"></rect>
+    </g>
+    <ellipse cx="300" cy="330" rx="420" ry="260" fill="url(#cr-glow)"></ellipse>
+
+    <!-- Floor -->
+    <rect x="0" y="286" width="1200" height="234" fill="url(#cr-floor)"></rect>
+
+    <!-- Desk rows, back to front -->
+    {
+      ROWS.map((row) => (
+        <g opacity={row.opacity}>
+          {Array.from({ length: row.seats }).map((_, i) => {
+            const gap = 1200 / row.seats;
+            const cx = gap * (i + 0.5);
+            const deskW = 168 * row.scale;
+            const deskH = 13 * row.scale;
+            const legH = 46 * row.scale;
+            const headR = 19 * row.scale;
+            return (
+              <g transform={`translate(${cx} ${row.y})`}>
+                {/* Pupil: head and shoulders above the desk line */}
+                <circle cx="0" cy={-headR - 20 * row.scale} r={headR} fill="#0A171C" />
+                <path
+                  d={`M ${-headR * 1.7} ${-6 * row.scale} q ${headR * 1.7} ${-34 * row.scale} ${headR * 3.4} 0 z`}
+                  fill="#0A171C"
+                />
+                {/* Desk */}
+                <rect x={-deskW / 2} y="0" width={deskW} height={deskH} rx={2 * row.scale} fill="#16272E" />
+                <rect x={-deskW / 2} y="0" width={deskW} height={2 * row.scale} fill="#E8B87C" opacity="0.14" />
+                {/* Legs */}
+                <rect x={-deskW / 2 + 8 * row.scale} y={deskH} width={5 * row.scale} height={legH} fill="#16272E" />
+                <rect x={deskW / 2 - 13 * row.scale} y={deskH} width={5 * row.scale} height={legH} fill="#16272E" />
+                {/* An open book on the desk of the front row only — the detail
+                    that says these children are already reading. */}
+                {row.scale === 1 && (
+                  <g transform="translate(0 -7)">
+                    <path d="M -22 6 L 0 0 L 22 6 L 0 9 Z" fill="#F6F1E7" opacity="0.85" />
+                    <path d="M 0 0 L 0 9" stroke="#A87C4B" stroke-width="1" opacity="0.7" />
+                  </g>
+                )}
+              </g>
+            );
+          })}
+        </g>
+      ))
+    }
+
+    <!-- Bottom fade, so the layer dissolves into the page rather than cutting -->
+    <rect x="0" y="300" width="1200" height="220" fill="url(#cr-fade)"></rect>
+  </svg>
+</div>

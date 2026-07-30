@@ -1,0 +1,58 @@
+---
+import { GIVING_TIERS } from "../data/programme";
+import DonateButton from "./DonateButton.astro";
+
+interface Props {
+  /** `preview` shows three tiles on the home page; `full` shows all of them. */
+  variant?: "preview" | "full";
+}
+const { variant = "full" } = Astro.props;
+
+const tiers =
+  variant === "preview"
+    ? GIVING_TIERS.filter((t) => ["library", "collection", "shelf"].includes(t.key))
+    : GIVING_TIERS;
+
+/* An empty amount means "not costed yet". Say so, rather than printing a blank
+   space or inventing a figure. */
+const amountLabel = (amount: string) => (amount === "" ? "By arrangement" : amount);
+---
+
+<ul
+  class:list={[
+    "grid gap-4",
+    variant === "preview" ? "sm:grid-cols-3" : "sm:grid-cols-2 lg:grid-cols-3",
+  ]}
+>
+  {
+    tiers.map((tier, i) => (
+      <li
+        class:list={[
+          "reveal card flex flex-col p-6",
+          tier.featured && "ring-1 ring-ochre-500/50",
+        ]}
+        data-reveal-delay={i * 60}
+      >
+        {tier.featured && <span class="tag mb-3 self-start">Most direct</span>}
+        <h3 class="text-h4 font-display">{tier.name}</h3>
+        <p class="nums mt-2 font-display text-h3 text-ochre-800">
+          {amountLabel(tier.amount)}
+        </p>
+        <p class="muted mt-3 flex-1 text-small">{tier.delivers}</p>
+        <div class="mt-5">
+          {tier.key === "grants" || tier.key === "inkind" ? (
+            <a href="/get-involved#partner" class="btn btn-secondary w-full">
+              Talk to us
+            </a>
+          ) : (
+            <DonateButton
+              label={tier.key === "monthly" ? "Give monthly" : "Give"}
+              variant={tier.featured ? "primary" : "secondary"}
+              class="w-full"
+            />
+          )}
+        </div>
+      </li>
+    ))
+  }
+</ul>

@@ -1,0 +1,281 @@
+---
+import Base from "../layouts/Base.astro";
+import PageHeader from "../components/PageHeader.astro";
+import DonateButton from "../components/DonateButton.astro";
+import { VALUES } from "../data/programme";
+import { SITE } from "../data/site";
+import { getCollection, render } from "astro:content";
+import { Image } from "astro:assets";
+
+const team = (await getCollection("team")).sort((a, b) => a.data.order - b.data.order);
+const rendered = await Promise.all(
+  team.map(async (member) => ({ member, Content: (await render(member)).Content })),
+);
+
+const GOVERNANCE = [
+  {
+    name: "Legal status",
+    body: "Incorporated in Canada as a not-for-profit corporation. Charitable registration status is in progress; we will publish the registration number here the moment it is granted.",
+  },
+  {
+    name: "Board",
+    body: "A minimum of three directors at arm's length from one another. The board sets strategy, approves all grants and disbursements, and is responsible for ensuring our resources are applied exclusively to our charitable purpose.",
+  },
+  {
+    name: "Financial controls",
+    body: "Dual signing authority; staged disbursement against milestones; retention of all supporting documentation.",
+  },
+  {
+    name: "Reporting",
+    body: "Annual financial statements; annual return filings; project reports to funders and donors.",
+  },
+  {
+    name: "Conflict of interest",
+    body: "A written policy requiring disclosure and recusal. Directors do not transact with the organisation.",
+  },
+  {
+    name: "Safeguarding",
+    body: "A child protection policy governing all activity conducted in or around schools, by us or by our partners.",
+  },
+];
+---
+
+<Base
+  title="About"
+  description="The AVID Foundation is a Canadian non-profit restoring school libraries in Nigeria, founded by members of the Nigerian diaspora in Canada. Our story, our values, our board and our governance."
+>
+  <PageHeader
+    eyebrow="About us"
+    title="No one is born an avid reader."
+    lead="A child becomes one by having something worth reading within reach, at the age when reading is still being decided. In the Nigerian schools we work with, they are not. We exist to put it there."
+  />
+
+  <!-- ══ OUR STORY ═════════════════════════════════════════════════════ -->
+  <section class="section grain" aria-labelledby="story-heading">
+    <div class="shell grid gap-x-16 gap-y-10 md:grid-cols-12">
+      <div class="md:col-span-4">
+        <p class="eyebrow"><span>Our story</span></p>
+        <h2 id="story-heading" class="text-h2 mt-5 font-display">
+          The name carries the reason.
+        </h2>
+      </div>
+
+      <div class="prose md:col-span-8">
+        <p class="text-lead">
+          The AVID Foundation is a Canadian non-profit working to restore school
+          libraries in Nigeria. We were founded by members of the Nigerian
+          diaspora in Canada who believe that a functioning library is among the
+          most cost-effective investments available in a child's education — and
+          that too many Nigerian schoolchildren attend schools where the library
+          is locked, empty, or has never existed at all.
+        </p>
+        <p>
+          <strong>Avid</strong> is not a word anyone is born into. A child
+          becomes an avid reader by having something worth reading within reach,
+          at the age when reading is still being decided. That gap is not a
+          funding mystery — it is a shelf, a room, a trained teacher and a
+          timetable. We fund exactly that, so that avid readers can happen where
+          they currently cannot.
+        </p>
+        <p>
+          We are a Canadian organisation by design. We are incorporated in
+          Canada, governed by a Canadian board, and accountable to Canadian
+          regulators and donors. We do not maintain a separate Nigerian entity.
+          Instead, we deliver our work through carefully selected local partners
+          who know their communities, or directly with the schools under written
+          agreements that hold them — and us — to a clear standard. We begin in
+          Lagos, and take what works to schools across Nigeria.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ MISSION & VISION ══════════════════════════════════════════════ -->
+  <section class="on-dark bg-teal" aria-labelledby="mission-heading">
+    <h2 id="mission-heading" class="sr-only-text">Mission and vision</h2>
+    <div class="shell grid gap-px py-0 md:grid-cols-2">
+      <div class="py-14 md:pr-12">
+        <p class="eyebrow"><span>Our mission</span></p>
+        <p class="mt-6 text-h3 font-display">
+          To refurbish, restock and sustain libraries in under-resourced Nigerian
+          schools, and to support the people who run them, so that every child in
+          those schools has books to read and a place to read them. We begin in
+          Lagos.
+        </p>
+      </div>
+      <div class="border-t border-paper/15 py-14 md:border-l md:border-t-0 md:pl-12">
+        <p class="eyebrow"><span>Our vision</span></p>
+        <p class="mt-6 text-h2 font-display text-ochre-200">
+          Where every classroom has a library behind it.
+        </p>
+        <p class="muted mt-5">
+          A Nigeria in which no child's literacy is limited by the absence of a
+          library, and every school library is a working, used and valued part of
+          school life.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ VALUES ════════════════════════════════════════════════════════ -->
+  <section class="section border-b border-teal/12 bg-cream" aria-labelledby="values-heading">
+    <div class="shell">
+      <p class="eyebrow"><span>Our values</span></p>
+      <h2 id="values-heading" class="text-h2 mt-5 max-w-2xl font-display">
+        Five commitments, written so you can hold us to them.
+      </h2>
+
+      <dl class="mt-12 grid gap-x-12 gap-y-8 md:grid-cols-2 lg:grid-cols-3">
+        {
+          VALUES.map((v, i) => (
+            <div class="reveal" data-reveal-delay={i * 60}>
+              <dt class="flex items-baseline gap-3">
+                <span
+                  class="block h-4 w-1 flex-none rounded-sm bg-ochre-500"
+                  aria-hidden="true"
+                />
+                <span class="text-h4 font-display">{v.name}</span>
+              </dt>
+              <dd class="muted mt-2 pl-4 text-small">{v.body}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <!-- ══ LEADERSHIP ════════════════════════════════════════════════════ -->
+  <section class="section" id="leadership" aria-labelledby="leadership-heading">
+    <div class="shell">
+      <div class="max-w-2xl">
+        <p class="eyebrow"><span>Leadership</span></p>
+        <h2 id="leadership-heading" class="text-h2 mt-5 font-display">
+          Who is accountable for this.
+        </h2>
+      </div>
+
+      <div class="mt-12 space-y-16">
+        {
+          rendered.map(({ member, Content }) => (
+            <article class="grid gap-x-12 gap-y-6 md:grid-cols-12">
+              <div class="md:col-span-4">
+                {member.data.photo ? (
+                  <Image
+                    src={member.data.photo}
+                    alt={`${member.data.name}, ${member.data.role} of The AVID Foundation`}
+                    widths={[320, 560]}
+                    sizes="(min-width: 768px) 30vw, 92vw"
+                    class="w-full rounded-sm border border-teal/15 object-cover"
+                  />
+                ) : (
+                  /* No photograph supplied yet. Rather than a grey silhouette,
+                     the person's defining line stands in for the portrait. */
+                  <div class="checkout-card flex aspect-[4/5] flex-col justify-end p-6 pl-11">
+                    {member.data.highlight && (
+                      <p class="text-h3 font-display leading-tight text-teal">
+                        {member.data.highlight}
+                      </p>
+                    )}
+                    <p class="card-field mt-4">Photograph to follow</p>
+                  </div>
+                )}
+              </div>
+
+              <div class="md:col-span-8">
+                <p class="eyebrow"><span>{member.data.role}</span></p>
+                <h3 class="text-h2 mt-3 font-display">{member.data.name}</h3>
+                {member.data.highlight && member.data.photo && (
+                  <p class="mt-4 text-lead font-display" style="font-variation-settings:'opsz' 40">
+                    {member.data.highlight}
+                  </p>
+                )}
+                <div class="prose mt-5">
+                  <Content />
+                </div>
+                {member.data.linkedin && (
+                  <p class="mt-5">
+                    <a
+                      class="link text-small font-semibold"
+                      href={member.data.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {member.data.name} on LinkedIn
+                      <span class="sr-only-text">(opens in a new tab)</span>
+                    </a>
+                  </p>
+                )}
+              </div>
+            </article>
+          ))
+        }
+      </div>
+
+      {/* Board members are added as they are appointed. Funders read this
+          section closely, so the gap is acknowledged rather than hidden. */}
+      <div class="mt-16 border-t border-teal/15 pt-8">
+        <h3 class="text-h4 font-display">Our board</h3>
+        <p class="muted mt-3 max-w-2xl text-small">
+          AVID is governed by a volunteer board of directors whose members deal
+          with one another at arm's length. We are appointing our founding board
+          now, and each director's name, role and biography will be published
+          here as they are confirmed — before we accept institutional funding,
+          not after.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ GOVERNANCE ════════════════════════════════════════════════════ -->
+  <section
+    id="governance"
+    class="section border-y border-teal/12 bg-cream"
+    aria-labelledby="governance-heading"
+  >
+    <div class="shell grid gap-x-16 gap-y-10 md:grid-cols-12">
+      <div class="md:col-span-4">
+        <p class="eyebrow"><span>Governance</span></p>
+        <h2 id="governance-heading" class="text-h2 mt-5 font-display">
+          Built for the scrutiny, from the outset.
+        </h2>
+        <p class="muted mt-5 text-small">
+          Canadian charity law places clear obligations on organisations working
+          abroad. We built our operating model around them from day one: we
+          maintain books and records sufficient to demonstrate that every
+          disbursement was used for the charitable purpose intended, we do not
+          act as a pass-through for funds destined for any foreign organisation,
+          and our board retains genuine authority over our resources.
+        </p>
+      </div>
+
+      <dl class="md:col-span-8">
+        {
+          GOVERNANCE.map((item, i) => (
+            <div
+              class="reveal grid gap-x-8 gap-y-1 border-t border-teal/12 py-5 sm:grid-cols-3"
+              data-reveal-delay={i * 50}
+            >
+              <dt class="card-field pt-1 text-ink">{item.name}</dt>
+              <dd class="text-small sm:col-span-2">{item.body}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <!-- ══ CTA ═══════════════════════════════════════════════════════════ -->
+  <section class="on-dark bg-teal-mid" aria-labelledby="about-cta">
+    <div class="shell py-16 text-center">
+      <h2 id="about-cta" class="text-h2 mx-auto max-w-2xl font-display">
+        We are seeking partners for our first cohort in Lagos.
+      </h2>
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <DonateButton label="Sponsor a library" variant="on-dark" />
+        <a href={`mailto:${SITE.email.partnerships}`} class="btn btn-ghost-dark">
+          Email the founder
+        </a>
+      </div>
+    </div>
+  </section>
+</Base>

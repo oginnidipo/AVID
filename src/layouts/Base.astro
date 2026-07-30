@@ -1,0 +1,72 @@
+---
+import "../styles/global.css";
+import Seo from "../components/Seo.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import CookieNotice from "../components/CookieNotice.astro";
+import { NEEDS_COOKIE_CONSENT } from "../data/site";
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  publishedOn?: Date;
+  noindex?: boolean;
+  extraJsonLd?: Record<string, unknown>;
+}
+
+const seo = Astro.props;
+---
+
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <Seo {...seo} />
+    <script is:inline>
+      /* Set before first paint so CSS can distinguish a JavaScript-capable
+         browser from one without, and no reveal-on-scroll content is ever
+         hidden from someone who won't get the reveal. */
+      document.documentElement.classList.add("js");
+    </script>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+    {NEEDS_COOKIE_CONSENT && <CookieNotice />}
+
+    <script>
+      /* ── Reveal on scroll ────────────────────────────────────────────────
+         One observer for the whole page. Elements are revealed once and then
+         unobserved, so scrolling stays cheap. Respects reduced-motion by
+         revealing everything immediately. */
+      const targets = document.querySelectorAll<HTMLElement>(".reveal");
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      if (reduced || !("IntersectionObserver" in window)) {
+        targets.forEach((el) => el.classList.add("is-in"));
+      } else {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              const el = entry.target as HTMLElement;
+              /* Stagger siblings so a row of cards arrives in sequence rather
+                 than all at once. Capped so a long list never feels slow. */
+              const delay = Math.min(Number(el.dataset.revealDelay ?? 0), 400);
+              el.style.transitionDelay = `${delay}ms`;
+              el.classList.add("is-in");
+              observer.unobserve(el);
+            }
+          },
+          { rootMargin: "0px 0px -12% 0px", threshold: 0.05 },
+        );
+        targets.forEach((el) => observer.observe(el));
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,56 @@
+---
+/**
+ * The AVID Foundation identity.
+ *
+ * The supplied artwork — an open book with a quill feather, and the stacked
+ * "The / AVID / FOUNDATION" wordmark — is built into static SVG files by
+ * `scripts/build-logo-svg.mjs`. The wordmark is outlined from Fraunces rather
+ * than set as live text, so the logo renders identically before webfonts load
+ * and in contexts that have no fonts at all.
+ *
+ * Referenced as files rather than inlined: the lockup is ~18KB of path data, so
+ * as a file it is fetched and cached once for the whole site instead of being
+ * re-sent inside every page's HTML.
+ *
+ * Two colourways, matching the supplied artwork:
+ *   `primary`  — teal book, ochre feather, teal AVID   → for Paper and Cream
+ *   `reversed` — paper/sage book, ochre feather        → for Deep Teal
+ *
+ * The variant is explicit rather than inferred, because a single wrong guess
+ * here produces an invisible logo.
+ */
+interface Props {
+  /** Height of the lockup in pixels. */
+  size?: number;
+  /** Which colourway. Pick the one that suits the surface behind it. */
+  variant?: "primary" | "reversed";
+  /** `full` is the horizontal lockup; `mark` is the book alone. */
+  form?: "full" | "mark";
+  class?: string;
+}
+const {
+  size = 40,
+  variant = "primary",
+  form = "full",
+  class: className = "",
+} = Astro.props;
+
+/* Intrinsic aspect ratios of the generated files, so width/height are set on
+   the element and the header never shifts as the image loads. */
+const ART = {
+  full: { ratio: 630.2 / 212, src: { primary: "/logo-avid.svg", reversed: "/logo-avid-reversed.svg" } },
+  mark: { ratio: 88 / 80, src: { primary: "/logo-mark.svg", reversed: "/logo-mark-reversed.svg" } },
+}[form];
+
+const width = Math.round(size * ART.ratio);
+---
+
+<img
+  src={ART.src[variant]}
+  width={width}
+  height={size}
+  alt="The AVID Foundation"
+  class={`block ${className}`}
+  style={`height:${size}px;width:auto`}
+  decoding="async"
+/>

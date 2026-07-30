@@ -1,0 +1,72 @@
+---
+import { COMPONENTS } from "../data/programme";
+
+interface Props {
+  /** `cards` for the home page preview, `full` for Our Work. */
+  variant?: "cards" | "full";
+}
+const { variant = "cards" } = Astro.props;
+
+/* Each component gets a spine colour, so the five read as five books standing
+   together on a shelf — the motif the brief asks for, carrying real meaning:
+   the package is complete or it is not. */
+const SPINE = ["#133B42", "#1B4D5C", "#9A5518", "#41564A", "#7E4212"];
+---
+
+{
+  variant === "cards" ? (
+    /* Three across, not five. Five columns inside the page shell leaves each
+       card about 218px wide, which is too narrow for a heading plus two lines
+       of body text — words break badly and the row reads as clutter rather
+       than as a system. The "five-ness" is carried by the 01–05 numbering and
+       the copy, which is where it belongs. */
+    <ul class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {COMPONENTS.map((c, i) => (
+        <li
+          class="reveal card group relative flex flex-col overflow-hidden p-7 pt-8 transition-shadow hover:shadow-lift"
+          data-reveal-delay={i * 70}
+        >
+          {/* The spine: a coloured edge down the left of each card. */}
+          <span
+            class="absolute inset-y-0 left-0 w-1.5"
+            style={`background-color:${SPINE[i]}`}
+            aria-hidden="true"
+          />
+          <span class="card-field text-ochre-800">{String(c.n).padStart(2, "0")}</span>
+          <h3 class="text-h4 mt-1.5 font-display">{c.name}</h3>
+          <p class="mt-2.5 text-small font-semibold text-ink">{c.short}</p>
+          <p class="muted mt-2.5 text-small leading-relaxed">{c.body}</p>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <ol class="mt-10 space-y-0">
+      {COMPONENTS.map((c, i) => (
+        <li
+          class="reveal grid gap-x-8 gap-y-3 border-t border-teal/12 py-8 md:grid-cols-12"
+          data-reveal-delay={i * 60}
+        >
+          <div class="flex items-start gap-4 md:col-span-4">
+            <span
+              class="mt-1 block h-11 w-2 flex-none rounded-sm"
+              style={`background-color:${SPINE[i]}`}
+              aria-hidden="true"
+            />
+            <div>
+              <span class="card-field text-ochre-800">
+                Component {String(c.n).padStart(2, "0")}
+              </span>
+              <h3 class="text-h3 font-display">{c.name}</h3>
+            </div>
+          </div>
+          <div class="md:col-span-8">
+            <p class="text-lead font-display" style="font-variation-settings:'opsz' 30">
+              {c.short}
+            </p>
+            <p class="muted mt-2 max-w-2xl">{c.body}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  )
+}

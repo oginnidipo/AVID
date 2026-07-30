@@ -1,0 +1,185 @@
+---
+import Logo from "./Logo.astro";
+import DonateButton from "./DonateButton.astro";
+import { NAV } from "../data/nav";
+
+const path = Astro.url.pathname.replace(/\/$/, "") || "/";
+const isCurrent = (href: string) => path === href || path.startsWith(href + "/");
+---
+
+<header
+  id="site-header"
+  class="sticky top-0 z-50 border-b border-teal/12 bg-paper/88 backdrop-blur-md"
+  data-header
+>
+  <div class="shell flex items-center gap-4 py-3">
+    <a
+      href="/"
+      class="flex-none transition-opacity hover:opacity-75"
+      aria-label="The AVID Foundation — home"
+      aria-current={path === "/" ? "page" : undefined}
+    >
+      <Logo size={48} variant="primary" />
+    </a>
+
+    <!-- Desktop navigation -->
+    <nav aria-label="Main" class="ml-auto hidden lg:block">
+      <ul class="flex items-center gap-1">
+        {
+          NAV.map((item) => (
+            <li>
+              <a
+                href={item.href}
+                aria-current={isCurrent(item.href) ? "page" : undefined}
+                class:list={[
+                  "relative block rounded px-3 py-2 text-[0.9375rem] font-medium transition-colors",
+                  item.audience === "schools"
+                    ? "text-ochre-800 hover:text-ochre-700"
+                    : "text-ink hover:text-teal",
+                ]}
+                data-nav-link
+              >
+                {item.label}
+                {/* Active marker drawn as a book spine lying flat under the label */}
+                {isCurrent(item.href) && (
+                  <span
+                    class="absolute inset-x-3 -bottom-0.5 h-[3px] rounded-sm bg-ochre-500"
+                    aria-hidden="true"
+                  />
+                )}
+              </a>
+            </li>
+          ))
+        }
+        <li class="ml-3">
+          <DonateButton />
+        </li>
+      </ul>
+    </nav>
+
+    <!--
+      Mobile. The toggle is only shown when JavaScript is running; the panel it
+      controls is a plain list that, without JavaScript, simply renders open
+      below the bar. So the navigation is always reachable.
+    -->
+    <div class="ml-auto lg:hidden">
+    <button
+      type="button"
+      class="hidden items-center gap-2 rounded px-3 py-2.5 text-[0.9375rem] font-semibold text-teal [.js_&]:inline-flex"
+      aria-expanded="false"
+      aria-controls="mobile-nav"
+      data-menu-toggle
+    >
+      <span class="relative block h-3 w-5" aria-hidden="true">
+        <span
+          class="absolute inset-x-0 top-0 h-[2px] rounded bg-current transition-transform duration-200"
+          data-bar="top"></span>
+        <span
+          class="absolute inset-x-0 top-[5px] h-[2px] rounded bg-current transition-opacity duration-200"
+          data-bar="mid"></span>
+        <span
+          class="absolute inset-x-0 top-[10px] h-[2px] rounded bg-current transition-transform duration-200"
+          data-bar="bottom"></span>
+      </span>
+      <span data-menu-label>Menu</span>
+    </button>
+    </div>
+  </div>
+
+  <div class="lg:hidden">
+  <nav
+    id="mobile-nav"
+    aria-label="Main"
+    class="border-t border-teal/12 bg-paper [.js_&]:hidden [.js_&][data-open]:block"
+    data-mobile-nav
+  >
+    <ul class="shell flex flex-col py-2">
+      {
+        NAV.map((item) => (
+          <li class="border-b border-teal/8 last:border-0">
+            <a
+              href={item.href}
+              aria-current={isCurrent(item.href) ? "page" : undefined}
+              class:list={[
+                "flex items-baseline justify-between gap-4 py-3.5",
+                isCurrent(item.href) ? "text-ochre-800" : "text-ink",
+              ]}
+            >
+              <span class="text-h4 font-display">{item.label}</span>
+              <span class="card-field flex-none">{item.blurb}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <div class="shell pb-4">
+      <DonateButton class="w-full" label="Donate" />
+    </div>
+  </nav>
+  </div>
+</header>
+
+<script>
+  /* ── Sticky header behaviour ──────────────────────────────────────────────
+     Two jobs, both small:
+       1. Publish the header's real height as --header-h so in-page anchors
+          (and :target scroll-margin) clear it at every breakpoint.
+       2. Run the mobile menu with correct aria state and focus handling.
+     ---------------------------------------------------------------------- */
+  const header = document.querySelector<HTMLElement>("[data-header]");
+  const toggle = document.querySelector<HTMLButtonElement>("[data-menu-toggle]");
+  const panel = document.querySelector<HTMLElement>("[data-mobile-nav]");
+  const label = document.querySelector<HTMLElement>("[data-menu-label]");
+
+  if (header) {
+    const publishHeight = () => {
+      document.documentElement.style.setProperty(
+        "--header-h",
+        `${header.getBoundingClientRect().height}px`,
+      );
+    };
+    publishHeight();
+    new ResizeObserver(publishHeight).observe(header);
+  }
+
+  if (toggle && panel) {
+    const bars = {
+      top: toggle.querySelector<HTMLElement>('[data-bar="top"]'),
+      mid: toggle.querySelector<HTMLElement>('[data-bar="mid"]'),
+      bottom: toggle.querySelector<HTMLElement>('[data-bar="bottom"]'),
+    };
+
+    const setOpen = (open: boolean) => {
+      toggle.setAttribute("aria-expanded", String(open));
+      if (open) panel.setAttribute("data-open", "");
+      else panel.removeAttribute("data-open");
+      if (label) label.textContent = open ? "Close" : "Menu";
+      bars.top?.style.setProperty("transform", open ? "translateY(5px) rotate(45deg)" : "");
+      bars.mid?.style.setProperty("opacity", open ? "0" : "");
+      bars.bottom?.style.setProperty(
+        "transform",
+        open ? "translateY(-5px) rotate(-45deg)" : "",
+      );
+    };
+
+    toggle.addEventListener("click", () => {
+      setOpen(toggle.getAttribute("aria-expanded") !== "true");
+    });
+
+    /* Escape closes and returns focus to the toggle — otherwise a keyboard
+       user is stranded inside a panel they can't dismiss. */
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && toggle.getAttribute("aria-expanded") === "true") {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+
+    /* Close when the viewport grows past the breakpoint, so the panel's open
+       state doesn't linger invisibly behind the desktop nav. */
+    const wide = window.matchMedia("(min-width: 64rem)");
+    wide.addEventListener("change", (event) => {
+      if (event.matches) setOpen(false);
+    });
+  }
+</script>

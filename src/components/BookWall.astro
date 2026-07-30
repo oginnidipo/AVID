@@ -1,0 +1,207 @@
+---
+import { BOOKS } from "../data/books";
+
+/**
+ * A wall of shelved book spines, drawn from the real reading list.
+ *
+ * This is the "library" half of the site's one signature idea. It is drawn
+ * rather than photographed for three reasons: there are no photographs yet,
+ * it costs no image request at all on a metered connection, and every spine
+ * carries a real Nigerian or African title — which is the point being made.
+ *
+ * The layout is deterministic: the same pseudo-random sequence every build, so
+ * the wall never reshuffles between deploys.
+ */
+interface Props {
+  /** Number of shelves to draw. */
+  shelves?: number;
+  class?: string;
+}
+const { shelves = 4, class: className = "" } = Astro.props;
+
+/* A tiny seeded generator (mulberry32). Deterministic, so builds are stable. */
+function rng(seed: number) {
+  return () => {
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/* Spine colours: dark enough that the pale label on them stays legible, and
+   all within the brand's warm/teal family. */
+const SPINES = [
+  { fill: "#1B4D5C", label: "#E8B87C" },
+  { fill: "#133B42", label: "#C8D8CB" },
+  { fill: "#9A5518", label: "#F6F1E7" },
+  { fill: "#7E4212", label: "#E8B87C" },
+  { fill: "#41564A", label: "#C8D8CB" },
+  { fill: "#6E3B2E", label: "#E8B87C" },
+  { fill: "#2E4A52", label: "#A7BEAE" },
+  { fill: "#7A5A18", label: "#F6F1E7" },
+  { fill: "#54364C", label: "#E8B87C" },
+];
+
+const VIEW_W = 1200;
+const SHELF_H = 168;
+const BOARD_H = 9;
+const VIEW_H = shelves * SHELF_H;
+
+const random = rng(20260729);
+const pool = [...BOOKS];
+
+interface Spine {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  fill: string;
+  label: string;
+  title: string;
+  author: string;
+  lean: number;
+  bands: number[];
+}
+
+const rows: Spine[][] = [];
+let bookIndex = 0;
+
+for (let s = 0; s < shelves; s++) {
+  const row: Spine[] = [];
+  const boardY = s * SHELF_H + SHELF_H - BOARD_H;
+  let x = 8 + random() * 14;
+
+  while (x < VIEW_W - 30) {
+    const book = pool[bookIndex % pool.length];
+    bookIndex++;
+
+    const w = 16 + Math.round(random() * 30);
+    if (x + w > VIEW_W - 8) break;
+
+    const h = 96 + Math.round(random() * 46);
+    const palette = SPINES[Math.floor(random() * SPINES.length)];
+    /* Roughly one spine in nine leans. Every real shelf has a few. */
+    const lean = random() > 0.89 ? (random() > 0.5 ? 4.5 : -4.5) : 0;
+
+    /* Decorative bands across the spine, as on a cloth-bound book. */
+    const bandCount = random() > 0.55 ? 2 : random() > 0.3 ? 1 : 0;
+    const bands: number[] = [];
+    for (let b = 0; b < bandCount; b++) bands.push(Math.round(h * (0.14 + b * 0.1)));
+
+    row.push({
+      x, y: boardY - h, w, h,
+      fill: palette.fill, label: palette.label,
+      title: book.title, author: book.author,
+      lean, bands,
+    });
+
+    x += w + 1 + random() * 2.5;
+  }
+  rows.push(row);
+}
+
+/* Only spines at least this wide get a printed title — narrower ones turn into
+   illegible mush and just add weight to the page. */
+const LABEL_MIN_W = 26;
+const trim = (s: string, n: number) => (s.length > n ? s.slice(0, n - 1) + "…" : s);
+---
+
+<div class={className} aria-hidden="true">
+  <svg
+    viewBox={`0 0 ${VIEW_W} ${VIEW_H}`}
+    preserveAspectRatio="xMidYMax slice"
+    class="block h-full w-full"
+    role="presentation"
+    focusable="false"
+  >
+    <defs>
+      <linearGradient id="bw-case" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#0B2126"></stop>
+        <stop offset="1" stop-color="#123138"></stop>
+      </linearGradient>
+      <!-- Each shelf's recess is darkest at the top, where the board above
+           casts its shadow down onto the books. -->
+      <linearGradient id="bw-recess" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#000" stop-opacity="0.42"></stop>
+        <stop offset="0.28" stop-color="#000" stop-opacity="0.06"></stop>
+        <stop offset="1" stop-color="#000" stop-opacity="0"></stop>
+      </linearGradient>
+      <linearGradient id="bw-board" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#C99A63"></stop>
+        <stop offset="0.45" stop-color="#A87C4B"></stop>
+        <stop offset="1" stop-color="#6E4E2C"></stop>
+      </linearGradient>
+      <!-- Light falls from the left, as from a window. -->
+      <linearGradient id="bw-light" x1="0" y1="0" x2="1" y2="0.35">
+        <stop offset="0" stop-color="#E8B87C" stop-opacity="0.2"></stop>
+        <stop offset="0.45" stop-color="#E8B87C" stop-opacity="0.04"></stop>
+        <stop offset="1" stop-color="#0B2126" stop-opacity="0.35"></stop>
+      </linearGradient>
+    </defs>
+
+    <rect width={VIEW_W} height={VIEW_H} fill="url(#bw-case)"></rect>
+
+    {
+      rows.map((row, s) => (
+        <g>
+          <rect x="0" y={s * SHELF_H} width={VIEW_W} height={SHELF_H} fill="url(#bw-recess)" />
+
+          {row.map((sp) => (
+            <g
+              transform={
+                sp.lean
+                  ? `rotate(${sp.lean} ${sp.x + sp.w / 2} ${sp.y + sp.h})`
+                  : undefined
+              }
+            >
+              <rect x={sp.x} y={sp.y} width={sp.w} height={sp.h} fill={sp.fill} rx="1.5" />
+              {/* Highlight along the spine's leading edge */}
+              <rect x={sp.x} y={sp.y} width="1.5" height={sp.h} fill="#fff" opacity="0.11" />
+              {sp.bands.map((b) => (
+                <rect
+                  x={sp.x + 2.5}
+                  y={sp.y + b}
+                  width={sp.w - 5}
+                  height="1.6"
+                  fill={sp.label}
+                  opacity="0.5"
+                />
+              ))}
+              {sp.w >= LABEL_MIN_W && (
+                <text
+                  transform={`translate(${sp.x + sp.w / 2 + 4} ${sp.y + sp.h - 12}) rotate(-90)`}
+                  fill={sp.label}
+                  font-family="Public Sans, system-ui, sans-serif"
+                  font-size="11.5"
+                  font-weight="600"
+                  letter-spacing="0.2"
+                  opacity="0.92"
+                >
+                  {trim(sp.title, 30)}
+                </text>
+              )}
+              {sp.w >= LABEL_MIN_W + 8 && (
+                <text
+                  transform={`translate(${sp.x + sp.w / 2 - 8} ${sp.y + sp.h - 12}) rotate(-90)`}
+                  fill={sp.label}
+                  font-family="Public Sans, system-ui, sans-serif"
+                  font-size="8"
+                  opacity="0.62"
+                >
+                  {trim(sp.author, 24)}
+                </text>
+              )}
+            </g>
+          ))}
+
+          {/* The board they stand on */}
+          <rect x="0" y={s * SHELF_H + SHELF_H - BOARD_H} width={VIEW_W} height={BOARD_H} fill="url(#bw-board)" />
+          <rect x="0" y={s * SHELF_H + SHELF_H - BOARD_H} width={VIEW_W} height="1.5" fill="#E4C79B" opacity="0.55" />
+        </g>
+      ))
+    }
+
+    <rect width={VIEW_W} height={VIEW_H} fill="url(#bw-light)"></rect>
+  </svg>
+</div>

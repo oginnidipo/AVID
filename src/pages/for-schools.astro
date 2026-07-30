@@ -1,0 +1,334 @@
+---
+import Base from "../layouts/Base.astro";
+import SchoolApplicationForm from "../components/SchoolApplicationForm.astro";
+import PhotoCarousel from "../components/PhotoCarousel.astro";
+import { COMPONENTS } from "../data/programme";
+import { SITE } from "../data/site";
+import { galleryFor } from "../lib/gallery";
+
+/* Photographs of finished libraries. Empty until AVID adds them via /admin —
+   the carousel renders nothing at all rather than an empty frame. */
+const photos = await galleryFor("for-schools");
+
+const PROCESS = [
+  {
+    title: "You apply",
+    body: "Using the form on this page. It takes about ten minutes. You do not need to prepare anything in advance.",
+  },
+  {
+    title: "We review",
+    body: "Every application is read by a person and assessed against need and eligibility. We aim to respond within three weeks.",
+  },
+  {
+    title: "We visit and verify",
+    body: "For applications we take forward, we arrange a visit to see the space and talk to you about what the school needs.",
+  },
+  {
+    title: "Selected schools are notified",
+    body: "We contact you directly with a decision and, if selected, a timeline. We reply either way — including when the answer is no.",
+  },
+];
+---
+
+<Base
+  title="For Schools"
+  description="Under-resourced public, low-fee private and community schools in Lagos can apply for a complete library refurbishment: the space, the furniture, the collection, the systems and staff training."
+  extraJsonLd={{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "Which schools can apply for an AVID library?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Under-resourced public, low-fee private and community schools in Lagos State. You do not need an existing library room to apply.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Does it cost the school anything?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "No. AVID funds the refurbishment, the furniture, the books, the cataloguing systems and the staff training. We ask the school to commit a member of staff and timetabled reading periods.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "How long does an application take to complete?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "About ten minutes. Photographs of the current space are optional but strengthen an application.",
+        },
+      },
+    ],
+  }}
+>
+  <!-- ══ HEADER ════════════════════════════════════════════════════════
+       A distinctly warmer opening than the donor pages. A head teacher
+       arriving here is being invited, not solicited. -->
+  <section class="on-dark grain bg-teal">
+    <div class="shell py-16 md:py-20">
+      <p class="eyebrow"><span>For schools</span></p>
+      <h1 class="text-h1 mt-5 max-w-4xl font-display">
+        If your library is locked, bare, or was never built — this page is for
+        you.
+      </h1>
+      <p class="mt-6 max-w-2xl text-lead text-paper/90">
+        We refurbish school libraries in Lagos at no cost to the school. There is
+        no fee, no catch, and no requirement to have anything in place already.
+        Applying takes about ten minutes.
+      </p>
+      <div class="mt-9 flex flex-wrap gap-3">
+        <a href="#apply" class="btn btn-on-dark">Start the application</a>
+        <a href="#eligibility" class="btn btn-ghost-dark">Check if we can help</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ ELIGIBILITY ═══════════════════════════════════════════════════
+       Three separate questions — can we apply, what must we have, what is
+       asked of us — so they get three cards. An earlier version stacked all
+       three lists inside one panel, which put ten items and three subheadings
+       in a single 645px box: exactly the wall of text a head teacher skimming
+       on a phone will bounce off. -->
+  <section id="eligibility" class="section grain" aria-labelledby="who-heading">
+    <div class="shell">
+      <div class="max-w-3xl">
+        <p class="eyebrow"><span>Who can apply</span></p>
+        <h2 id="who-heading" class="text-h2 mt-5 font-display">
+          Under-resourced schools in Lagos.
+        </h2>
+        <p class="muted mt-5 text-lead">
+          We are starting with a small first cohort in Lagos State so that we can
+          do each library properly. As we grow, we will open to schools across
+          Nigeria — and applications from outside Lagos are still worth making,
+          because they tell us where to go next.
+        </p>
+      </div>
+
+      <ul class="mt-14 grid gap-5 lg:grid-cols-3">
+        <!-- 1. Eligible -->
+        <li class="reveal card flex flex-col p-7 lg:p-8" data-reveal-delay={0}>
+          <h3 class="text-h4 font-display">You can apply if your school is</h3>
+          <ul class="mt-6 space-y-5">
+            {
+              [
+                "A public (government) primary or secondary school",
+                "A low-fee private school serving an under-resourced community",
+                "A community-run school",
+                "Located in Lagos State — other areas, still apply",
+              ].map((item) => (
+                <li class="flex gap-3.5">
+                  <svg
+                    class="mt-0.5 flex-none text-ochre-700"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M3 8.5 6.2 11.7 13 5"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                  <span class="text-small leading-relaxed">{item}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </li>
+
+        <!-- 2. Not required -->
+        <li class="reveal card flex flex-col p-7 lg:p-8" data-reveal-delay={70}>
+          <h3 class="text-h4 font-display">You do not need</h3>
+          <p class="muted mt-2 text-tag">
+            None of these count against an application.
+          </p>
+          <ul class="mt-5 space-y-5">
+            {
+              [
+                "An existing library room — we plan for schools that have none",
+                "Any books already on hand",
+                "A budget, a contribution, or matched funding",
+                "A formal proposal or letter — this form is enough",
+              ].map((item) => (
+                <li class="flex gap-3.5">
+                  <span
+                    class="mt-2.5 block h-1.5 w-4 flex-none rounded bg-teal/30"
+                    aria-hidden="true"
+                  />
+                  <span class="text-small leading-relaxed">{item}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </li>
+
+        <!-- 3. What the school commits to -->
+        <li
+          class="reveal card flex flex-col p-7 ring-1 ring-ochre-500/40 lg:p-8"
+          data-reveal-delay={140}
+        >
+          <h3 class="text-h4 font-display">We ask the school for two things</h3>
+          <p class="muted mt-2 text-tag">
+            This is the whole of our side of the bargain.
+          </p>
+          <ul class="mt-5 space-y-5">
+            {
+              [
+                "A member of staff who will take responsibility for the library, whom we train",
+                "Timetabled reading periods, so the room is used and not just admired",
+              ].map((item) => (
+                <li class="flex gap-3.5">
+                  <span
+                    class="mt-1.5 block h-4 w-[3px] flex-none rounded-sm bg-ochre-500"
+                    aria-hidden="true"
+                  />
+                  <span class="text-small leading-relaxed">{item}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ══ WHAT WE PROVIDE ═══════════════════════════════════════════════ -->
+  <section
+    class="section border-y border-teal/12 bg-cream"
+    aria-labelledby="provide-heading"
+  >
+    <div class="shell">
+      <div class="max-w-3xl">
+        <p class="eyebrow"><span>What we provide</span></p>
+        <h2 id="provide-heading" class="text-h2 mt-5 font-display">
+          The whole library, not a box of books.
+        </h2>
+        <p class="muted mt-5 text-lead">
+          Selected schools receive all five components. We fund the work, and we
+          come back afterwards.
+        </p>
+      </div>
+
+      <!-- Three across, not five. Five columns inside the page shell gives each
+           card about 218px, which is too narrow for a heading plus a line of
+           body text — the words break awkwardly and the row reads as clutter.
+           The "five-ness" is carried by the 01–05 numbering instead. -->
+      <ul class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          COMPONENTS.map((c, i) => (
+            <li class="reveal card flex gap-4 p-6 lg:p-7" data-reveal-delay={i * 60}>
+              <span
+                class="mt-1 block h-9 w-1.5 flex-none rounded-sm bg-ochre-500"
+                aria-hidden="true"
+              />
+              <div>
+                <span class="card-field text-ochre-800">
+                  {String(c.n).padStart(2, "0")}
+                </span>
+                <h3 class="text-h4 mt-0.5 font-display">{c.name}</h3>
+                <p class="muted mt-2 text-small leading-relaxed">{c.short}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- ══ PHOTOGRAPHS ═══════════════════════════════════════════════════
+       Sits directly after "what we provide" on purpose: a head teacher has
+       just read the promise, and this is the evidence of it. Renders nothing
+       until there are photographs, so the page never shows an empty frame. -->
+  {
+    photos.length > 0 && (
+      <section class="section" aria-labelledby="photos-heading">
+        <div class="shell">
+          <div class="max-w-3xl">
+            <p class="eyebrow"><span>What it looks like</span></p>
+            <h2 id="photos-heading" class="text-h2 mt-5 font-display">
+              A finished library, in the schools we have worked with.
+            </h2>
+            <p class="muted mt-5 text-lead">
+              This is the standard we refurbish to. Photographs are published
+              with written consent from each school.
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-12">
+          <PhotoCarousel
+            photos={photos}
+            perView={2}
+            label="Photographs of refurbished school libraries"
+          />
+        </div>
+      </section>
+    )
+  }
+
+  <!-- ══ THE PROCESS ═══════════════════════════════════════════════════ -->
+  <section class="section" aria-labelledby="process-heading">
+    <div class="shell grid gap-x-16 gap-y-10 md:grid-cols-12">
+      <div class="md:col-span-4">
+        <p class="eyebrow"><span>How the process works</span></p>
+        <h2 id="process-heading" class="text-h2 mt-5 font-display">
+          Four steps, and we reply either way.
+        </h2>
+        <p class="muted mt-5 text-small">
+          We know what it is like to send an application into silence. We answer
+          every school that applies, including the ones we cannot take on — and
+          where we can, we say why.
+        </p>
+      </div>
+
+      <ol class="md:col-span-8">
+        {
+          PROCESS.map((step, i) => (
+            <li
+              class="reveal flex gap-5 border-t border-teal/12 py-6 first:border-t-0 first:pt-0"
+              data-reveal-delay={i * 60}
+            >
+              <span class="card-field mt-1 flex-none text-ochre-800">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <div>
+                <h3 class="text-h4 font-display">{step.title}</h3>
+                <p class="muted mt-1.5 text-small">{step.body}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- ══ THE APPLICATION ═══════════════════════════════════════════════ -->
+  <section
+    class="section border-t border-teal/12 bg-cream"
+    aria-labelledby="apply-heading"
+  >
+    <div class="shell-narrow">
+      <p class="eyebrow"><span>The application</span></p>
+      <h2 id="apply-heading" class="text-h2 mt-5 font-display">
+        Apply for a library
+      </h2>
+      <p class="muted mt-5">
+        Sixteen questions, six of them optional. Answer as briefly as you like —
+        we would rather have a short honest application than a polished one. If
+        you would prefer to send it by email instead, write to{" "}
+        <a class="link" href={`mailto:${SITE.email.applications}`}>
+          {SITE.email.applications}
+        </a>.
+      </p>
+
+      <SchoolApplicationForm />
+    </div>
+  </section>
+</Base>

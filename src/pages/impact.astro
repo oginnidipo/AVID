@@ -1,0 +1,185 @@
+---
+import Base from "../layouts/Base.astro";
+import PageHeader from "../components/PageHeader.astro";
+import ImpactFigures from "../components/ImpactFigures.astro";
+import DonateButton from "../components/DonateButton.astro";
+import { MEASURES } from "../data/programme";
+import { SITE, IMPACT } from "../data/site";
+import { getCollection } from "astro:content";
+
+const libraries = await getCollection("libraries");
+const hasResults = libraries.length > 0;
+
+/* The reporting commitments. These are promises, and they are dated, so a
+   funder can check whether they were kept. */
+const COMMITMENTS = [
+  {
+    title: "Every disbursement is tied to a school",
+    body: "We do not make general grants. Each payment references a named school, a milestone and a receipt.",
+  },
+  {
+    title: "Annual financial statements",
+    body: "Published here each year, alongside our annual return filings.",
+  },
+  {
+    title: "A report to every donor, naming the school",
+    body: "If you funded a shelf, you get the photograph of that shelf. If you funded a library, you get the full record.",
+  },
+  {
+    title: "Durability measured at 12 and 24 months",
+    body: "We report the proportion of libraries still open, stocked and staffed — including the ones that are not.",
+  },
+  {
+    title: "We publish what did not work",
+    body: "A library that closes is a failure we will describe, not omit. This is the commitment most easily broken, so we are stating it first.",
+  },
+];
+---
+
+<Base
+  title="Impact & Reporting"
+  description="Our first-cohort goals, verified progress against them, what we measure, and our reporting commitments. Published from day one — including the figures that are still zero."
+>
+  <PageHeader
+    eyebrow="Impact & reporting"
+    title="The numbers, including the ones that are still zero."
+    lead="A new organisation asking for money should show its books before it has a record to be proud of. This page exists from day one so you can watch it change."
+  />
+
+  <!-- ══ FIGURES ═══════════════════════════════════════════════════════ -->
+  <section class="section on-dark bg-teal" aria-labelledby="figures-heading">
+    <div class="shell">
+      <h2 id="figures-heading" class="eyebrow"><span>Where we stand</span></h2>
+      <div class="mt-8">
+        <ImpactFigures />
+      </div>
+
+      {
+        !hasResults && (
+          <div class="mt-10 max-w-3xl border-l-2 border-ochre-500 pl-6">
+            <p class="text-lead font-display" style="font-variation-settings:'opsz' 40">
+              We have not refurbished a library yet.
+            </p>
+            <p class="muted mt-3 text-small">
+              AVID was incorporated in {SITE.founded} and is selecting its first
+              cohort of schools in Lagos. Everything on this page is therefore a
+              goal and a method, not an achievement — and it is labelled that way
+              throughout. When the first library opens, its record appears on our{" "}
+              <a class="link" href="/our-work#libraries">transparency wall</a> and
+              these figures move.
+            </p>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <!-- ══ WHAT WE MEASURE ═══════════════════════════════════════════════ -->
+  <section class="section grain" aria-labelledby="measure-heading">
+    <div class="shell grid gap-x-16 gap-y-10 md:grid-cols-12">
+      <div class="md:col-span-4">
+        <p class="eyebrow"><span>What we measure</span></p>
+        <h2 id="measure-heading" class="text-h2 mt-5 font-display">
+          Six measures, and only one of them counts books.
+        </h2>
+        <p class="muted mt-5 text-small">
+          It is easy to report deliveries. Whether children read more is harder,
+          slower and the only thing that matters. We assess reading fluency and
+          comprehension at baseline and at follow-up intervals so that we can
+          answer the real question.
+        </p>
+      </div>
+
+      <dl class="md:col-span-8">
+        {
+          MEASURES.map((m, i) => (
+            <div
+              class="reveal grid gap-x-8 gap-y-1 border-t border-teal/12 py-5 sm:grid-cols-3"
+              data-reveal-delay={i * 50}
+            >
+              <dt class="card-field pt-1 text-ink">{m.name}</dt>
+              <dd class="text-small sm:col-span-2">{m.body}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <!-- ══ COMMITMENTS ═══════════════════════════════════════════════════ -->
+  <section
+    class="section border-y border-teal/12 bg-cream"
+    aria-labelledby="commit-heading"
+  >
+    <div class="shell">
+      <div class="max-w-3xl">
+        <p class="eyebrow"><span>Our reporting commitments</span></p>
+        <h2 id="commit-heading" class="text-h2 mt-5 font-display">
+          Five promises you can check.
+        </h2>
+      </div>
+
+      <ol class="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {
+          COMMITMENTS.map((c, i) => (
+            <li class="reveal card p-6" data-reveal-delay={i * 60}>
+              <span class="card-field text-ochre-800">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <h3 class="text-h4 mt-1.5 font-display">{c.title}</h3>
+              <p class="muted mt-2 text-small">{c.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- ══ ANNUAL REPORTS ════════════════════════════════════════════════ -->
+  <section class="section" aria-labelledby="reports-heading">
+    <div class="shell-narrow">
+      <p class="eyebrow"><span>Annual reports and statements</span></p>
+      <h2 id="reports-heading" class="text-h2 mt-5 font-display">
+        Documents, as they exist.
+      </h2>
+
+      <div class="checkout-card mt-8 p-7 pl-12">
+        <p class="card-field">Filing status</p>
+        <p class="mt-2 text-small">
+          AVID was incorporated in {SITE.founded}. Our first financial year is in
+          progress, so there is no annual report to publish yet. Our first
+          statements and annual return will be posted on this page when filed.
+        </p>
+        <p class="muted mt-4 text-small">
+          In the meantime, if you are assessing us for a grant and need our
+          incorporation documents, board list, conflict-of-interest policy,
+          safeguarding policy or draft budget, email{" "}
+          <a class="link" href={`mailto:${SITE.email.partnerships}`}>
+            {SITE.email.partnerships}
+          </a>{" "}
+          and we will send them. We would rather be asked than assumed about.
+        </p>
+      </div>
+
+      {
+        IMPACT.verifiedOn && (
+          <p class="muted mt-6 text-tag">
+            Figures on this page last verified {IMPACT.verifiedOn}.
+          </p>
+        )
+      }
+    </div>
+  </section>
+
+  <section class="on-dark bg-teal-mid">
+    <div class="shell py-16 text-center">
+      <h2 class="text-h2 mx-auto max-w-2xl font-display">
+        Help us put the first number on this page.
+      </h2>
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <DonateButton label="Sponsor a library" variant="on-dark" />
+        <a href="/get-involved#partner" class="btn btn-ghost-dark">Partner with us</a>
+      </div>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,412 @@
+---
+import { FORMS, SITE } from "../data/site";
+
+/**
+ * The school application. Section 5 of the brief, in full — all sixteen fields
+ * in the specified order, with the specified types.
+ *
+ * Written for a busy head teacher on a phone: one column throughout, large
+ * targets, plain labels, the reason for each question where it isn't obvious,
+ * and no question we don't actually need to assess an application.
+ */
+const endpoint = FORMS.schoolApplication;
+---
+
+<form
+  id="apply"
+  data-form
+  data-endpoint={endpoint}
+  data-fallback-email={SITE.email.applications}
+  data-success-panel="application-received"
+  action={endpoint || undefined}
+  method="POST"
+  enctype="multipart/form-data"
+  novalidate
+  class="mt-8"
+>
+  <!-- Tells the form service where to send it and what to call it. -->
+  <input type="hidden" name="_subject" value="New school library application" />
+  <input type="hidden" name="Form" value="School library application" />
+  <!-- Without JavaScript the service redirects here after a native submit. -->
+  <input type="hidden" name="_next" value={`${SITE.url}/thank-you`} />
+
+  <!-- Honeypot. Bots fill hidden fields; people never see this. -->
+  <div class="sr-only-text" aria-hidden="true">
+    <label for="apply-gotcha">Leave this field empty</label>
+    <input id="apply-gotcha" type="text" name="_gotcha" tabindex="-1" autocomplete="off" />
+  </div>
+
+  <!-- ── The school ──────────────────────────────────────────────────────── -->
+  <fieldset class="border-t border-teal/15 pt-7">
+    <legend class="eyebrow mb-5">The school</legend>
+
+    <div class="space-y-6">
+      <div>
+        <label class="field-label" for="school-name">
+          School name <span class="field-req">(required)</span>
+          <span class="field-hint">The official name of the school.</span>
+        </label>
+        <input
+          id="school-name"
+          class="input"
+          type="text"
+          name="School name"
+          required
+          autocomplete="organization"
+        />
+        <p class="field-error">Please give the school's name.</p>
+      </div>
+
+      <div>
+        <label class="field-label" for="school-address">
+          School address <span class="field-req">(required)</span>
+          <span class="field-hint">Street, area, city and state.</span>
+        </label>
+        <textarea
+          id="school-address"
+          class="input"
+          name="School address"
+          rows="3"
+          required
+          autocomplete="street-address"></textarea>
+        <p class="field-error">Please give the school's address.</p>
+      </div>
+
+      <div class="grid gap-6 sm:grid-cols-2">
+        <div>
+          <label class="field-label" for="school-type">
+            School type <span class="field-req">(required)</span>
+          </label>
+          <select id="school-type" class="input" name="School type" required>
+            <option value="">Please choose…</option>
+            <option>Public</option>
+            <option>Low-fee private</option>
+            <option>Community</option>
+            <option>Other</option>
+          </select>
+          <p class="field-error">Please choose the type of school.</p>
+        </div>
+
+        <div>
+          <label class="field-label" for="enrolment">
+            Approximate enrolment <span class="field-req">(required)</span>
+            <span class="field-hint">Total number of pupils. An estimate is fine.</span>
+          </label>
+          <input
+            id="enrolment"
+            class="input nums"
+            type="number"
+            name="Approximate enrolment"
+            min="1"
+            max="20000"
+            step="1"
+            inputmode="numeric"
+            required
+          />
+          <p class="field-error">Please give an approximate number of pupils.</p>
+        </div>
+      </div>
+    </div>
+  </fieldset>
+
+  <!-- ── Who to speak to ─────────────────────────────────────────────────── -->
+  <fieldset class="mt-10 border-t border-teal/15 pt-7">
+    <legend class="eyebrow mb-5">Who we should speak to</legend>
+
+    <div class="space-y-6">
+      <div class="grid gap-6 sm:grid-cols-2">
+        <div>
+          <label class="field-label" for="contact-name">
+            Contact name <span class="field-req">(required)</span>
+            <span class="field-hint">Head teacher or responsible staff member.</span>
+          </label>
+          <input
+            id="contact-name"
+            class="input"
+            type="text"
+            name="Contact name"
+            required
+            autocomplete="name"
+          />
+          <p class="field-error">Please give a contact name.</p>
+        </div>
+
+        <div>
+          <label class="field-label" for="contact-role">
+            Contact role <span class="field-req">(required)</span>
+            <span class="field-hint">For example: Head Teacher, Proprietor.</span>
+          </label>
+          <input
+            id="contact-role"
+            class="input"
+            type="text"
+            name="Contact role"
+            required
+            autocomplete="organization-title"
+          />
+          <p class="field-error">Please give this person's role.</p>
+        </div>
+      </div>
+
+      <div class="grid gap-6 sm:grid-cols-2">
+        <div>
+          <label class="field-label" for="contact-email">
+            Contact email <span class="field-req">(required)</span>
+          </label>
+          <input
+            id="contact-email"
+            class="input"
+            type="email"
+            name="Contact email"
+            required
+            autocomplete="email"
+            placeholder="name@school.edu.ng"
+          />
+          <p class="field-error">
+            Please give an email address we can reply to, in the form
+            name@example.com.
+          </p>
+        </div>
+
+        <div>
+          <label class="field-label" for="contact-phone">
+            Contact phone <span class="field-req">(required)</span>
+            <span class="field-hint">
+              With country code. WhatsApp-capable if possible — it is usually
+              the easiest way for us to reach you.
+            </span>
+          </label>
+          <input
+            id="contact-phone"
+            class="input nums"
+            type="tel"
+            name="Contact phone"
+            required
+            autocomplete="tel"
+            inputmode="tel"
+            placeholder="+234 800 000 0000"
+          />
+          <p class="field-error">Please give a phone number we can reach you on.</p>
+        </div>
+      </div>
+    </div>
+  </fieldset>
+
+  <!-- ── The space ───────────────────────────────────────────────────────── -->
+  <fieldset class="mt-10 border-t border-teal/15 pt-7">
+    <legend class="eyebrow mb-5">The library space</legend>
+
+    <div class="space-y-6">
+      <div>
+        <label class="field-label" for="library-space">
+          Is there a library space now? <span class="field-req">(required)</span>
+          <span class="field-hint">
+            "No dedicated space" does not rule you out. It tells us what to plan
+            for.
+          </span>
+        </label>
+        <select id="library-space" class="input" name="Is there a library space now?" required>
+          <option value="">Please choose…</option>
+          <option>Yes, in use</option>
+          <option>Yes, unused or bare</option>
+          <option>No dedicated space</option>
+        </select>
+        <p class="field-error">Please choose one of these.</p>
+      </div>
+
+      <div>
+        <label class="field-label" for="space-condition">
+          Condition of the space <span class="muted font-normal">(optional)</span>
+          <span class="field-hint">
+            A brief description of the room and any existing books.
+          </span>
+        </label>
+        <textarea
+          id="space-condition"
+          class="input"
+          name="Condition of the space"
+          rows="4"></textarea>
+      </div>
+
+      <div>
+        <label class="field-label" for="pupils-benefit">
+          Pupils who would benefit <span class="field-req">(required)</span>
+          <span class="field-hint">An estimate.</span>
+        </label>
+        <input
+          id="pupils-benefit"
+          class="input nums"
+          type="number"
+          name="Pupils who would benefit"
+          min="1"
+          max="20000"
+          step="1"
+          inputmode="numeric"
+          required
+        />
+        <p class="field-error">Please give an estimated number of pupils.</p>
+      </div>
+    </div>
+  </fieldset>
+
+  <!-- ── The application ────────────────────────────────────────────────── -->
+  <fieldset class="mt-10 border-t border-teal/15 pt-7">
+    <legend class="eyebrow mb-5">Your application</legend>
+
+    <div class="space-y-6">
+      <div>
+        <label class="field-label" for="why-applying">
+          Why are you applying? <span class="field-req">(required)</span>
+          <span class="field-hint">
+            What the school most needs, and why. A few sentences is plenty —
+            write it as you would say it.
+          </span>
+        </label>
+        <textarea
+          id="why-applying"
+          class="input"
+          name="Why are you applying?"
+          rows="6"
+          required
+          minlength="40"></textarea>
+        <p class="field-error">
+          Please tell us a little about why you are applying — at least a
+          sentence or two.
+        </p>
+      </div>
+
+      <fieldset>
+        <legend class="field-label">
+          Greatest need <span class="muted font-normal">(optional)</span>
+          <span class="field-hint">Choose as many as apply.</span>
+        </legend>
+        <ul class="mt-2 grid gap-2 sm:grid-cols-2">
+          {
+            [
+              "Books",
+              "Shelving & furniture",
+              "Space repair",
+              "Staff training",
+              "Cataloguing",
+            ].map((need, i) => (
+              <li>
+                <label class="check-row" for={`need-${i}`}>
+                  <input
+                    id={`need-${i}`}
+                    type="checkbox"
+                    name="Greatest need"
+                    value={need}
+                  />
+                  <span class="text-small">{need}</span>
+                </label>
+              </li>
+            ))
+          }
+        </ul>
+      </fieldset>
+
+      <div>
+        <label class="field-label" for="how-heard">
+          How did you hear about AVID? <span class="muted font-normal">(optional)</span>
+          <span class="field-hint">It helps us understand our reach.</span>
+        </label>
+        <input id="how-heard" class="input" type="text" name="How did you hear about AVID?" />
+      </div>
+
+      <div>
+        <label class="field-label" for="photos">
+          Photos of the current space <span class="muted font-normal">(optional)</span>
+          <span class="field-hint">
+            Up to 3 images, 5MB each. Phone photos are perfect. This genuinely
+            strengthens an application — we can see what we would be working
+            with. Please avoid photographs that identify individual children.
+          </span>
+        </label>
+        <input
+          id="photos"
+          class="input"
+          type="file"
+          name="Photos"
+          accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
+          multiple
+        />
+        <p class="muted nums mt-2 text-tag" data-file-list aria-live="polite"></p>
+      </div>
+    </div>
+  </fieldset>
+
+  <!-- ── Consent ────────────────────────────────────────────────────────── -->
+  <fieldset class="mt-10 border-t border-teal/15 pt-7">
+    <legend class="eyebrow mb-5">Consent</legend>
+
+    <div class="card p-5">
+      <p class="text-small">
+        Applying does not guarantee selection. The AVID Foundation will use the
+        information you provide solely to assess and administer library
+        projects, and will store it securely. We will not share it with third
+        parties except as needed to deliver the programme.
+      </p>
+      <p class="muted mt-3 text-tag">
+        Our <a class="link" href="/privacy">privacy policy</a> sets out how long
+        we keep applications and how to ask us to delete yours.
+      </p>
+    </div>
+
+    <label class="check-row mt-4" for="consent">
+      <input id="consent" type="checkbox" name="Consent" value="Agreed" required />
+      <span class="text-small">
+        I have read the note above and I agree to AVID using this information to
+        assess our application. <span class="field-req">(required)</span>
+      </span>
+    </label>
+    <p class="field-error">Please confirm you agree, so we can process your application.</p>
+  </fieldset>
+
+  <!-- Status region. Announced to screen readers as it changes. -->
+  <div data-form-status hidden role="alert" aria-live="assertive"></div>
+
+  <div class="mt-8 flex flex-wrap items-center gap-4">
+    <button type="submit" class="btn btn-primary px-8">Send application</button>
+    <p class="muted text-tag">
+      We reply to every application, including the ones we cannot take on.
+    </p>
+  </div>
+</form>
+
+<!-- Confirmation. Replaces the form on success; focus moves here. -->
+<div id="application-received" hidden class="mt-8">
+  <div class="checkout-card p-7 pl-12">
+    <span class="card-stamp inline-block">Received</span>
+    <h3 class="text-h2 mt-5 font-display">Thank you — your application is with us.</h3>
+    <p class="mt-4 max-w-prose">
+      We have it, and a real person will read it. Here is what happens next:
+    </p>
+    <ol class="mt-5 space-y-3">
+      {
+        [
+          "We review every application against our eligibility and need criteria.",
+          "If we take yours forward, we contact you to arrange a visit and verify the space.",
+          "Selected schools are notified directly. We reply either way.",
+        ].map((step, i) => (
+          <li class="flex gap-3">
+            <span class="card-field mt-1 flex-none text-ochre-800">
+              {String(i + 1).padStart(2, "0")}
+            </span>
+            <span class="text-small">{step}</span>
+          </li>
+        ))
+      }
+    </ol>
+    <p class="muted mt-6 text-small">
+      Keep an eye on the inbox you gave us — including the spam folder, as our
+      first reply sometimes lands there. If you need to add anything, email{" "}
+      <a class="link" href={`mailto:${SITE.email.applications}`}>
+        {SITE.email.applications}
+      </a>.
+    </p>
+  </div>
+</div>
+
+<script>
+  import "../scripts/forms";
+</script>

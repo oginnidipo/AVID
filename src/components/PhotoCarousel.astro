@@ -1,0 +1,501 @@
+---
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
+/**
+ * ── PHOTO CAROUSEL ─────────────────────────────────────────────────────────
+ *
+ * A horizontal filmstrip of photographs. Built on CSS scroll-snap rather than a
+ * JavaScript carousel library, which buys a lot:
+ *
+ *  · It works with no JavaScript at all — the strip is a scroll container, so
+ *    swipe and trackpad scroll are native. The arrows and dots are progressive
+ *    enhancement layered on top.
+ *  · Native momentum scrolling on a phone, which no JS carousel matches.
+ *  · Keyboard and screen-reader behaviour comes from real focusable elements
+ *    rather than being reimplemented.
+ *  · Zero dependencies and about 1KB of script.
+ *
+ * It never autoplays. Photographs of children deserve to be looked at, not
+ * flicked past on a timer, and an unrequested moving element is a WCAG 2.2.2
+ * problem the moment it runs longer than five seconds.
+ *
+ * Images are optimised at build time and served as AVIF/WebP at the right size
+ * for the viewport — the originals can and should be full resolution.
+ * ─────────────────────────────────────────────────────────────────────────── */
+
+export interface CarouselPhoto {
+  src: ImageMetadata;
+  /** What is in the photograph. Required — this is not decoration. */
+  alt: string;
+  /** Optional visible caption, shown under the image. */
+  caption?: string;
+  /** Optional school or place credit, shown as a small tag. */
+  credit?: string;
+}
+
+interface Props {
+  photos: CarouselPhoto[];
+  /** Accessible name for the region, e.g. "Photographs from Surulere". */
+  label: string;
+  /** Slides visible at once on a large screen. */
+  perView?: 1 | 2 | 3;
+  class?: string;
+}
+
+const { photos, label, perView = 2, class: className = "" } = Astro.props;
+
+/* A stable id so the arrows, dots and strip can reference one another even with
+   several carousels on a page. */
+const id = `carousel-${Math.random().toString(36).slice(2, 9)}`;
+
+/* Slide width per breakpoint. Slides are always wider than the container on
+   small screens, so the next photo peeks in and the strip reads as scrollable
+   without needing an affordance drawn on top of it. */
+const widths = {
+  1: "basis-[86%] sm:basis-[70%] lg:basis-full",
+  2: "basis-[86%] sm:basis-[62%] lg:basis-[calc(50%-0.625rem)]",
+  3: "basis-[86%] sm:basis-[52%] lg:basis-[calc(33.333%-0.834rem)]",
+}[perView];
+
+const sizes = {
+  1: "(min-width: 1024px) 1200px, 86vw",
+  2: "(min-width: 1024px) 600px, (min-width: 640px) 62vw, 86vw",
+  3: "(min-width: 1024px) 400px, (min-width: 640px) 52vw, 86vw",
+}[perView];
+---
+
+{
+  photos.length > 0 && (
+    <section
+      class={`carousel ${className}`}
+      data-carousel
+      aria-roledescription="carousel"
+      aria-label={label}
+    >
+      <div class="shell">
+        <div class="flex items-end justify-between gap-6">
+          <p class="card-field" data-carousel-status aria-live="polite">
+            <span data-carousel-current>1</span> / {photos.length}
+          </p>
+
+          {/* Controls. Hidden until the script runs, because non-functioning
+              buttons are worse than none — the strip scrolls natively anyway. */}
+          <div class="flex gap-2 [.js_&]:flex" data-carousel-controls hidden>
+            <button
+              type="button"
+              class="carousel-btn"
+              data-carousel-prev
+              aria-controls={`${id}-strip`}
+            >
+              <span class="sr-only-text">Previous photograph</span>
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                <path
+                  d="M11.5 3.5 6 9l5.5 5.5"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+            <button
+              type="button"
+              class="carousel-btn"
+              data-carousel-next
+              aria-controls={`${id}-strip`}
+            >
+              <span class="sr-only-text">Next photograph</span>
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                <path
+                  d="M6.5 3.5 12 9l-5.5 5.5"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/*
+        The strip. `tabindex="0"` makes it focusable so a keyboard user can
+        scroll it with the arrow keys, and the roledescription tells a screen
+        reader what it is. Padding matches the shell so the first slide lines up
+        with the page grid while the strip itself bleeds to the viewport edge.
+      */}
+      <div
+        id={`${id}-strip`}
+        class="carousel-strip mt-5"
+        data-carousel-strip
+        tabindex="0"
+        role="group"
+        aria-label={`${label} — scrollable filmstrip`}
+      >
+        <ul class="carousel-track">
+          {photos.map((photo, i) => (
+            <li
+              class={`carousel-slide ${widths}`}
+              data-carousel-slide
+              role="group"
+              aria-roledescription="slide"
+              aria-label={`${i + 1} of ${photos.length}`}
+            >
+              <figure class="h-full">
+                <div class="overflow-hidden rounded-sm border border-teal/15 bg-teal/8">
+                  <Image
+                    src={photo.src}
+                    alt={photo.alt}
+                    widths={[420, 700, 1000, 1400]}
+                    sizes={sizes}
+                    class="aspect-[4/3] w-full object-cover"
+                    loading={i < perView ? "eager" : "lazy"}
+                  />
+                </div>
+                {(photo.caption || photo.credit) && (
+                  <figcaption class="mt-3">
+                    {photo.caption && <p class="text-small">{photo.caption}</p>}
+                    {photo.credit && (
+                      <p class="card-field mt-1.5">{photo.credit}</p>
+                    )}
+                  </figcaption>
+                )}
+              </figure>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Dots double as a position indicator and as jump targets. */}
+      <div class="shell">
+        <ol class="mt-6 flex flex-wrap gap-2" data-carousel-dots hidden>
+          {photos.map((photo, i) => (
+            <li>
+              <button
+                type="button"
+                class="carousel-dot"
+                data-carousel-dot={i}
+                aria-controls={`${id}-strip`}
+              >
+                <span class="sr-only-text">
+                  Go to photograph {i + 1}: {photo.alt}
+                </span>
+              </button>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  /* One gutter value, shared by the strip's scroll-padding and the track's
+     padding, so the two cannot disagree. It matches `.shell` — gutter on small
+     screens, and the centring offset for the 78rem shell once the viewport is
+     wider than that — so slide one lines up with the headline above it while the
+     strip itself still bleeds to the viewport edge. */
+  .carousel {
+    --carousel-gutter: var(--spacing-gutter);
+  }
+  @media (min-width: 78rem) {
+    .carousel {
+      --carousel-gutter: max(var(--spacing-gutter), calc((100vw - 78rem) / 2 + var(--spacing-gutter)));
+    }
+  }
+
+  .carousel-strip {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    /*
+      Smoothness is deliberately NOT set here. With `scroll-snap-type: mandatory`,
+      a CSS-smooth scroll container re-snaps mid-animation and cancels
+      programmatic scrolls — the arrows and dots move the strip once and then
+      appear dead. The script passes `behavior: "smooth"` per call instead, which
+      snapping leaves alone, and honours prefers-reduced-motion itself.
+    */
+    /*
+      This is the load-bearing line. Snap positions are measured against the
+      scrollport's *padding* box, so the gutter has to be declared here as
+      scroll-padding. Putting it only on the track's padding-inline-start makes
+      mandatory snapping immediately scroll the gutter away — the strip lands at
+      scrollLeft ≈ gutter on load and can never return to a true zero.
+    */
+    scroll-padding-inline-start: var(--carousel-gutter);
+    /* Hide the scrollbar but keep the scrolling. The dots and arrows carry the
+       affordance, and a native bar under a row of photographs looks like a
+       mistake. */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    /* Momentum scrolling on iOS. */
+    -webkit-overflow-scrolling: touch;
+  }
+  .carousel-strip::-webkit-scrollbar {
+    display: none;
+  }
+  /* Focus ring sits outside the clipped strip so it is never cut off. */
+  .carousel-strip:focus-visible {
+    outline: 2px solid var(--color-ochre-700);
+    outline-offset: 3px;
+  }
+
+  .carousel-track {
+    display: flex;
+    gap: 1.25rem;
+    padding-inline-start: var(--carousel-gutter);
+    /* Trailing space so the final photo can still snap to the left edge rather
+       than being pinned against the end of the scroll range. */
+    padding-inline-end: max(var(--carousel-gutter), 15vw);
+  }
+
+  .carousel-slide {
+    flex: 0 0 auto;
+    scroll-snap-align: start;
+  }
+
+  :global(.carousel-btn) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 9999px;
+    border: 1px solid color-mix(in oklab, var(--color-teal) 25%, transparent);
+    color: var(--color-teal);
+    background: var(--color-cream);
+    transition: background-color 150ms, border-color 150ms, opacity 150ms;
+  }
+  :global(.carousel-btn:hover:not(:disabled)) {
+    background: var(--color-paper);
+    border-color: color-mix(in oklab, var(--color-teal) 55%, transparent);
+  }
+  :global(.carousel-btn:disabled) {
+    opacity: 0.35;
+    cursor: default;
+  }
+  /* On a dark section the buttons invert. */
+  :global(.on-dark .carousel-btn) {
+    color: var(--color-paper);
+    background: transparent;
+    border-color: color-mix(in oklab, var(--color-paper) 35%, transparent);
+  }
+  :global(.on-dark .carousel-btn:hover:not(:disabled)) {
+    background: color-mix(in oklab, var(--color-paper) 12%, transparent);
+    border-color: var(--color-paper);
+  }
+
+  :global(.carousel-dot) {
+    display: block;
+    width: 2rem;
+    height: 0.375rem;
+    border-radius: 9999px;
+    background: color-mix(in oklab, var(--color-teal) 18%, transparent);
+    transition: background-color 200ms;
+  }
+  :global(.carousel-dot[aria-current="true"]) {
+    background: var(--color-ochre-500);
+  }
+  :global(.on-dark .carousel-dot) {
+    background: color-mix(in oklab, var(--color-paper) 25%, transparent);
+  }
+  :global(.on-dark .carousel-dot[aria-current="true"]) {
+    background: var(--color-ochre-300);
+  }
+  /* Dots are 6px tall but need a 24px target. */
+  :global(.carousel-dot) {
+    position: relative;
+  }
+  :global(.carousel-dot::after) {
+    content: "";
+    position: absolute;
+    inset: -0.6rem -0.125rem;
+  }
+
+</style>
+
+<script>
+  /* Progressive enhancement for the scroll-snap carousels.
+     Without this the strip is still a working, swipeable scroll container; this
+     adds arrows, dots and keyboard paging, and keeps the "3 / 7" counter and
+     the dots in sync with wherever the reader has scrolled to. */
+  type Carousel = HTMLElement;
+
+  function initCarousel(root: Carousel) {
+    const strip = root.querySelector<HTMLElement>("[data-carousel-strip]");
+    const slides = [...root.querySelectorAll<HTMLElement>("[data-carousel-slide]")];
+    const prev = root.querySelector<HTMLButtonElement>("[data-carousel-prev]");
+    const next = root.querySelector<HTMLButtonElement>("[data-carousel-next]");
+    const dotList = root.querySelector<HTMLElement>("[data-carousel-dots]");
+    const dots = [...root.querySelectorAll<HTMLButtonElement>("[data-carousel-dot]")];
+    const current = root.querySelector<HTMLElement>("[data-carousel-current]");
+    const controls = root.querySelector<HTMLElement>("[data-carousel-controls]");
+
+    if (!strip || slides.length === 0) return;
+
+    /* Only reveal the controls once we know they will work. */
+    if (controls) controls.hidden = false;
+    if (dotList) dotList.hidden = false;
+
+    let index = 0;
+
+    /**
+     * Scroll offset that brings a slide to the strip's leading edge.
+     *
+     * Measured with getBoundingClientRect rather than offsetLeft: offsetLeft is
+     * relative to each element's own offsetParent, and the slides' parent is not
+     * necessarily the strip, so subtracting the two gives a number that is
+     * quietly wrong — which is why an earlier version never scrolled at all.
+     * Viewport rectangles are always comparable.
+     */
+    const offsetFor = (slide: HTMLElement) => {
+      const stripBox = strip.getBoundingClientRect();
+      const slideBox = slide.getBoundingClientRect();
+      /* Subtract the scroll-padding so the slide lands at the gutter, not flush
+         against the viewport edge. */
+      const pad = parseFloat(getComputedStyle(strip).scrollPaddingInlineStart) || 0;
+      return strip.scrollLeft + (slideBox.left - stripBox.left) - pad;
+    };
+
+    const atStart = () => strip.scrollLeft <= 2;
+    const atEnd = () =>
+      Math.ceil(strip.scrollLeft + strip.clientWidth) >= strip.scrollWidth - 2;
+
+    /**
+     * Index of the slide nearest the leading edge. This is the stepping basis
+     * for the arrows and arrow keys — it must stay a true geometric answer, or
+     * paging breaks at the end of the strip.
+     */
+    const leading = () => {
+      let best = 0;
+      let bestGap = Infinity;
+      slides.forEach((slide, i) => {
+        const gap = Math.abs(offsetFor(slide) - strip.scrollLeft);
+        if (gap < bestGap) {
+          bestGap = gap;
+          best = i;
+        }
+      });
+      return best;
+    };
+
+    /**
+     * Which slide to *report* as current.
+     *
+     * With more than one slide in view, the final slides' snap offsets sit past
+     * the maximum scroll position and can never become the leading slide. At the
+     * end of the strip we therefore report the last slide, so clicking the last
+     * dot highlights the last dot — reporting the second-to-last reads as a bug
+     * even though the photograph is plainly on screen.
+     */
+    const displayIndex = () => (atEnd() ? slides.length - 1 : leading());
+
+    const sync = () => {
+      index = displayIndex();
+      if (current) current.textContent = String(index + 1);
+      dots.forEach((dot, i) =>
+        dot.setAttribute("aria-current", i === index ? "true" : "false"),
+      );
+      /* Disable rather than hide, so the controls do not shift position. */
+      if (prev) prev.disabled = atStart();
+      if (next) next.disabled = atEnd();
+    };
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    const goTo = (i: number) => {
+      const slide = slides[Math.max(0, Math.min(i, slides.length - 1))];
+      if (!slide) return;
+
+      /* Clamp into the scrollable range. The last slides' snap offsets exceed
+         it, so an unclamped target would silently become "no movement". */
+      const maxScroll = strip.scrollWidth - strip.clientWidth;
+      const target = Math.min(Math.max(0, offsetFor(slide)), maxScroll);
+      const before = strip.scrollLeft;
+      if (Math.abs(target - before) < 1) return;
+
+      const smooth = !reducedMotion.matches;
+      strip.scrollTo({ left: target, behavior: smooth ? "smooth" : "auto" });
+
+      /*
+        Self-healing fallback. Some engines cancel a programmatic smooth scroll
+        on a container with `scroll-snap-type: mandatory`, which would leave the
+        arrows and dots looking dead. A smooth scroll that is running will have
+        moved measurably within 200ms; one that has not moved at all was
+        swallowed, so finish the job instantly. Costs nothing when smooth
+        scrolling works, and guarantees the control does something when it
+        doesn't.
+      */
+      if (!smooth) return;
+      setTimeout(() => {
+        if (Math.abs(strip.scrollLeft - before) < 1) {
+          strip.scrollLeft = target;
+          sync();
+        }
+      }, 200);
+    };
+
+    prev?.addEventListener("click", () => goTo(leading() - 1));
+    next?.addEventListener("click", () => goTo(leading() + 1));
+    dots.forEach((dot, i) => dot.addEventListener("click", () => goTo(i)));
+
+    /* Left/right arrows page the strip when it has focus. Without this, the
+       browser scrolls by a small fixed amount and lands between slides. */
+    strip.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        goTo(leading() + 1);
+      } else if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        goTo(leading() - 1);
+      } else if (event.key === "Home") {
+        event.preventDefault();
+        goTo(0);
+      } else if (event.key === "End") {
+        event.preventDefault();
+        goTo(slides.length - 1);
+      }
+    });
+
+    /* Keep the counter and dots honest during a free swipe.
+       Throttled on a timer rather than requestAnimationFrame: rAF is paused in
+       background tabs, which would leave the counter frozen at whatever it read
+       when the tab lost focus. A short timer keeps it correct either way, and
+       with a handful of slides the rect reads are far too cheap to matter. */
+    let queued: ReturnType<typeof setTimeout> | null = null;
+    strip.addEventListener(
+      "scroll",
+      () => {
+        if (queued !== null) return;
+        queued = setTimeout(() => {
+          queued = null;
+          sync();
+        }, 60);
+      },
+      { passive: true },
+    );
+
+    /* Slide widths are percentage-based, so a resize changes which slide is
+       where. */
+    if ("ResizeObserver" in window) {
+      new ResizeObserver(() => sync()).observe(strip);
+    }
+
+    sync();
+
+    /* Exposed for the test harness, so carousel behaviour can be verified
+       without depending on smooth-scroll animation completing. */
+    (root as HTMLElement & { _carousel?: unknown })._carousel = {
+      goTo,
+      sync,
+      leading,
+      displayIndex,
+      offsetFor,
+      slides,
+    };
+  }
+
+  document.querySelectorAll<Carousel>("[data-carousel]").forEach(initCarousel);
+</script>

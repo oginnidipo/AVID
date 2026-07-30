@@ -1,0 +1,216 @@
+---
+import Base from "../layouts/Base.astro";
+import PageHeader from "../components/PageHeader.astro";
+import { SITE, DONATE, ANALYTICS, NEEDS_COOKIE_CONSENT } from "../data/site";
+
+/**
+ * Privacy policy.
+ *
+ * Written to describe what this site actually does — not a generic template.
+ * It reflects the real configuration: which analytics are enabled, whether a
+ * donation platform is connected, and the photo-consent practice the brief
+ * asks AVID to establish before the first shoot.
+ *
+ * NOTE FOR AVID: this is a clear, honest, plain-language policy, but it is not
+ * legal advice. Have it reviewed by a Canadian lawyer before you begin
+ * collecting personal data at volume, and update the "last reviewed" date
+ * below whenever it changes.
+ */
+const LAST_REVIEWED = "July 2026";
+---
+
+<Base
+  title="Privacy Policy"
+  description="What personal information The AVID Foundation collects, why, how long we keep it, and how to ask us to delete it."
+>
+  <PageHeader
+    eyebrow="Privacy"
+    title="Privacy policy"
+    lead={`What we collect, why we collect it, and how to make us delete it. Last reviewed ${LAST_REVIEWED}.`}
+  />
+
+  <section class="section grain">
+    <div class="shell-narrow prose">
+      <h2>The short version</h2>
+      <p>
+        We collect the least we can. We use it only to do the work described on
+        this site. We do not sell it, rent it, or share it for advertising. If you
+        want it deleted, email{" "}
+        <a href={`mailto:${SITE.email.general}`}>{SITE.email.general}</a> and we
+        will do it.
+      </p>
+
+      <h2>Who we are</h2>
+      <p>
+        {SITE.name} is {SITE.legalStatus.toLowerCase()} based in{" "}
+        {SITE.location.line}. We are the data controller for the information
+        described here. For any privacy question, contact{" "}
+        <a href={`mailto:${SITE.email.general}`}>{SITE.email.general}</a>.
+      </p>
+
+      <h2>What we collect, and why</h2>
+
+      <h3>School applications</h3>
+      <p>
+        When a school applies for a library we collect the school's name and
+        address, its type and enrolment, a contact person's name, role, email and
+        phone number, a description of the library space, the reason for
+        applying, and optionally photographs of the space.
+      </p>
+      <p>
+        We use this solely to assess and administer library projects. We store it
+        securely and we do not share it with third parties except as needed to
+        deliver the programme — for example, sharing a shortlisted school's
+        address with the local delivery partner who will carry out the
+        refurbishment.
+      </p>
+      <p>
+        <strong>How long we keep it.</strong> Applications from schools we take
+        on are retained for the life of the project and for seven years
+        afterwards, because Canadian charity law requires us to keep records
+        demonstrating how funds were used. Applications we do not take forward are
+        deleted within 24 months, unless you ask us to keep you on file for a
+        future cohort.
+      </p>
+
+      <h3>Enquiries and partnership messages</h3>
+      <p>
+        Your name, email address, organisation if you give one, and your message.
+        We use it to reply to you and to keep a record of the conversation. Kept
+        for three years, then deleted.
+      </p>
+
+      <h3>Mailing list</h3>
+      <p>
+        If you sign up for updates we keep your email address until you
+        unsubscribe. Every email we send includes an unsubscribe link, and
+        unsubscribing removes your address entirely.
+      </p>
+
+      <h3>Donations</h3>
+      {
+        DONATE.url ? (
+          <p>
+            Donations are processed by{" "}
+            <strong>{DONATE.platformName || "our donation platform"}</strong>, not
+            by this website. Your card details are entered on their system and
+            AVID never sees or stores them. We receive your name, the amount, and
+            the contact details you choose to share, which we use to acknowledge
+            your gift and send you the report on the school it funded.
+          </p>
+        ) : (
+          <p>
+            We have not yet connected an online donation platform, so this website
+            does not collect or process any payment information at all. Gifts are
+            currently arranged by email, and we keep only what we need to
+            acknowledge the gift and report on how it was used.
+          </p>
+        )
+      }
+      <p>
+        Donation records are kept for seven years, as required for Canadian
+        financial and charity reporting.
+      </p>
+
+      <h2>Photographs of schools and children</h2>
+      <p>
+        We publish photographs of the libraries we build. This is central to our
+        transparency, and it carries a duty we take seriously.
+      </p>
+      <ul>
+        <li>
+          We obtain <strong>written consent from the school</strong> before
+          publishing any photograph taken on its premises.
+        </li>
+        <li>
+          Where an identifiable child appears, we obtain{" "}
+          <strong>written consent from that child's parent or guardian</strong>,
+          in addition to the school's. Consent is specific about where the image
+          may be used.
+        </li>
+        <li>
+          We do not publish a child's full name alongside their photograph, and we
+          do not publish images that reveal a child's home address, school
+          timetable or other identifying detail.
+        </li>
+        <li>
+          Consent can be withdrawn at any time. Email{" "}
+          <a href={`mailto:${SITE.email.general}`}>{SITE.email.general}</a> and we
+          will remove the image from the site, usually within two working days.
+        </li>
+        <li>
+          Where we have not obtained consent, we publish no photograph. Our
+          publishing process blocks it rather than relying on anyone to remember.
+        </li>
+      </ul>
+      <p>
+        Our child protection policy governs all activity conducted in or around
+        schools, by us and by our delivery partners.
+      </p>
+
+      <h2>Analytics and cookies</h2>
+      {
+        ANALYTICS.plausibleDomain ? (
+          <p>
+            We use Plausible Analytics to count visits and see which pages are
+            useful. It is privacy-focused: it sets{" "}
+            <strong>no cookies</strong>, collects no personal data, does not
+            track you across websites, and stores no information that could
+            identify you. There is nothing to consent to and nothing to opt out
+            of, which is why you have not been shown a cookie banner.
+          </p>
+        ) : NEEDS_COOKIE_CONSENT ? (
+          <p>
+            We use Google Analytics to count visits and see which pages are
+            useful. It sets cookies, so we ask your permission first — the
+            notice you saw when you arrived. Google Analytics does not load at
+            all unless you accept. If you declined, or ignored the notice,
+            nothing was set. You can change your mind by clearing this site's
+            data in your browser and reloading the page.
+          </p>
+        ) : (
+          <p>
+            This site currently runs <strong>no analytics and sets no
+            cookies</strong>. We do not track you, and there is no consent
+            banner because there is nothing to consent to.
+          </p>
+        )
+      }
+      <p>
+        Our web host keeps standard server logs, which include IP addresses, for
+        a short period for security and troubleshooting. We do not use them to
+        build any profile of you.
+      </p>
+
+      <h2>Fonts, embeds and third parties</h2>
+      <p>
+        The fonts on this site are served from our own domain, so loading a page
+        does not tell Google or anyone else that you visited. We do not embed
+        social media widgets, advertising trackers, or "like" buttons.
+      </p>
+      <p>Form submissions are delivered through a form-handling service, which processes your message in order to email it to us.</p>
+
+      <h2>Your rights</h2>
+      <p>You can ask us to:</p>
+      <ul>
+        <li>tell you what information we hold about you;</li>
+        <li>correct anything that is wrong;</li>
+        <li>delete it, where we are not legally required to keep it;</li>
+        <li>stop emailing you.</li>
+      </ul>
+      <p>
+        Email <a href={`mailto:${SITE.email.general}`}>{SITE.email.general}</a>{" "}
+        and we will respond within 30 days. If you are not satisfied with our
+        response, you may complain to the Office of the Privacy Commissioner of
+        Canada.
+      </p>
+
+      <h2>Changes</h2>
+      <p>
+        If we change this policy we will update the date at the top. Material
+        changes affecting how we use information you have already given us will be
+        emailed to you where we hold your address.
+      </p>
+    </div>
+  </section>
+</Base>

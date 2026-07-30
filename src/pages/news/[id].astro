@@ -1,0 +1,133 @@
+---
+import Base from "../../layouts/Base.astro";
+import DonateButton from "../../components/DonateButton.astro";
+import { SITE } from "../../data/site";
+import { getCollection, render, type CollectionEntry } from "astro:content";
+import { Image } from "astro:assets";
+
+export async function getStaticPaths() {
+  const stories = await getCollection("stories", ({ data }) => !data.draft);
+  return stories.map((entry) => ({ params: { id: entry.id }, props: { entry } }));
+}
+
+interface Props {
+  entry: CollectionEntry<"stories">;
+}
+const { entry } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+
+const fmt = (date: Date) =>
+  date.toLocaleDateString("en-CA", { day: "numeric", month: "long", year: "numeric" });
+
+/* Other recent stories, for the foot of the article. */
+const others = (await getCollection("stories", ({ data }) => !data.draft))
+  .filter((s) => s.id !== entry.id)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 2);
+---
+
+<Base
+  title={d.title}
+  description={d.summary}
+  publishedOn={d.date}
+  extraJsonLd={{
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    headline: d.title,
+    description: d.summary,
+    datePublished: d.date.toISOString(),
+    author: { "@type": "Organization", name: d.author },
+    publisher: { "@type": "NGO", name: SITE.name, url: SITE.url },
+  }}
+>
+  <article>
+    <header class="on-dark grain bg-teal">
+      <div class="shell py-14 md:py-18">
+        <nav aria-label="Breadcrumb" class="card-field flex flex-wrap items-center">
+          <a href="/news" class="py-1.5 underline-offset-4 hover:text-paper hover:underline">
+            News
+          </a>
+          <span aria-hidden="true" class="mx-2">/</span>
+          <span aria-current="page" class="py-1.5 text-paper">{d.title}</span>
+        </nav>
+
+        <div class="mt-6 flex flex-wrap items-center gap-3">
+          <time class="card-field text-sage" datetime={d.date.toISOString()}>
+            {fmt(d.date)}
+          </time>
+          {d.tags.map((tag) => <span class="tag">{tag}</span>)}
+        </div>
+
+        <h1 class="text-h1 mt-4 max-w-4xl font-display">{d.title}</h1>
+        <p class="mt-6 max-w-2xl text-lead text-paper/90">{d.summary}</p>
+      </div>
+    </header>
+
+    {
+      d.cover && (
+        <div class="bg-cream">
+          <div class="shell py-8">
+            <Image
+              src={d.cover}
+              alt={d.coverAlt ?? ""}
+              widths={[760, 1200, 1800]}
+              sizes="(min-width: 1280px) 1200px, 96vw"
+              class="w-full rounded-sm border border-teal/15 object-cover"
+            />
+            {d.coverAlt && <p class="muted mt-2 text-tag">{d.coverAlt}</p>}
+          </div>
+        </div>
+      )
+    }
+
+    <div class="section">
+      <div class="shell-narrow">
+        <div class="prose">
+          <Content />
+        </div>
+
+        <p class="muted mt-12 border-t border-teal/15 pt-6 text-tag">
+          Written by {d.author}. Published {fmt(d.date)}.
+        </p>
+      </div>
+    </div>
+  </article>
+
+  {
+    others.length > 0 && (
+      <section class="border-t border-teal/12 bg-cream" aria-labelledby="more-heading">
+        <div class="shell py-14">
+          <h2 id="more-heading" class="eyebrow"><span>More from AVID</span></h2>
+          <ul class="mt-6 grid gap-6 sm:grid-cols-2">
+            {others.map((story) => (
+              <li>
+                <a href={`/news/${story.id}`} class="group block">
+                  <time class="card-field" datetime={story.data.date.toISOString()}>
+                    {fmt(story.data.date)}
+                  </time>
+                  <h3 class="text-h4 mt-1.5 font-display group-hover:text-ochre-800">
+                    {story.data.title}
+                  </h3>
+                  <p class="muted mt-1.5 text-small">{story.data.summary}</p>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="on-dark bg-teal-mid">
+    <div class="shell py-14 text-center">
+      <h2 class="text-h2 mx-auto max-w-2xl font-display">
+        A generation of Nigerian readers, one library at a time.
+      </h2>
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <DonateButton label="Sponsor a library" variant="on-dark" />
+        <a href="/our-work#libraries" class="btn btn-ghost-dark">See our libraries</a>
+      </div>
+    </div>
+  </section>
+</Base>

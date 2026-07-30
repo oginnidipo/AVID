@@ -1,0 +1,169 @@
+---
+import Base from "../layouts/Base.astro";
+import PageHeader from "../components/PageHeader.astro";
+import { SITE, DONATE } from "../data/site";
+
+/**
+ * Terms of use and donor policy.
+ *
+ * NOTE FOR AVID: plain-language and honest, but not legal advice. Have this
+ * reviewed by a Canadian lawyer, particularly the refund and receipting
+ * sections, before you begin accepting donations at volume.
+ */
+const LAST_REVIEWED = "July 2026";
+---
+
+<Base
+  title="Terms & Donor Policy"
+  description="Terms of use for this website, and The AVID Foundation's donor policy: what a gift funds, what a donor receives, refunds, and receipting."
+>
+  <PageHeader
+    eyebrow="Terms"
+    title="Terms of use and donor policy"
+    lead={`How this site may be used, and what a gift to AVID does and does not entitle you to. Last reviewed ${LAST_REVIEWED}.`}
+  />
+
+  <section class="section grain">
+    <div class="shell-narrow prose">
+      <h2>Donor policy</h2>
+
+      <h3>What your gift funds</h3>
+      <p>
+        Gifts are applied to programme delivery: refurbishing library spaces,
+        furniture, book stock, cataloguing systems and staff training in the
+        schools we work with, together with the monitoring and follow-up that
+        keeps those libraries open.
+      </p>
+      <p>
+        Where you fund a specific item — a shelf, a collection, a whole library —
+        we assign it to a named school and report to you on that school. If a
+        named project cannot proceed (for example, a school withdraws), we will
+        contact you and either reassign your gift to a comparable project with
+        your agreement, or refund it.
+      </p>
+
+      <h3>Tax receipts</h3>
+      {
+        DONATE.taxReceiptsAvailable ? (
+          <p>
+            {SITE.name} is a registered Canadian charity
+            {SITE.charitableRegistrationNumber && (
+              <> (registration no. {SITE.charitableRegistrationNumber})</>
+            )}{" "}
+            and issues official donation receipts for income tax purposes in
+            accordance with Canada Revenue Agency requirements.
+          </p>
+        ) : (
+          <>
+            <p>
+              <strong>
+                We cannot currently issue official donation receipts for income
+                tax purposes.
+              </strong>{" "}
+              AVID's application for registered-charity status with the Canada
+              Revenue Agency is in progress. Under Canadian law, only a
+              registered charity may issue official donation receipts, and we will
+              not state or imply otherwise.
+            </p>
+            <p>
+              For a gift made today you receive a written acknowledgement of the
+              gift and a report naming the school it funded. Once registration is
+              granted we will say so clearly on this site, and receipting will
+              begin for gifts made from that date forward. A gift made before
+              registration cannot be receipted retroactively.
+            </p>
+          </>
+        )
+      }
+
+      <h3>Refunds</h3>
+      <p>
+        If you make a gift in error, or change your mind, email{" "}
+        <a href={`mailto:${SITE.email.donate}`}>{SITE.email.donate}</a> within 30
+        days and we will refund it in full, provided the funds have not already
+        been disbursed to a project. Recurring gifts can be cancelled at any time
+        and take effect before the next payment.
+      </p>
+
+      <h3>Anonymity and recognition</h3>
+      <p>
+        We name sponsors on a library's record only where the donor has asked us
+        to. The default is that we do not publish your name. If you would like
+        recognition, or would like it removed later, tell us and we will change
+        it.
+      </p>
+
+      <h3>What a gift does not confer</h3>
+      <p>
+        A donation does not give a donor authority over which schools we select,
+        which books we place, or how a project is run. Our board retains
+        decision-making authority over all our resources — a requirement of
+        Canadian charity law and, we think, the right way round. We welcome
+        conversation and we do not accept direction.
+      </p>
+      <p>
+        We decline gifts where accepting them would compromise our independence,
+        our safeguarding obligations, or the interests of the schools we serve.
+      </p>
+
+      <h2>Terms of use</h2>
+
+      <h3>About this site</h3>
+      <p>
+        This website is published by {SITE.name}, {SITE.location.line}. We aim to
+        keep it accurate and current. Statistics cited are drawn from UNESCO,
+        UNICEF and published Nigerian education statistics, with the source
+        named where quoted.
+      </p>
+
+      <h3>Applications</h3>
+      <p>
+        Submitting a school application does not create any agreement between us
+        and does not guarantee selection. We assess every application on need and
+        eligibility, and we reply to all of them.
+      </p>
+
+      <h3>Content and copyright</h3>
+      <p>
+        Text and images on this site are the property of {SITE.name} or are used
+        with permission. You are welcome to quote us, link to us, and reproduce
+        short extracts with attribution — journalists, students and researchers
+        especially. Please ask before reproducing photographs, because our
+        permission to publish an image does not always extend to onward use.
+      </p>
+      <p>
+        Book titles and authors named on this site are referenced for
+        identification only; those works remain the property of their rights
+        holders.
+      </p>
+
+      <h3>Links out</h3>
+      <p>
+        We link to other organisations where it is useful. We are not responsible
+        for their content or their privacy practices.
+      </p>
+
+      <h3>Limits</h3>
+      <p>
+        We provide this site in good faith and without warranty. We are not liable
+        for loss arising from reliance on information here, except where liability
+        cannot be excluded by law.
+      </p>
+
+      <h3>Accessibility</h3>
+      <p>
+        This site is built to meet WCAG 2.1 Level AA. If any part of it is
+        difficult for you to use, tell us at{" "}
+        <a href={`mailto:${SITE.email.general}`}>{SITE.email.general}</a> — we
+        treat that as a defect to be fixed, and we would rather hear about it than
+        not.
+      </p>
+
+      <h3>Governing law</h3>
+      <p>
+        These terms are governed by the laws of the Province of Ontario and the
+        federal laws of Canada.
+      </p>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>AVID — Edit the website</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <!--
+      Sveltia CMS: the editor AVID uses to add libraries, news and team members
+      without touching code. It reads the field definitions in config.yml, shows
+      a form for each content type, and saves changes back to the repository —
+      which triggers a rebuild and publishes the change.
+
+      It is loaded from a CDN here rather than bundled, so it stays current
+      without a redeploy. This is the only third-party script anywhere on the
+      site, and it is on /admin, which is noindex and never seen by visitors.
+    -->
+    <script src="https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js" type="module"></script>
+  </body>
+</html>

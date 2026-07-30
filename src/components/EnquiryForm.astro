@@ -1,0 +1,152 @@
+---
+import { FORMS, SITE } from "../data/site";
+
+/**
+ * General enquiry and partnership form. Same engine as the school application,
+ * fewer questions.
+ *
+ * The brief asks for separate, clearly signposted routes for general
+ * enquiries, school applications and partnerships. School applications have
+ * their own page and form; this handles the other two, with the subject
+ * pre-set so the message lands in the right inbox and is already labelled
+ * when AVID opens it.
+ */
+interface Props {
+  /** Which route this instance serves. */
+  kind: "general" | "partnership";
+  id?: string;
+}
+const { kind, id = `enquiry-${kind}` } = Astro.props;
+
+const config = {
+  general: {
+    endpoint: FORMS.contact,
+    email: SITE.email.general,
+    subject: "Website enquiry",
+    submitLabel: "Send message",
+    messageLabel: "Your message",
+    messageHint: "Tell us what you need and we will point you to the right person.",
+  },
+  partnership: {
+    endpoint: FORMS.partnership,
+    email: SITE.email.partnerships,
+    subject: "Partnership enquiry",
+    submitLabel: "Start a conversation",
+    messageLabel: "What you have in mind",
+    messageHint:
+      "A sentence or two on your organisation and what you are considering. We will reply with a real answer, not a brochure.",
+  },
+}[kind];
+---
+
+<form
+  id={id}
+  data-form
+  data-endpoint={config.endpoint}
+  data-fallback-email={config.email}
+  data-success-panel={`${id}-sent`}
+  action={config.endpoint || undefined}
+  method="POST"
+  novalidate
+  class="space-y-6"
+>
+  <input type="hidden" name="_subject" value={config.subject} />
+  <input type="hidden" name="Form" value={config.subject} />
+  <input type="hidden" name="_next" value={`${SITE.url}/thank-you`} />
+
+  <div class="sr-only-text" aria-hidden="true">
+    <label for={`${id}-gotcha`}>Leave this field empty</label>
+    <input id={`${id}-gotcha`} type="text" name="_gotcha" tabindex="-1" autocomplete="off" />
+  </div>
+
+  <div class="grid gap-6 sm:grid-cols-2">
+    <div>
+      <label class="field-label" for={`${id}-name`}>
+        Your name <span class="field-req">(required)</span>
+      </label>
+      <input
+        id={`${id}-name`}
+        class="input"
+        type="text"
+        name="Name"
+        required
+        autocomplete="name"
+      />
+      <p class="field-error">Please give your name.</p>
+    </div>
+
+    <div>
+      <label class="field-label" for={`${id}-email`}>
+        Your email <span class="field-req">(required)</span>
+      </label>
+      <input
+        id={`${id}-email`}
+        class="input"
+        type="email"
+        name="Email"
+        required
+        autocomplete="email"
+      />
+      <p class="field-error">
+        Please give an email address we can reply to, in the form name@example.com.
+      </p>
+    </div>
+  </div>
+
+  {
+    kind === "partnership" && (
+      <div>
+        <label class="field-label" for={`${id}-org`}>
+          Organisation <span class="muted font-normal">(optional)</span>
+        </label>
+        <input
+          id={`${id}-org`}
+          class="input"
+          type="text"
+          name="Organisation"
+          autocomplete="organization"
+        />
+      </div>
+    )
+  }
+
+  <div>
+    <label class="field-label" for={`${id}-message`}>
+      {config.messageLabel} <span class="field-req">(required)</span>
+      <span class="field-hint">{config.messageHint}</span>
+    </label>
+    <textarea
+      id={`${id}-message`}
+      class="input"
+      name="Message"
+      rows="6"
+      required
+      minlength="10"></textarea>
+    <p class="field-error">Please write us a message, even a short one.</p>
+  </div>
+
+  <div data-form-status hidden role="alert" aria-live="assertive"></div>
+
+  <div class="flex flex-wrap items-center gap-4">
+    <button type="submit" class="btn btn-primary px-7">{config.submitLabel}</button>
+    <p class="muted text-tag">
+      Or email <a class="link" href={`mailto:${config.email}`}>{config.email}</a> directly.
+    </p>
+  </div>
+</form>
+
+<div id={`${id}-sent`} hidden>
+  <div class="checkout-card p-7 pl-12">
+    <span class="card-stamp inline-block">Received</span>
+    <h3 class="text-h3 mt-5 font-display">Thank you — we have your message.</h3>
+    <p class="mt-3 text-small">
+      We read everything that arrives and reply by email. If it is urgent, you
+      can also reach us at{" "}
+      <a class="link" href={`mailto:${config.email}`}>{config.email}</a>.
+    </p>
+  </div>
+</div>
+
+<script>
+  import "../scripts/forms";
+</script>

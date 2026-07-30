@@ -1,0 +1,320 @@
+---
+import Base from "../layouts/Base.astro";
+import PageHeader from "../components/PageHeader.astro";
+import FiveComponents from "../components/FiveComponents.astro";
+import LibraryCard from "../components/LibraryCard.astro";
+import DonateButton from "../components/DonateButton.astro";
+import { DELIVERY_STEPS, THEORY_OF_CHANGE, MEASURES } from "../data/programme";
+import { BOOKS, BAND_LABELS, type Band } from "../data/books";
+import { getCollection } from "astro:content";
+import { sortLibraries } from "../lib/libraries";
+
+const libraries = sortLibraries(await getCollection("libraries"));
+
+const bands: Band[] = ["early", "middle", "upper"];
+const byBand = bands.map((band) => ({
+  band,
+  label: BAND_LABELS[band],
+  titles: BOOKS.filter((b) => b.band === band),
+}));
+---
+
+<Base
+  title="Our Work"
+  description="The five-part refurbishment package, how we deliver it in Nigeria, our theory of change, what we measure, and every library we have built — named."
+>
+  <PageHeader
+    eyebrow="Our work"
+    title="A refurbished library is a small intervention with a long tail."
+    lead="It serves every pupil in the school, every year, for as long as it is maintained — which makes it one of the most cost-efficient literacy interventions available, and one that scales school by school."
+  />
+
+  <!-- ══ THE CASE ══════════════════════════════════════════════════════ -->
+  <section id="case" class="section grain" aria-labelledby="case-heading">
+    <div class="shell grid gap-x-16 gap-y-10 md:grid-cols-12">
+      <div class="md:col-span-4">
+        <p class="eyebrow"><span>The case for action</span></p>
+        <h2 id="case-heading" class="text-h2 mt-5 font-display">
+          Where classrooms are full, the missing piece is not enrolment.
+        </h2>
+      </div>
+
+      <div class="prose md:col-span-8">
+        <p class="text-lead">
+          Nigeria is in the midst of what UNESCO has described as a learning
+          crisis: most children at age ten cannot read and understand an
+          age-appropriate text.
+        </p>
+        <p>
+          A 2024 UNICEF assessment found that only 26% of Nigerian children and
+          adolescents aged 7 to 14 possess basic reading and mathematics skills.
+          Nationally, more than 18 million children aged 5 to 14 are out of
+          school, and Nigeria accounts for over 20% of the world's out-of-school
+          children.
+        </p>
+        <p>
+          We begin in Lagos, because Lagos makes the case with unusual clarity.
+          Enrolment there is comparatively strong — UNICEF data indicates
+          out-of-school rates in Lagos of roughly 3% at primary level and 4% at
+          junior secondary, far below national figures, and Lagos leads the
+          country in secondary enrolment with over 1.2 million students.{" "}
+          <strong>The children are already in the classroom. What they lack is
+          behind it.</strong>
+        </p>
+        <p>
+          Nigeria's education budget has hovered at roughly 5–8% of total
+          government spending, well below the 15–20% UNESCO recommends, and
+          school libraries are among the first things to disappear when budgets
+          are stretched. Enrolment programmes will not close this gap. Reading
+          resources will. Lagos is where we prove the model; Nigeria is where we
+          take it.
+        </p>
+        <p class="muted text-tag">
+          Figures drawn from UNESCO, UNICEF and published Nigerian education
+          statistics.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ THE FIVE-PART PACKAGE ═════════════════════════════════════════ -->
+  <section
+    class="section border-y border-teal/12 bg-cream"
+    aria-labelledby="package-heading"
+  >
+    <div class="shell">
+      <div class="max-w-3xl">
+        <p class="eyebrow"><span>The programme</span></p>
+        <h2 id="package-heading" class="text-h2 mt-5 font-display">
+          The five-part refurbishment package
+        </h2>
+        <p class="muted mt-5 text-lead">
+          Each school library we take on receives a complete refurbishment rather
+          than a partial donation. Our standard intervention has five components.
+        </p>
+      </div>
+
+      <FiveComponents variant="full" />
+    </div>
+  </section>
+
+  <!-- ══ THE SHELF ═════════════════════════════════════════════════════ -->
+  <section class="section" aria-labelledby="shelf-heading">
+    <div class="shell">
+      <div class="max-w-3xl">
+        <p class="eyebrow"><span>The collection</span></p>
+        <h2 id="shelf-heading" class="text-h2 mt-5 font-display">
+          What we actually put on the shelves.
+        </h2>
+        <p class="muted mt-5">
+          Weighted towards Nigerian and African authors alongside international
+          titles — including work in Yorùbá, Igbo and Hausa, because a child
+          should be able to find their own language on a shelf. Final selections
+          are made with each school's teachers.
+        </p>
+      </div>
+
+      <div class="mt-12 grid gap-10 lg:grid-cols-3">
+        {
+          byBand.map((group) => (
+            <div class="reveal">
+              <h3 class="card-field border-b border-teal/15 pb-2 text-ink">
+                {group.label}
+              </h3>
+              <ul class="mt-4 space-y-3">
+                {group.titles.map((book) => (
+                  <li class="flex gap-3">
+                    <span
+                      class="mt-1.5 block h-3.5 w-[3px] flex-none rounded-sm bg-ochre-500"
+                      aria-hidden="true"
+                    />
+                    <span class="text-small">
+                      <span class="font-semibold">{book.title}</span>
+                      <span class="muted"> — {book.author}</span>
+                      {book.language && (
+                        <span class="tag ml-2 align-middle">{book.language}</span>
+                      )}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ DELIVERY MODEL ════════════════════════════════════════════════ -->
+  <section
+    class="section on-dark bg-teal"
+    id="delivery"
+    aria-labelledby="delivery-heading"
+  >
+    <div class="shell">
+      <div class="max-w-3xl">
+        <p class="eyebrow"><span>How we work in Nigeria</span></p>
+        <h2 id="delivery-heading" class="text-h2 mt-5 font-display">
+          No local entity. By design.
+        </h2>
+        <p class="muted mt-5 text-lead">
+          It keeps our governance, our accounting and our accountability in one
+          jurisdiction, and puts delivery in the hands of people who live and
+          work in the communities we serve.
+        </p>
+      </div>
+
+      <ol class="mt-12 grid gap-px overflow-hidden rounded border border-paper/20 bg-paper/20 md:grid-cols-2 lg:grid-cols-3">
+        {
+          DELIVERY_STEPS.map((step, i) => (
+            <li class="bg-teal p-7">
+              <span class="card-field text-ochre-200">
+                Step {String(i + 1).padStart(2, "0")}
+              </span>
+              <h3 class="text-h4 mt-2 font-display">{step.title}</h3>
+              <p class="muted mt-2 text-small">{step.body}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- ══ THEORY OF CHANGE ══════════════════════════════════════════════ -->
+  <section
+    class="section border-b border-teal/12 bg-cream"
+    aria-labelledby="toc-heading"
+  >
+    <div class="shell">
+      <p class="eyebrow"><span>Theory of change</span></p>
+      <h2 id="toc-heading" class="text-h2 mt-5 max-w-2xl font-display">
+        From a room to a reading habit.
+      </h2>
+
+      <!-- Four linked columns. On mobile they stack, and the connecting arrows
+           become vertical, so the chain still reads as a chain. -->
+      <ol class="mt-12 grid gap-4 md:grid-cols-4">
+        {
+          THEORY_OF_CHANGE.map((col, i) => (
+            <li class="reveal relative" data-reveal-delay={i * 80}>
+              <div class="card h-full p-6">
+                <h3 class="card-field text-ochre-800">{col.stage}</h3>
+                <ul class="mt-4 space-y-2.5">
+                  {col.items.map((item) => (
+                    <li class="flex gap-2.5 text-small">
+                      <span
+                        class="mt-1.5 block h-3 w-[3px] flex-none rounded-sm bg-teal/45"
+                        aria-hidden="true"
+                      />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              {i < THEORY_OF_CHANGE.length - 1 && (
+                <span
+                  class="absolute -bottom-3.5 left-1/2 -translate-x-1/2 text-ochre-600 md:-right-3.5 md:bottom-auto md:left-auto md:top-1/2 md:-translate-x-0 md:-translate-y-1/2"
+                  aria-hidden="true"
+                >
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <path
+                      class="md:hidden"
+                      d="M9 3v12M4.5 10.5 9 15l4.5-4.5"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      class="hidden md:block"
+                      d="M3 9h12M10.5 4.5 15 9l-4.5 4.5"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </span>
+              )}
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <!-- ══ WHAT WE MEASURE ═══════════════════════════════════════════════ -->
+  <section class="section" aria-labelledby="measure-heading">
+    <div class="shell grid gap-x-16 gap-y-10 md:grid-cols-12">
+      <div class="md:col-span-4">
+        <p class="eyebrow"><span>What we measure</span></p>
+        <h2 id="measure-heading" class="text-h2 mt-5 font-display">
+          Whether children are reading more — not how many books we delivered.
+        </h2>
+      </div>
+      <dl class="md:col-span-8">
+        {
+          MEASURES.map((m, i) => (
+            <div
+              class="reveal grid gap-x-8 gap-y-1 border-t border-teal/12 py-5 sm:grid-cols-3"
+              data-reveal-delay={i * 50}
+            >
+              <dt class="card-field pt-1 text-ink">{m.name}</dt>
+              <dd class="text-small sm:col-span-2">{m.body}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <!-- ══ THE TRANSPARENCY WALL ═════════════════════════════════════════ -->
+  <section
+    id="libraries"
+    class="section border-t border-teal/12 bg-cream"
+    aria-labelledby="libraries-heading"
+  >
+    <div class="shell">
+      <div class="max-w-3xl">
+        <p class="eyebrow"><span>Our libraries</span></p>
+        <h2 id="libraries-heading" class="text-h2 mt-5 font-display">
+          Every library, named — with what changed.
+        </h2>
+        <p class="muted mt-5">
+          This is our transparency wall. Each school appears with its name, its
+          location, its photographs, what we did and one specific result. It
+          grows one school at a time.
+        </p>
+      </div>
+
+      {
+        libraries.length > 0 ? (
+          <ul class="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {libraries.map((entry, i) => (
+              <LibraryCard entry={entry} delay={i * 70} />
+            ))}
+          </ul>
+        ) : (
+          <div class="checkout-card mt-12 p-8 pl-14 md:p-12 md:pl-20">
+            <span class="card-stamp inline-block">First cohort in progress</span>
+            <p class="mt-6 max-w-2xl text-h3 font-display">
+              Nothing here yet — and we will not put anything here until it is
+              true.
+            </p>
+            <p class="muted mt-4 max-w-2xl">
+              We are selecting our first schools in Lagos. When the first library
+              opens, its record appears on this wall: the school's name, what we
+              did, what it cost, and what changed for the pupils in it. If you
+              are reading this page in a year and it is still empty, that will
+              tell you something too.
+            </p>
+            <div class="mt-7 flex flex-wrap gap-3">
+              <DonateButton label="Fund the first library" />
+              <a href="/for-schools" class="btn btn-secondary">Apply for a library</a>
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,63 @@
+---
+import Base from "../layouts/Base.astro";
+import { SITE } from "../data/site";
+
+/**
+ * Landing page for form submissions that were sent natively — that is, by a
+ * browser without JavaScript, where the form service redirects here rather
+ * than the page swapping in its own confirmation panel.
+ *
+ * Deliberately excluded from the sitemap and marked noindex: it is a
+ * destination, not a page anyone should arrive at from search.
+ */
+---
+
+<Base
+  title="Thank you"
+  description="We have received your message."
+  noindex
+>
+  <section class="section grain">
+    <div class="shell-narrow">
+      <div class="checkout-card p-8 pl-14 md:p-12 md:pl-20">
+        <span class="card-stamp inline-block">Received</span>
+        <h1 class="text-h1 mt-6 font-display">Thank you — we have it.</h1>
+        <p class="mt-5 text-lead">
+          Your message reached us and a real person will read it.
+        </p>
+
+        <div class="mt-8 border-t border-teal/15 pt-6">
+          <h2 class="card-field text-ink">If you applied for a library</h2>
+          <ol class="mt-4 space-y-3">
+            {
+              [
+                "We review every application against need and eligibility.",
+                "If we take yours forward, we contact you to arrange a visit.",
+                "Selected schools are notified directly. We reply either way.",
+              ].map((step, i) => (
+                <li class="flex gap-3">
+                  <span class="card-field mt-1 flex-none text-ochre-800">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span class="text-small">{step}</span>
+                </li>
+              ))
+            }
+          </ol>
+          <p class="muted mt-5 text-small">
+            Keep an eye on the inbox you gave us, including the spam folder — our
+            first reply sometimes lands there. To add anything, email{" "}
+            <a class="link" href={`mailto:${SITE.email.applications}`}>
+              {SITE.email.applications}
+            </a>.
+          </p>
+        </div>
+
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="/" class="btn btn-primary">Back to the home page</a>
+          <a href="/our-work" class="btn btn-secondary">See our work</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

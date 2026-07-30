@@ -1,0 +1,195 @@
+---
+import Base from "../../layouts/Base.astro";
+import DonateButton from "../../components/DonateButton.astro";
+import { COMPONENTS } from "../../data/programme";
+import { SITE } from "../../data/site";
+import { getCollection, render, type CollectionEntry } from "astro:content";
+import { Image } from "astro:assets";
+
+export async function getStaticPaths() {
+  const libraries = await getCollection("libraries");
+  return libraries.map((entry) => ({ params: { id: entry.id }, props: { entry } }));
+}
+
+interface Props {
+  entry: CollectionEntry<"libraries">;
+}
+const { entry } = Astro.props;
+const d = entry.data;
+const { Content } = await render(entry);
+
+/* Safeguarding gate. Publishing a photograph of a child without written consent
+   on file is a serious failure, and the kind that is easy to make by accident
+   in a rush. The build refuses rather than trusting anyone to remember. */
+if ((d.cover || d.gallery.length > 0) && !d.photoConsentOnFile) {
+  throw new Error(
+    `Refusing to publish "${entry.id}": it has photographs but photoConsentOnFile is not true.\n` +
+      `Written photo consent must be on file before images of a school or its pupils go live.\n` +
+      `See docs/PHOTO-CONSENT.md. Once consent is recorded, set photoConsentOnFile: true in\n` +
+      `src/content/libraries/${entry.id}.md`,
+  );
+}
+
+const monthLabel = new Date(d.date + "-01").toLocaleDateString("en-CA", {
+  month: "long",
+  year: "numeric",
+});
+const statusLabel = {
+  complete: "Open",
+  "in-progress": "In progress",
+  committed: "Committed",
+}[d.status];
+---
+
+<Base
+  title={`${d.school}, ${d.location}`}
+  description={`${d.school} in ${d.location}: ${d.result}`}
+  extraJsonLd={{
+    "@context": "https://schema.org",
+    "@type": "Project",
+    name: `Library refurbishment at ${d.school}`,
+    location: { "@type": "Place", name: `${d.school}, ${d.location}` },
+    funder: { "@type": "NGO", name: SITE.name, url: SITE.url },
+    description: d.result,
+  }}
+>
+  <!-- ══ HEADER ════════════════════════════════════════════════════════ -->
+  <section class="on-dark grain bg-teal">
+    <div class="shell py-14 md:py-18">
+      <nav aria-label="Breadcrumb" class="card-field flex flex-wrap items-center">
+        <a href="/our-work#libraries" class="py-1.5 underline-offset-4 hover:text-paper hover:underline">
+          Our libraries
+        </a>
+        <span aria-hidden="true" class="mx-2">/</span>
+        <span aria-current="page" class="py-1.5 text-paper">{d.school}</span>
+      </nav>
+
+      <div class="mt-6 flex flex-wrap items-center gap-3">
+        <span class="tag">{statusLabel}</span>
+        <span class="card-field text-sage">{d.location}</span>
+      </div>
+
+      <h1 class="text-h1 mt-4 max-w-4xl font-display">{d.school}</h1>
+      <p class="mt-6 max-w-2xl text-lead text-paper/90">{d.result}</p>
+    </div>
+  </section>
+
+  <!-- ══ THE RECORD ════════════════════════════════════════════════════ -->
+  <section class="border-b border-teal/12 bg-cream">
+    <dl class="shell grid gap-x-8 gap-y-6 py-10 sm:grid-cols-2 lg:grid-cols-4">
+      <div>
+        <dt class="card-field">Pupils with access</dt>
+        <dd class="nums text-h3 mt-1 font-display">{d.pupils.toLocaleString("en-CA")}</dd>
+      </div>
+      <div>
+        <dt class="card-field">Books placed</dt>
+        <dd class="nums text-h3 mt-1 font-display">
+          {d.booksPlaced > 0 ? d.booksPlaced.toLocaleString("en-CA") : "—"}
+        </dd>
+      </div>
+      <div>
+        <dt class="card-field">{d.status === "complete" ? "Opened" : "Due"}</dt>
+        <dd class="text-h3 mt-1 font-display">{monthLabel}</dd>
+      </div>
+      <div>
+        <dt class="card-field">Sponsor</dt>
+        <dd class="text-h4 mt-1 font-display">{d.sponsor ?? "Seeking a sponsor"}</dd>
+      </div>
+    </dl>
+  </section>
+
+  <div class="section">
+    <div class="shell grid gap-x-16 gap-y-12 md:grid-cols-12">
+      <!-- Narrative -->
+      <div class="prose md:col-span-7">
+        <Content />
+      </div>
+
+      <!-- What was included -->
+      <aside class="md:col-span-5">
+        <div class="card p-6">
+          <h2 class="text-h4 font-display">What this project included</h2>
+          <ul class="mt-5 space-y-4">
+            {
+              COMPONENTS.map((c) => {
+                const has = d.components.includes(c.key);
+                return (
+                  <li class="flex gap-3">
+                    <span
+                      class:list={[
+                        "mt-1 block h-5 w-1.5 flex-none rounded-sm",
+                        has ? "bg-ochre-500" : "bg-teal/15",
+                      ]}
+                      aria-hidden="true"
+                    />
+                    <div>
+                      <p
+                        class:list={[
+                          "text-small font-semibold",
+                          !has && "text-ink/45",
+                        ]}
+                      >
+                        {c.name}
+                        {!has && (
+                          <span class="card-field ml-2 font-normal">not included</span>
+                        )}
+                      </p>
+                      {has && <p class="muted mt-0.5 text-tag">{c.short}</p>}
+                    </div>
+                  </li>
+                );
+              })
+            }
+          </ul>
+        </div>
+
+        <div class="mt-5">
+          <DonateButton label="Fund a library like this" class="w-full" />
+        </div>
+      </aside>
+    </div>
+
+    <!-- Gallery -->
+    {
+      d.gallery.length > 0 && (
+        <div class="shell mt-16">
+          <h2 class="eyebrow"><span>Photographs</span></h2>
+          <ul class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {d.gallery.map((img, i) => (
+              <li class="reveal" data-reveal-delay={i * 60}>
+                <figure>
+                  <Image
+                    src={img.src}
+                    alt={img.alt}
+                    widths={[420, 760, 1100]}
+                    sizes="(min-width: 1024px) 31vw, (min-width: 640px) 46vw, 92vw"
+                    class="w-full rounded-sm border border-teal/15 object-cover"
+                    loading="lazy"
+                  />
+                  <figcaption class="muted mt-2 text-tag">{img.alt}</figcaption>
+                </figure>
+              </li>
+            ))}
+          </ul>
+          <p class="muted mt-6 max-w-2xl text-tag">
+            Photographs are published with written consent from the school. Where
+            pupils appear, consent has been obtained from the school and from
+            guardians. See our <a class="link" href="/privacy">privacy policy</a>.
+          </p>
+        </div>
+      )
+    }
+  </div>
+
+  <section class="on-dark bg-teal-mid">
+    <div class="shell py-14 text-center">
+      <h2 class="text-h2 mx-auto max-w-2xl font-display">
+        There is a next school on this list.
+      </h2>
+      <div class="mt-8 flex flex-wrap justify-center gap-3">
+        <DonateButton label="Sponsor the next one" variant="on-dark" />
+        <a href="/our-work#libraries" class="btn btn-ghost-dark">See all libraries</a>
+      </div>
+    </div>
+  </section>
+</Base>

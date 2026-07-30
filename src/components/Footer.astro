@@ -1,0 +1,134 @@
+---
+import Logo from "./Logo.astro";
+import Newsletter from "./Newsletter.astro";
+import { SITE } from "../data/site";
+import { NAV, FOOTER_NAV } from "../data/nav";
+
+const year = new Date().getFullYear();
+const socials = (
+  [
+    ["instagram", "Instagram"],
+    ["linkedin", "LinkedIn"],
+    ["x", "X"],
+    ["facebook", "Facebook"],
+  ] as const
+).filter(([key]) => SITE.social[key] !== "");
+---
+
+<footer class="on-dark bg-teal-deep">
+  <Newsletter />
+
+  <div class="shell grid gap-10 py-14 md:grid-cols-12 md:gap-8">
+    <!-- Mission line -->
+    <div class="md:col-span-5">
+      <Logo size={46} variant="reversed" />
+      <p class="mt-5 max-w-sm text-lead font-display" style="font-variation-settings:'opsz' 40">
+        {SITE.tagline}
+      </p>
+      <p class="muted mt-4 max-w-sm text-small">
+        {SITE.legalStatus} refurbishing, restocking and sustaining libraries in
+        under-resourced Nigerian schools. We begin in Lagos.
+      </p>
+    </div>
+
+    <!-- Navigation -->
+    <nav aria-labelledby="footer-nav-heading" class="md:col-span-3">
+      <h2 id="footer-nav-heading" class="eyebrow">Explore</h2>
+      <ul class="mt-4 space-y-2.5">
+        {
+          [...NAV, ...FOOTER_NAV].map((item) => (
+            <li>
+              <a
+                href={item.href}
+                class="text-small text-paper/85 underline-offset-4 transition-colors hover:text-paper hover:underline"
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <!-- Contact -->
+    <div class="md:col-span-4">
+      <h2 class="eyebrow">Contact</h2>
+      <ul class="mt-4 space-y-3 text-small">
+        <li>
+          <span class="card-field block text-sage/80">General enquiries</span>
+          <a class="link" href={`mailto:${SITE.email.general}`}>{SITE.email.general}</a>
+        </li>
+        <li>
+          <span class="card-field block text-sage/80">School applications</span>
+          <a class="link" href={`mailto:${SITE.email.applications}`}>
+            {SITE.email.applications}
+          </a>
+        </li>
+        <li>
+          <span class="card-field block text-sage/80">Partnerships</span>
+          <a class="link" href={`mailto:${SITE.email.partnerships}`}>
+            {SITE.email.partnerships}
+          </a>
+        </li>
+        {
+          SITE.phone && (
+            <li>
+              <span class="card-field block text-sage/80">Telephone</span>
+              <a class="link" href={`tel:${SITE.phone.replace(/[^+\d]/g, "")}`}>
+                {SITE.phone}
+              </a>
+            </li>
+          )
+        }
+        <li class="muted pt-1">{SITE.location.line}</li>
+      </ul>
+
+      {
+        socials.length > 0 && (
+          <ul class="mt-6 flex gap-2">
+            {socials.map(([key, name]) => (
+              <li>
+                <a
+                  href={SITE.social[key]}
+                  target="_blank"
+                  rel="noopener noreferrer me"
+                  class="flex h-11 w-11 items-center justify-center rounded border border-paper/25 transition-colors hover:border-paper hover:bg-paper/10"
+                >
+                  <span class="sr-only-text">{`${name} (opens in a new tab)`}</span>
+                  <span aria-hidden="true" class="font-card text-tag">
+                    {name.slice(0, 2).toUpperCase()}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </div>
+
+  <!-- Legal strip -->
+  <div class="border-t border-paper/12">
+    <div
+      class="shell flex flex-col gap-3 py-6 text-tag sm:flex-row sm:items-center sm:justify-between"
+    >
+      <p class="muted">
+        © {year} {SITE.name}. {SITE.legalStatus}, {SITE.founded}.
+      </p>
+      <p class="muted nums">
+        {
+          SITE.charitableRegistrationNumber ? (
+            <>
+              CRA charitable registration no.{" "}
+              <span class="text-sage-pale">{SITE.charitableRegistrationNumber}</span>
+            </>
+          ) : (
+            /* Honest interim wording. The brief is explicit: until registration
+               is granted the site must not state or imply tax receipts. */
+            <>Charitable registration is in progress. We cannot yet issue tax receipts.</>
+          )
+        }
+      </p>
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,50 @@
+---
+import Base from "../layouts/Base.astro";
+import { NAV } from "../data/nav";
+import { SITE } from "../data/site";
+---
+
+<Base title="Page not found" description="That page doesn't exist." noindex>
+  <section class="section grain">
+    <div class="shell-narrow">
+      <div class="checkout-card p-8 pl-14 md:p-12 md:pl-20">
+        <span class="card-stamp inline-block">Not on the shelf</span>
+        <h1 class="text-h1 mt-6 font-display">
+          We can't find that one.
+        </h1>
+        <p class="muted mt-5 max-w-xl">
+          The page may have moved, or the link may have a typo in it. Here is
+          everything on the site — one of these is probably what you were after.
+        </p>
+
+        <ul class="mt-8 grid gap-2 sm:grid-cols-2">
+          {
+            [
+              { href: "/", label: "Home", blurb: "Start here" },
+              ...NAV,
+              { href: "/impact", label: "Impact & Reporting", blurb: "Our figures and commitments" },
+              { href: "/news", label: "News", blurb: "Library openings and updates" },
+            ].map((item) => (
+              <li>
+                <a
+                  href={item.href}
+                  class="flex flex-col rounded-sm border border-teal/15 bg-cream/60 p-3.5 transition-colors hover:border-teal/40 hover:bg-cream"
+                >
+                  <span class="font-display text-h4">{item.label}</span>
+                  <span class="muted text-tag">{"blurb" in item ? item.blurb : ""}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+
+        <p class="muted mt-8 text-small">
+          Still stuck? Email{" "}
+          <a class="link" href={`mailto:${SITE.email.general}`}>{SITE.email.general}</a>{" "}
+          and tell us what you were looking for — if a link of ours is broken we
+          would like to fix it.
+        </p>
+      </div>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,162 @@
+---
+import { IMPACT } from "../data/site";
+import { getCollection } from "astro:content";
+import { completedLibraries } from "../lib/libraries";
+
+/**
+ * The live counter the brief asks for — built so that it can only ever tell
+ * the truth.
+ *
+ * The distinction that matters: at launch AVID has refurbished nothing. A
+ * counter reading "5 libraries" on day one would be a fabrication, and the
+ * kind a funder checks. So each figure shows the verified actual, with the
+ * first-cohort goal alongside it and a progress bar between them. On day one
+ * that reads "0 of 5 libraries — first cohort in progress", which is both
+ * honest and, for a new organisation, more persuasive than a round number.
+ *
+ * The numbers count up when scrolled into view. As `actual` figures are
+ * entered in src/data/site.ts, the same component starts showing real
+ * achievement without a line of code changing.
+ */
+/**
+ * The actual figures are counted from the libraries collection, not typed in by
+ * hand. Every completed library on the transparency wall contributes its pupil
+ * and book counts here, so the headline numbers and the named-school records can
+ * never drift apart — and adding a library updates both.
+ *
+ * The hand-entered values in src/data/site.ts act as a floor, for anything
+ * delivered before a record was written up. Normally they stay at zero.
+ */
+const completed = completedLibraries(await getCollection("libraries"));
+
+const counted = {
+  libraries: completed.length,
+  pupils: completed.reduce((sum, e) => sum + e.data.pupils, 0),
+  books: completed.reduce((sum, e) => sum + e.data.booksPlaced, 0),
+};
+
+const actual = {
+  libraries: Math.max(counted.libraries, IMPACT.actual.libraries),
+  pupils: Math.max(counted.pupils, IMPACT.actual.pupils),
+  books: Math.max(counted.books, IMPACT.actual.books),
+};
+
+const FIGURES = [
+  { label: "Libraries refurbished", actual: actual.libraries, goal: IMPACT.goals.libraries },
+  { label: "Pupils reached", actual: actual.pupils, goal: IMPACT.goals.pupils },
+  { label: "Books placed on shelves", actual: actual.books, goal: IMPACT.goals.books },
+];
+
+const anyProgress = FIGURES.some((f) => f.actual > 0);
+---
+
+<div>
+  <ul class="grid gap-px overflow-hidden rounded border border-paper/20 bg-paper/20 sm:grid-cols-2 lg:grid-cols-4">
+    {
+      FIGURES.map((f, i) => (
+        <li class="bg-teal p-6 lg:p-7">
+          <p
+            class="nums text-h1 font-display text-ochre-200"
+            style="font-variation-settings:'opsz' 90;font-weight:600"
+          >
+            <span data-count-to={f.actual} data-count-delay={i * 90}>{f.actual}</span>
+          </p>
+          <p class="mt-1 text-small font-semibold">{f.label}</p>
+
+          {/* Progress against the first-cohort goal. */}
+          <div
+            class="mt-4 h-1.5 overflow-hidden rounded-full bg-paper/18"
+            role="img"
+            aria-label={`${f.actual} of a first-cohort goal of ${f.goal.toLocaleString("en-CA")}`}
+          >
+            <div
+              class="h-full rounded-full bg-ochre-500"
+              style={`width:${Math.max(f.actual === 0 ? 0 : 3, Math.round((f.actual / f.goal) * 100))}%`}
+            />
+          </div>
+          <p class="muted nums mt-2 text-tag">
+            First cohort goal: {f.goal.toLocaleString("en-CA")}
+          </p>
+        </li>
+      ))
+    }
+
+    <!-- The fourth figure is a commitment rather than a measurement, and is
+         labelled as such. -->
+    <li class="bg-teal p-6 lg:p-7">
+      <p
+        class="nums text-h1 font-display text-ochre-200"
+        style="font-variation-settings:'opsz' 90;font-weight:600"
+      >
+        <span data-count-to={IMPACT.spendingReportedToNamedSchool} data-count-delay={270}
+          >{IMPACT.spendingReportedToNamedSchool}</span
+        >%
+      </p>
+      <p class="mt-1 text-small font-semibold">Of spending reported to a named school</p>
+      <p class="muted mt-4 text-tag">
+        Not a target — a condition of how we disburse. Every payment is tied to
+        a school, a receipt and a result.
+      </p>
+    </li>
+  </ul>
+
+  <p class="muted mt-4 text-tag">
+    {
+      anyProgress ? (
+        <>
+          Verified figures{IMPACT.verifiedOn ? ` as at ${IMPACT.verifiedOn}` : ""}. Goals
+          are for our first cohort of schools in Lagos.
+        </>
+      ) : (
+        <>
+          Our first cohort is in progress, so these figures are honestly zero.
+          We publish them from day one so you can watch them move — and hold us
+          to them if they don't.
+        </>
+      )
+    }
+  </p>
+</div>
+
+<script>
+  /* Count up on first view. Uses the element's text as the source of truth for
+     the final value, so if JavaScript never runs the correct number is already
+     on the page — nobody sees a zero that should be a five. */
+  const counters = document.querySelectorAll<HTMLElement>("[data-count-to]");
+  const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (counters.length && !reduced && "IntersectionObserver" in window) {
+    const format = new Intl.NumberFormat("en-CA");
+
+    const run = (el: HTMLElement) => {
+      const target = Number(el.dataset.countTo ?? 0);
+      if (target <= 0) return; // nothing to animate towards
+      const delay = Number(el.dataset.countDelay ?? 0);
+      const duration = 1100;
+
+      setTimeout(() => {
+        const start = performance.now();
+        const tick = (now: number) => {
+          const t = Math.min((now - start) / duration, 1);
+          /* easeOutExpo: fast, then settles — reads as a tally landing. */
+          const eased = t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+          el.textContent = format.format(Math.round(target * eased));
+          if (t < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+      }, delay);
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          run(entry.target as HTMLElement);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.4 },
+    );
+    counters.forEach((el) => observer.observe(el));
+  }
+</script>

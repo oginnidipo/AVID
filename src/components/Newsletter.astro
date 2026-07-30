@@ -1,0 +1,79 @@
+---
+import { FORMS, SITE } from "../data/site";
+
+/**
+ * "Stay updated" capture. The brief flags this as a common gap that is far
+ * cheaper to build now than to add later — so it ships on day one, in the
+ * footer of every page.
+ *
+ * Posts to whatever FORMS.newsletter is set to (Mailchimp, Buttondown,
+ * Formspree — all accept a plain POST). Until it is set, the field is replaced
+ * by a mailto: link so a willing supporter is never turned away.
+ */
+const configured = FORMS.newsletter !== "";
+---
+
+<section
+  aria-labelledby="newsletter-heading"
+  class="border-b border-paper/12 bg-teal"
+>
+  <div class="shell grid items-center gap-8 py-12 md:grid-cols-2">
+    <div>
+      <h2 id="newsletter-heading" class="eyebrow">Stay updated</h2>
+      <p class="mt-3 text-h3 font-display">
+        We write when a library opens — not before.
+      </p>
+      <p class="muted mt-2 max-w-md text-small">
+        A short note a few times a year: which school, what changed, what it
+        cost. No campaigns, no forwarding your address to anyone.
+      </p>
+    </div>
+
+    {
+      configured ? (
+        <form
+          action={FORMS.newsletter}
+          method="POST"
+          class="flex flex-col gap-3 sm:flex-row sm:items-start"
+          data-newsletter
+        >
+          <div class="flex-1">
+            <label class="sr-only-text" for="newsletter-email">Email address</label>
+            <input
+              id="newsletter-email"
+              class="input"
+              type="email"
+              name="email"
+              autocomplete="email"
+              required
+              placeholder="you@example.com"
+            />
+            <p class="muted mt-2 text-tag">
+              You can unsubscribe from any email we send.
+            </p>
+          </div>
+          {/* Honeypot: bots fill hidden fields, people don't. */}
+          <div class="sr-only-text" aria-hidden="true">
+            <label for="newsletter-website">Leave this blank</label>
+            <input id="newsletter-website" type="text" name="_gotcha" tabindex="-1" />
+          </div>
+          <button type="submit" class="btn btn-on-dark flex-none">Sign up</button>
+        </form>
+      ) : (
+        <div>
+          <p class="text-small">
+            Email{" "}
+            <a class="link" href={`mailto:${SITE.email.general}?subject=Keep%20me%20updated`}>
+              {SITE.email.general}
+            </a>{" "}
+            with "keep me updated" and we will add you to the list.
+          </p>
+          <p class="muted mt-2 text-tag">
+            {/* Visible only to AVID, effectively — but honest either way. */}
+            A signup form appears here once the mailing list is connected.
+          </p>
+        </div>
+      )
+    }
+  </div>
+</section>
