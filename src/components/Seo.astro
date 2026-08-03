@@ -1,5 +1,6 @@
 ---
 import { SITE, ANALYTICS } from "../data/site";
+import { IS_PRODUCTION } from "../lib/env";
 
 interface Props {
   title: string;
@@ -80,7 +81,10 @@ const jsonLdBlocks = [orgJsonLd, ...(extraJsonLd ? [extraJsonLd] : [])];
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical.href} />
-{noindex && <meta name="robots" content="noindex, follow" />}
+{/* Per-page opt-out, plus a blanket block on any non-production build so a
+    preview URL can never be indexed alongside the real domain. */}
+{noindex && IS_PRODUCTION && <meta name="robots" content="noindex, follow" />}
+{!IS_PRODUCTION && <meta name="robots" content="noindex, nofollow" />}
 
 <meta property="og:type" content={publishedOn ? "article" : "website"} />
 <meta property="og:site_name" content={SITE.name} />

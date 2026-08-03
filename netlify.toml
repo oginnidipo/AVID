@@ -8,6 +8,9 @@
 
 [build.environment]
   NODE_VERSION = "22"
+  # Marks this as the real site: enables search-engine indexing and a real
+  # robots.txt. Leave it unset anywhere that is not the public domain.
+  SITE_ENV = "production"
 
 # Astro emits dist/404.html; Netlify serves it automatically for unmatched
 # paths on a static site, so no catch-all redirect is needed.
