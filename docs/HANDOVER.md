@@ -110,7 +110,7 @@ In Dynadot, go to **My Domains → theavidfoundation.org → DNS Settings** and 
 | A | *(blank / @)* | `185.199.109.153` |
 | A | *(blank / @)* | `185.199.110.153` |
 | A | *(blank / @)* | `185.199.111.153` |
-| CNAME | `www` | `educateed.github.io` |
+| CNAME | `www` | `oginnidipo.github.io` |
 
 Four A records, not one — GitHub serves from four addresses for redundancy.
 
@@ -161,7 +161,7 @@ Each has a form with every field labelled and explained. Changes are saved as a
 draft first, so you can review before publishing.
 
 **The simplest way to edit, needing no setup at all:** go to
-[github.com/educateed/AVID](https://github.com/educateed/AVID), open any file
+[github.com/oginnidipo/AVID](https://github.com/oginnidipo/AVID), open any file
 under `src/content/`, and click the pencil icon. Save, and the site rebuilds and
 republishes itself. This works today, for every kind of content, and adds
 nothing to maintain.
