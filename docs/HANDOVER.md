@@ -56,7 +56,7 @@ Work through this in order. Nothing here needs a developer except where noted.
 | # | Task | Where | Needs a developer? |
 |---|---|---|---|
 | 1 | Confirm the domain | `src/data/site.ts` → `SITE.url` | No |
-| 2 | Set up branded email addresses | Your email provider | No |
+| 2 | Set up branded email addresses | Dynadot Pro Email (see §7) | No |
 | 3 | Put the real addresses in | `src/data/site.ts` → `SITE.email` | No |
 | 4 | Create the three form endpoints | Formspree (see §5) | No |
 | 5 | Paste the endpoints in | `src/data/site.ts` → `FORMS` | No |
@@ -68,7 +68,7 @@ Work through this in order. Nothing here needs a developer except where noted.
 | 11 | Decide on analytics | `src/data/site.ts` → `ANALYTICS` | No |
 | 11b | Supply the original logo vector, if you have one | `public/logo-*.svg` | Yes — 10 minutes |
 | 12 | Have a lawyer review Privacy and Terms | `src/pages/privacy.astro`, `terms.astro` | No |
-| 13 | Point the domain at the host | Your registrar (see §7) | Yes — one-off |
+| 13 | Point the domain at GitHub Pages | Dynadot DNS (see §3) | No — copy 5 records |
 | 14 | Set up the `/admin` login | See §4 | Yes — one-off |
 
 **The site works with none of these done.** Every unset value has an honest
@@ -91,40 +91,59 @@ refuse — see §10.
 
 ## 3. Hosting and deployment
 
-Any static host works. **Cloudflare Pages** is the recommendation: the free tier
-is genuinely sufficient, it is fast in West Africa (which matters for your
-applicants), and it includes SSL and a global CDN at no cost.
+The site is hosted on **GitHub Pages**, and the domain, DNS and email all stay
+at **Dynadot**. That is deliberately only two accounts, both of which AVID
+already has — no extra vendor, no extra bill, nothing new to keep logged into.
 
-### Setting it up (one-off, ~15 minutes)
+**It is already set up.** Every push to `main` rebuilds and republishes the site
+automatically, which means saving a change in `/admin` publishes it. The workflow
+is [`.github/workflows/deploy.yml`](../.github/workflows/deploy.yml); you can
+watch a deploy, or re-run one by hand, from the repository's **Actions** tab.
 
-1. Put this project in a GitHub repository under an account **owned by AVID**,
-   not by a contractor.
-2. In Cloudflare, choose **Workers & Pages → Create → Pages → Connect to Git**
-   and pick that repository.
-3. Build settings:
-   - **Build command:** `npm run build`
-   - **Output directory:** `dist`
-   - **Node version:** add an environment variable `NODE_VERSION` = `22`
-4. Deploy. You get a `something.pages.dev` URL immediately.
-5. Add your real domain under **Custom domains**.
+### Pointing the domain at it
 
-From then on, every saved change rebuilds and publishes automatically.
+In Dynadot, go to **My Domains → theavidfoundation.org → DNS Settings** and set:
 
-**Netlify** works identically and [`netlify.toml`](../netlify.toml) is already
-configured. Security and caching headers are in
-[`public/_headers`](../public/_headers) for Cloudflare and in `netlify.toml` for
-Netlify.
+| Type | Host | Value |
+|---|---|---|
+| A | *(blank / @)* | `185.199.108.153` |
+| A | *(blank / @)* | `185.199.109.153` |
+| A | *(blank / @)* | `185.199.110.153` |
+| A | *(blank / @)* | `185.199.111.153` |
+| CNAME | `www` | `educateed.github.io` |
 
-### Why not Squarespace or Wix?
+Four A records, not one — GitHub serves from four addresses for redundancy.
 
-The brief asked for a recommendation. Those platforms are genuinely easier for
-some tasks, but they ship 300KB–1MB of JavaScript before any of your content
-appears. For a head teacher in Lagos on mobile data, that is the difference
-between an application submitted and an application abandoned — an inclusion
-issue, not a technical preference. This site's home page is about 32KB. You keep
-the point-and-click editing (§4) without the weight.
+Leave the nameservers as Dynadot's own (`ns1.dyna-ns.net`, `ns2.dyna-ns.net`).
+They must stay there for Dynadot email to work.
 
----
+Once DNS has propagated (usually under an hour), go to the repository's
+**Settings → Pages** and tick **Enforce HTTPS**. The certificate is free and
+issues automatically, but the tickbox only becomes available after the domain
+resolves.
+
+### What GitHub Pages does not do
+
+It does not support custom HTTP headers, so the rules in
+[`public/_headers`](../public/_headers) and `netlify.toml` are inert. In
+practice this costs a little cache tuning and a clickjacking header. It matters
+little for a site with no login and no user data held in the browser, and the
+important part — HTTPS with an automatic certificate — is included. Those files
+are kept so the rules apply immediately if hosting ever moves.
+
+### If you ever want to move
+
+Nothing here locks you in: it is a folder of static files. Cloudflare Pages and
+Netlify are both configured in the repository already
+([`netlify.toml`](../netlify.toml), [`public/_headers`](../public/_headers)) and
+would take about fifteen minutes to switch to, mainly waiting for DNS.
+
+### Why not the Dynadot website builder?
+
+Dynadot's only website product is a drag-and-drop builder using their own
+templates. There is no way to upload a build folder or connect a repository, so
+this site cannot run there. Their domain, DNS and email are used, which is the
+part they do well.
 
 ## 4. Editing content
 
@@ -141,18 +160,18 @@ edit:
 Each has a form with every field labelled and explained. Changes are saved as a
 draft first, so you can review before publishing.
 
-**To turn the login on** (one-off, needs a developer for about 20 minutes):
+**The simplest way to edit, needing no setup at all:** go to
+[github.com/educateed/AVID](https://github.com/educateed/AVID), open any file
+under `src/content/`, and click the pencil icon. Save, and the site rebuilds and
+republishes itself. This works today, for every kind of content, and adds
+nothing to maintain.
 
-1. In [`public/admin/config.yml`](../public/admin/config.yml), change `repo` to
-   AVID's GitHub repository.
-2. Set up GitHub authentication. Two options:
-   - **Simplest:** deploy the small `sveltia-cms-auth` Cloudflare Worker and
-     point `base_url` at it. Instructions are in the Sveltia CMS documentation.
-   - **Alternative:** use Netlify's OAuth if you host on Netlify.
-
-**Until then, you can still edit everything** — go to the repository on
-github.com, open any file under `src/content/`, and click the pencil icon. It is
-less pleasant than the form but it works today and needs no setup.
+**The `/admin` form editor is nicer but needs a sign-in step.** Signing in to
+GitHub from a browser-based editor requires a small OAuth helper somewhere,
+which means one more thing to run. Given AVID's preference for keeping the
+number of services down, it is reasonable to skip it and edit on github.com —
+the repository is already configured, so it can be switched on later at any
+time without touching the site.
 
 ### Editing text that is not in `/admin`
 
@@ -254,15 +273,21 @@ explains how to arrange a gift by email. Nothing is ever a dead link.
 
 ## 7. Domain and email
 
-**Domain.** Buy it in AVID's name. Point it at your host by adding the DNS
-records Cloudflare or Netlify shows you — they give exact instructions. This is
-a one-off job worth asking a developer to do.
+**Domain.** `theavidfoundation.org` is registered with Dynadot in AVID's name.
+Point it at the site with the DNS records in §3.
 
-Put the final domain in `SITE.url`. It is used for canonical URLs, the sitemap
-and social share cards, so it must be exact: include `https://` and no trailing
-slash.
+`SITE.url` in [`src/data/site.ts`](../src/data/site.ts) must match it exactly —
+`https://`, no trailing slash. It is used for canonical URLs, the sitemap and
+social share cards.
 
-**Branded email.** Set up at least these four:
+**Email — also Dynadot, so there is no third account.**
+
+Their **Pro Email** plan is about **C$41/year for up to 25 mailboxes**, which
+covers everything below with room to grow. The free plan included with the
+domain gives only one mailbox and caps at 25 emails a day, which is too tight
+for an inbox that receives school applications.
+
+Set up these four:
 
 | Address | Used for |
 |---|---|
@@ -271,11 +296,20 @@ slash.
 | `partners@` | Partnership and grant enquiries |
 | `donate@` | Donation questions |
 
-Google Workspace for Nonprofits is free once you have charitable status. Before
-that, Zoho Mail has a free tier for a custom domain. Then put the real addresses
-into `SITE.email`.
+Then put them into `SITE.email`. They are already written into the site with
+these names, so if you use exactly these, nothing needs changing.
 
----
+**Avoid the forwarding-only option.** It receives but cannot send, so replies
+would go out from someone's personal address rather than from
+`applications@theavidfoundation.org`. For an organisation asking schools and
+funders to trust it, that matters.
+
+Dynadot's email requires their nameservers, which is another reason to leave DNS
+where it is.
+
+**Later:** once charitable registration is granted, Google Workspace for
+Nonprofits is free and you may prefer to move. That is a DNS change and a
+mailbox migration, not a website change.
 
 ## 8. Analytics
 
@@ -443,10 +477,10 @@ two directors able to get in. A site nobody can log into is a site you have lost
 |---|---|---|
 | Domain registrar | ✅ | |
 | GitHub (the code) | ✅ | |
-| Cloudflare or Netlify (hosting) | ✅ | |
+| GitHub (hosting, via Pages) | ✅ | |
 | Formspree (forms) | ✅ | |
 | Donation platform | ✅ | |
-| Email provider | ✅ | |
+| Dynadot email | ✅ | |
 | Analytics | ✅ | |
 
 Fill in the right-hand column and keep it with your governance records. Use a

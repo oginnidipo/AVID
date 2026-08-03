@@ -5,17 +5,15 @@
 #  each content type has. It mirrors the validation rules in
 #  src/content.config.ts, so anything the editor accepts will also build.
 #
-#  SETUP (once, at handover — see docs/HANDOVER.md §4):
-#    1. Change `repo` below to AVID's GitHub repository.
-#    2. Connect authentication so staff can sign in. Two options, both documented
-#       in HANDOVER.md. Until then, content can still be edited directly on
-#       GitHub — the editor is a convenience, not a dependency.
+#  SETUP: the repository is already set. Signing in needs a GitHub OAuth step,
+#  which is optional — see docs/HANDOVER.md §4. Content can always be edited
+#  directly on github.com with no setup at all, so this editor is a convenience
+#  rather than something the site depends on.
 # ═══════════════════════════════════════════════════════════════════════════
 
 backend:
   name: github
-  # TODO(AVID): set this to your repository, e.g. avid-foundation/website
-  repo: AVID-FOUNDATION/website
+  repo: educateed/AVID
   branch: main
 
 # Where uploaded photographs are stored.
