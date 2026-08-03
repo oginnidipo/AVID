@@ -89,14 +89,32 @@ export const SITE: SiteConfig = {
   charitableRegistrationNumber: "",
 
   /**
-   * TODO(AVID): confirm branded addresses once the domain is live.
-   * These are used in mailto: links and as the destination hints for forms.
+   * Addresses shown in mailto: links and offered as the fallback whenever a
+   * form cannot be submitted.
+   *
+   * ⚠ Every address here must be a mailbox that actually receives mail. The
+   * site tells people to write to these; one that bounces is worse than no
+   * address at all, because the sender believes they have made contact.
+   *
+   * RIGHT NOW: only `applications@` exists (Dynadot free tier — one mailbox),
+   * so everything points there. It is a real inbox, so nothing is lost.
+   *
+   * TO RESTORE THE PROPER ADDRESSES — about five minutes, free:
+   * in Dynadot, open Email → Email Forwarding and forward
+   *     info@ → applications@
+   *     partners@ → applications@
+   *     donate@ → applications@
+   * (Forwarding allows 10 addresses at no cost and needs Dynadot's own
+   * nameservers, which is where DNS already lives.) Then put the real
+   * addresses back below. Upgrading to Dynadot Pro Email instead gives each
+   * one its own mailbox that can also *send*, which is worth having before
+   * approaching funders.
    */
   email: {
-    general: "info@theavidfoundation.org",
+    general: "applications@theavidfoundation.org",
     applications: "applications@theavidfoundation.org",
-    partnerships: "partners@theavidfoundation.org",
-    donate: "donate@theavidfoundation.org",
+    partnerships: "applications@theavidfoundation.org",
+    donate: "applications@theavidfoundation.org",
   },
 
   /** TODO(AVID): supply a phone number, or leave empty to hide it everywhere. */
