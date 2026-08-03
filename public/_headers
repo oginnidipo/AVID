@@ -1,6 +1,11 @@
-# Cloudflare Pages / Netlify header rules.
+# Header rules for hosts that support them (Cloudflare Pages, Netlify).
 #
-# Two jobs: cache aggressively where filenames are content-hashed, and set the
+# NOTE: GitHub Pages — the current production host — does NOT support custom
+# headers, so nothing in this file is applied there. It is kept because it costs
+# nothing and takes effect immediately if hosting ever moves. What GitHub Pages
+# does give you: HTTPS with automatic certificates, and HSTS once "Enforce
+# HTTPS" is ticked in the repository's Pages settings.
+#
 # security headers a site collecting personal data should have.
 
 /*

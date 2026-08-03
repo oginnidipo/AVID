@@ -1,0 +1,64 @@
+# Build the site and publish it to GitHub Pages.
+#
+# Hosting lives on GitHub because the code is already here: it adds no account,
+# no vendor and no bill that AVID does not already have. Dynadot keeps the
+# domain, the DNS and the email.
+#
+# Runs on every push to main, so publishing a content change from /admin is the
+# same action as saving it.
+
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  # Lets you re-publish by hand from the Actions tab without pushing anything.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never let two deploys race. Queue instead of cancelling, so a run that is
+# already publishing is allowed to finish.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build
+        env:
+          # Marks this as the real public site: enables indexing and a real
+          # robots.txt. Preview builds elsewhere leave this unset and are
+          # blocked from search engines. See src/lib/env.ts.
+          SITE_ENV: production
+        run: npm run build
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
