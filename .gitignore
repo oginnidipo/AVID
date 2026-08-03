@@ -5,6 +5,7 @@
 
 # Local tool state — machine-specific, not shared
 /.claude/settings.local.json
+/.vercel
 /venv
 
 # Environment / secrets. Never commit these.
@@ -16,3 +17,4 @@
 .DS_Store
 Thumbs.db
 *.log
+.vercel
