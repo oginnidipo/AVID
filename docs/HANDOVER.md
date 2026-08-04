@@ -55,11 +55,11 @@ Work through this in order. Nothing here needs a developer except where noted.
 
 | # | Task | Where | Needs a developer? |
 |---|---|---|---|
-| 1 | Confirm the domain | `src/data/site.ts` → `SITE.url` | No |
-| 2 | Set up branded email addresses | Dynadot Pro Email (see §7) | No |
+| 1 | ~~Confirm the domain~~ | Done — live on theavidfoundation.org | ✅ |
+| 2 | Set up the remaining addresses | Dynadot forwarding (see §7) | No |
 | 3 | Put the real addresses in | `src/data/site.ts` → `SITE.email` | No |
-| 4 | Create the three form endpoints | Formspree (see §5) | No |
-| 5 | Paste the endpoints in | `src/data/site.ts` → `FORMS` | No |
+| 4 | ~~Create the three form endpoints~~ | Done — Formspree | ✅ |
+| 5 | ~~Paste the endpoints in~~ | Done — all three tested live | ✅ |
 | 6 | Choose a donation platform | See §6 | No |
 | 7 | Paste the donation link in | `src/data/site.ts` → `DONATE.url` | No |
 | 8 | Set your first-cohort goals | `src/data/site.ts` → `IMPACT.goals` | No |
@@ -68,7 +68,7 @@ Work through this in order. Nothing here needs a developer except where noted.
 | 11 | Decide on analytics | `src/data/site.ts` → `ANALYTICS` | No |
 | 11b | Supply the original logo vector, if you have one | `public/logo-*.svg` | Yes — 10 minutes |
 | 12 | Have a lawyer review Privacy and Terms | `src/pages/privacy.astro`, `terms.astro` | No |
-| 13 | Point the domain at GitHub Pages | Dynadot DNS (see §3) | No — copy 5 records |
+| 13 | ~~Point the domain at GitHub Pages~~ | Done — HTTPS enforced | ✅ |
 | 14 | Set up the `/admin` login | See §4 | Yes — one-off |
 
 **The site works with none of these done.** Every unset value has an honest
@@ -219,7 +219,29 @@ A web form cannot send email by itself — it has to post to a service that does
 There are three forms: the school application, the general enquiry, and the
 partnership enquiry.
 
-**Recommended: [Formspree](https://formspree.io).** The free tier covers 50
+**Already connected.** The three endpoints are live in
+[`src/data/site.ts`](../src/data/site.ts) and each has been tested with a real
+submission. All three deliver to `applications@`.
+
+There are three test entries in that inbox and in the Formspree dashboard,
+subject lines beginning `TEST — please ignore`. Delete them once seen.
+
+**Attachments are off.** Formspree's free tier has no file storage, so the
+application form asks for photographs by email instead. If you move to a paid
+plan, set `FORMS.fileUploadsEnabled` to `true` and the upload field returns.
+
+**Watch the 50-a-month limit.** It covers all three forms together. Formspree
+warns you at 50%, 75% and 90%. Past the cap the forms show the "email us
+instead" message rather than failing silently — but that is a worse experience,
+so if applications pick up, upgrade before you hit it.
+
+**Formspree keeps only 30 days of history on the free plan.** It is a delivery
+pipe, not your records. The emails sitting in `applications@` are the record —
+do not delete them.
+
+---
+
+**Original setup notes, for reference: [Formspree](https://formspree.io).** The free tier covers 50
 submissions a month, which is plenty at first. File uploads (the optional
 photographs on the application form) need a paid plan — about US$10/month. If
 that is not affordable yet, the form still works; applicants simply cannot
