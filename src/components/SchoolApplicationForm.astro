@@ -313,25 +313,49 @@ const endpoint = FORMS.schoolApplication;
         <input id="how-heard" class="input" type="text" name="How did you hear about AVID?" />
       </div>
 
-      <div>
-        <label class="field-label" for="photos">
-          Photos of the current space <span class="muted font-normal">(optional)</span>
-          <span class="field-hint">
-            Up to 3 images, 5MB each. Phone photos are perfect. This genuinely
-            strengthens an application — we can see what we would be working
-            with. Please avoid photographs that identify individual children.
-          </span>
-        </label>
-        <input
-          id="photos"
-          class="input"
-          type="file"
-          name="Photos"
-          accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
-          multiple
-        />
-        <p class="muted nums mt-2 text-tag" data-file-list aria-live="polite"></p>
-      </div>
+      {
+        FORMS.fileUploadsEnabled ? (
+          <div>
+            <label class="field-label" for="photos">
+              Photos of the current space{" "}
+              <span class="muted font-normal">(optional)</span>
+              <span class="field-hint">
+                Up to 3 images, 5MB each. Phone photos are perfect. This genuinely
+                strengthens an application — we can see what we would be working
+                with. Please avoid photographs that identify individual children.
+              </span>
+            </label>
+            <input
+              id="photos"
+              class="input"
+              type="file"
+              name="Photos"
+              accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
+              multiple
+            />
+            <p class="muted nums mt-2 text-tag" data-file-list aria-live="polite" />
+          </div>
+        ) : (
+          /* Attachments are off (see FORMS.fileUploadsEnabled). Rather than drop
+             the request for photographs — they genuinely strengthen an
+             application — we ask for them by email, which always works. */
+          <div class="card p-5">
+            <p class="field-label mb-0">Photos of the current space</p>
+            <p class="muted mt-2 text-small">
+              Photographs genuinely strengthen an application — they let us see
+              what we would be working with. Send two or three by email to{" "}
+              <a class="link font-semibold" href={`mailto:${SITE.email.applications}?subject=Photos%20—%20library%20application`}>
+                {SITE.email.applications}
+              </a>{" "}
+              after you send this form, and mention your school's name.
+            </p>
+            <p class="muted mt-2 text-tag">
+              Phone photos are perfect. Please avoid photographs that identify
+              individual children.
+            </p>
+          </div>
+        )
+      }
     </div>
   </fieldset>
 

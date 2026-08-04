@@ -183,6 +183,21 @@ interface FormEndpoints {
   contact: string;
   partnership: string;
   newsletter: string;
+  /**
+   * Can the school application accept photo attachments?
+   *
+   * Formspree's free tier has no file-upload storage, and its documentation
+   * does not say whether a submission carrying a file is rejected outright or
+   * simply has the file dropped. A rejected submission means a head teacher
+   * loses a completed application, so this defaults to `false`: the upload
+   * field is hidden and applicants are invited to email photographs instead,
+   * which always works.
+   *
+   * Set to `true` on a paid Formspree plan (file storage is included), or once
+   * you have tested a free-tier submission with an attachment and confirmed the
+   * rest of the answers still arrive.
+   */
+  fileUploadsEnabled: boolean;
 }
 
 export const FORMS: FormEndpoints = {
@@ -194,6 +209,9 @@ export const FORMS: FormEndpoints = {
   partnership: "",
   /** TODO(AVID): Mailchimp / Buttondown form action URL for newsletter signup. */
   newsletter: "",
+
+  /** See the note on this field above before switching it on. */
+  fileUploadsEnabled: false,
 };
 
 /**
