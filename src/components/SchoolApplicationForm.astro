@@ -2,8 +2,13 @@
 import { FORMS, SITE } from "../data/site";
 
 /**
- * The school application. Section 5 of the brief, in full — all sixteen fields
- * in the specified order, with the specified types.
+ * The school application. Section 5 of the brief, in full — every field in the
+ * specified order, with the specified types.
+ *
+ * The photo upload is the one exception: it is gated behind
+ * FORMS.fileUploadsEnabled and currently off, because Formspree's free tier has
+ * no file storage. Photographs are requested by email instead, so the question
+ * is still asked, just answered differently.
  *
  * Written for a busy head teacher on a phone: one column throughout, large
  * targets, plain labels, the reason for each question where it isn't obvious,
@@ -20,7 +25,7 @@ const endpoint = FORMS.schoolApplication;
   data-success-panel="application-received"
   action={endpoint || undefined}
   method="POST"
-  enctype="multipart/form-data"
+  {...(FORMS.fileUploadsEnabled ? { enctype: "multipart/form-data" } : {})}
   novalidate
   class="mt-8"
 >

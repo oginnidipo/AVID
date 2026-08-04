@@ -201,12 +201,12 @@ interface FormEndpoints {
 }
 
 export const FORMS: FormEndpoints = {
-  /** TODO(AVID): e.g. "https://formspree.io/f/xxxxxxxx" → applications@ */
-  schoolApplication: "",
-  /** TODO(AVID): e.g. "https://formspree.io/f/xxxxxxxx" → info@ */
-  contact: "",
-  /** TODO(AVID): e.g. "https://formspree.io/f/xxxxxxxx" → partners@ */
-  partnership: "",
+  /** "AVID — School application" → applications@ */
+  schoolApplication: "https://formspree.io/f/mrpzzggb",
+  /** "AVID — General enquiry" → applications@ */
+  contact: "https://formspree.io/f/xjybbvvw",
+  /** "AVID — Partnership enquiry" → applications@ */
+  partnership: "https://formspree.io/f/maewwyyb",
   /** TODO(AVID): Mailchimp / Buttondown form action URL for newsletter signup. */
   newsletter: "",
 
