@@ -109,6 +109,14 @@ const gallery = defineCollection({
       /** Lower numbers appear first. */
       order: z.number().int().default(50),
       /**
+       * A photograph of a real place and real people, or a drawing?
+       *
+       * This decides whether the consent gate applies. An illustration depicts
+       * nobody, so there is nobody to obtain consent from; a photograph cannot
+       * publish without it. Defaulting to "photo" means a mistake fails safe.
+       */
+      kind: z.enum(["photo", "illustration"]).default("photo"),
+      /**
        * Which carousels this photograph appears in. A photograph of a finished
        * library belongs on For Schools; a portrait of pupils reading belongs on
        * the home page. Most belong in both.

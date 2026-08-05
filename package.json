@@ -10,7 +10,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "brand": "node scripts/build-brand.mjs"
+    "brand": "node scripts/build-brand.mjs",
+    "scenes": "node scripts/build-scenes.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",

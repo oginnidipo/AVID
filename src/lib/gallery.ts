@@ -18,7 +18,9 @@ export async function galleryFor(
   const entries = await getCollection("gallery", ({ data }) => !data.draft);
 
   for (const entry of entries) {
-    if (!entry.data.photoConsentOnFile) {
+    /* Illustrations depict nobody, so there is nobody whose consent could be
+       sought. The gate applies to photographs, which is where the risk is. */
+    if (entry.data.kind === "photo" && !entry.data.photoConsentOnFile) {
       throw new Error(
         `Refusing to publish gallery photograph "${entry.id}": photoConsentOnFile is not true.\n` +
           `Written photo consent must be on file before an image of a school or its pupils goes live.\n` +
