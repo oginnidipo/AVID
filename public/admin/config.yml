@@ -16,14 +16,20 @@ backend:
   repo: oginnidipo/AVID
   branch: main
 
-# Where uploaded photographs are stored.
-media_folder: src/assets/uploads
-# How the saved markdown refers to them. This is deliberately a RELATIVE path:
-# every content folder sits at src/content/<collection>/, so "../../assets/uploads"
-# reaches the upload folder from any entry. Astro resolves image paths relative
-# to the markdown file, which is what lets it optimise and resize each photo at
-# build time. An absolute /src/... path here would silently fail to resolve.
-public_folder: ../../assets/uploads
+# ── Where uploaded images go ───────────────────────────────────────────────
+#
+# The GLOBAL setting must be an absolute path — the CMS refuses to load
+# otherwise. It is only a fallback; nothing currently uses it.
+#
+# Each collection below overrides it with a RELATIVE path instead. That is the
+# part that matters: every content folder sits at src/content/<collection>/, so
+# "../../assets/uploads" reaches src/assets/uploads from any entry, and the
+# markdown records the image that same relative way. Astro resolves image paths
+# relative to the markdown file, which is what lets it optimise and resize each
+# photograph at build time. Uploading into public/ instead would skip that
+# entirely and ship full-size originals to phones on mobile data.
+media_folder: public/uploads
+public_folder: /uploads
 
 # Save as a draft, review, then publish — rather than every save going live.
 publish_mode: editorial_workflow
@@ -44,6 +50,9 @@ collections:
       persuasive thing on the site. Be specific, and only publish what is true.
     folder: src/content/libraries
     create: true
+    # Relative, so Astro can optimise these images. See the note at the top.
+    media_folder: ../../assets/uploads
+    public_folder: ../../assets/uploads
     slug: "{{fields.school | lower | replace(' ', '-')}}"
     identifier_field: school
     summary: "{{school}} — {{location}} ({{status}})"
@@ -135,6 +144,9 @@ collections:
     description: Library openings, school visits and updates.
     folder: src/content/stories
     create: true
+    # Relative, so Astro can optimise these images. See the note at the top.
+    media_folder: ../../assets/uploads
+    public_folder: ../../assets/uploads
     slug: "{{year}}-{{month}}-{{slug}}"
     summary: "{{title}} — {{date | date('yyyy-MM-dd')}}"
     sortable_fields: [date, title]
@@ -170,6 +182,9 @@ collections:
       you confirm written consent is on file.
     folder: src/content/gallery
     create: true
+    # Relative, so Astro can optimise these images. See the note at the top.
+    media_folder: ../../assets/uploads
+    public_folder: ../../assets/uploads
     slug: "{{year}}-{{month}}-{{slug}}"
     summary: "{{alt}}"
     sortable_fields: [order, alt]
@@ -230,6 +245,9 @@ collections:
       closely, so keep it current.
     folder: src/content/team
     create: true
+    # Relative, so Astro can optimise these images. See the note at the top.
+    media_folder: ../../assets/uploads
+    public_folder: ../../assets/uploads
     slug: "{{fields.name | lower | replace(' ', '-')}}"
     identifier_field: name
     summary: "{{name}} — {{role}}"
