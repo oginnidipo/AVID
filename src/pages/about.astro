@@ -62,29 +62,29 @@ const GOVERNANCE = [
 
       <div class="prose md:col-span-8">
         <p class="text-lead">
-          The AVID Foundation is a Canadian non-profit working to restore school
-          libraries in Nigeria. We were founded by members of the Nigerian
-          diaspora in Canada who believe that a functioning library is among the
-          most cost-effective investments available in a child's education — and
-          that too many Nigerian schoolchildren attend schools where the library
-          is locked, empty, or has never existed at all.
+          The AVID Foundation restores school libraries in Nigeria.
         </p>
         <p>
-          <strong>Avid</strong> is not a word anyone is born into. A child
-          becomes an avid reader by having something worth reading within reach,
-          at the age when reading is still being decided. That gap is not a
-          funding mystery — it is a shelf, a room, a trained teacher and a
-          timetable. We fund exactly that, so that avid readers can happen where
-          they currently cannot.
+          We were founded by members of the Nigerian diaspora in Canada. Too many
+          Nigerian schools have a library that is locked, empty, or was never
+          built at all.
         </p>
         <p>
-          We are a Canadian organisation by design. We are incorporated in
-          Canada, governed by a Canadian board, and accountable to Canadian
-          regulators and donors. We do not maintain a separate Nigerian entity.
-          Instead, we deliver our work through carefully selected local partners
-          who know their communities, or directly with the schools under written
-          agreements that hold them — and us — to a clear standard. We begin in
-          Lagos, and take what works to schools across Nigeria.
+          <strong>Avid</strong> is not a word anyone is born into. A child becomes
+          one by having something worth reading within reach — at the age when
+          reading is still being decided.
+        </p>
+        <p>
+          That gap is not a mystery. It is a shelf, a room, a trained teacher and
+          a timetable. We fund exactly that.
+        </p>
+        <p>
+          We are Canadian by design: incorporated here, governed by a Canadian
+          board, accountable to Canadian regulators.
+        </p>
+        <p>
+          We hold no Nigerian entity. We deliver through vetted local partners, or
+          directly with schools under written agreement. We begin in Lagos.
         </p>
       </div>
     </div>
@@ -216,11 +216,11 @@ const GOVERNANCE = [
       <div class="mt-16 border-t border-teal/15 pt-8">
         <h3 class="text-h4 font-display">Our board</h3>
         <p class="muted mt-3 max-w-2xl text-small">
-          AVID is governed by a volunteer board of directors whose members deal
-          with one another at arm's length. We are appointing our founding board
-          now, and each director's name, role and biography will be published
-          here as they are confirmed — before we accept institutional funding,
-          not after.
+          A volunteer board, whose members are at arm's length from one another.
+        </p>
+        <p class="muted mt-2 max-w-2xl text-small">
+          We are appointing it now. Each director appears here as they are
+          confirmed — before we accept institutional funding, not after.
         </p>
       </div>
     </div>
@@ -240,12 +240,25 @@ const GOVERNANCE = [
         </h2>
         <p class="muted mt-5 text-small">
           Canadian charity law places clear obligations on organisations working
-          abroad. We built our operating model around them from day one: we
-          maintain books and records sufficient to demonstrate that every
-          disbursement was used for the charitable purpose intended, we do not
-          act as a pass-through for funds destined for any foreign organisation,
-          and our board retains genuine authority over our resources.
+          abroad. We built our model around them from day one.
         </p>
+        <ul class="mt-5 space-y-3">
+          {
+            [
+              "Records showing every disbursement served its charitable purpose",
+              "No pass-through of funds to any foreign organisation",
+              "Board authority over our resources, retained",
+            ].map((item) => (
+              <li class="flex gap-3">
+                <span
+                  class="mt-1.5 block h-3.5 w-[3px] flex-none rounded-sm bg-ochre-500"
+                  aria-hidden="true"
+                />
+                <span class="text-small">{item}</span>
+              </li>
+            ))
+          }
+        </ul>
       </div>
 
       <dl class="md:col-span-8">

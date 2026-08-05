@@ -5,18 +5,12 @@ order: 1
 highlight: The Library Prefect who now builds libraries.
 ---
 
-Ade Olumide is a Nigerian-Canadian who spent her formative years in Nigeria
-before settling in Canada as a young woman. A project management professional
-with over 8 years of experience, she has led initiatives across government,
-banking and CPG sectors. She holds a Master's degree in International
-Development and a Bachelor's degree in Economics — a combination that shapes
-both her conviction that education is the surest lever for opportunity and her
-insistence that good intentions be matched by rigorous execution.
+Ade Olumide is a Nigerian-Canadian who grew up in Nigeria and settled in Canada
+as a young woman.
 
-Her commitment to AVID's mission traces back further than the foundation
-itself: she served as Library Prefect in her secondary school years, an early
-stewardship she now returns to at a larger scale. At AVID, Ade leads strategy,
-partner selection, and the foundation's relationships with funders.
+A project manager of eight years across government, banking and consumer goods,
+she holds a Master's in International Development and a BA in Economics.
 
-Beyond her work, she is an avid traveller who values time spent with those
-closest to her.
+She was Library Prefect at her secondary school. She now does the same job at a
+larger scale — leading AVID's strategy, partner selection, and its relationships
+with funders.

@@ -39,38 +39,46 @@ const byBand = bands.map((band) => ({
         </h2>
       </div>
 
-      <div class="prose md:col-span-8">
+      <div class="md:col-span-8">
         <p class="text-lead">
-          Nigeria is in the midst of what UNESCO has described as a learning
-          crisis: most children at age ten cannot read and understand an
-          age-appropriate text.
+          Nigeria is in a learning crisis. Most children at age ten cannot read
+          and understand a simple text.
         </p>
-        <p>
-          A 2024 UNICEF assessment found that only 26% of Nigerian children and
-          adolescents aged 7 to 14 possess basic reading and mathematics skills.
-          Nationally, more than 18 million children aged 5 to 14 are out of
-          school, and Nigeria accounts for over 20% of the world's out-of-school
-          children.
+
+        <!-- The statistics as figures rather than prose. Three numbers are read;
+             the same three buried in a paragraph are skimmed. -->
+        <dl class="mt-10 grid gap-8 sm:grid-cols-3">
+          {
+            [
+              { n: "26%", t: "of children aged 7–14 have basic reading and maths skills" },
+              { n: "18m", t: "children aged 5–14 are out of school nationally" },
+              { n: "5–8%", t: "of government spending goes to education, against 15–20% recommended" },
+            ].map((stat) => (
+              <div>
+                <dt class="nums text-h1 font-display text-ochre-700">{stat.n}</dt>
+                <dd class="muted mt-2 text-small">{stat.t}</dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        <div class="shelf-rule mt-10"></div>
+
+        <p class="mt-8">
+          Lagos makes the case with unusual clarity. Enrolment is strong — around
+          3% of primary-age children are out of school, far below the national
+          figure.
         </p>
-        <p>
-          We begin in Lagos, because Lagos makes the case with unusual clarity.
-          Enrolment there is comparatively strong — UNICEF data indicates
-          out-of-school rates in Lagos of roughly 3% at primary level and 4% at
-          junior secondary, far below national figures, and Lagos leads the
-          country in secondary enrolment with over 1.2 million students.{" "}
-          <strong>The children are already in the classroom. What they lack is
-          behind it.</strong>
+        <p class="mt-5 text-lead font-display" style="font-variation-settings:'opsz' 40">
+          The children are already in the classroom. What they lack is behind it.
         </p>
-        <p>
-          Nigeria's education budget has hovered at roughly 5–8% of total
-          government spending, well below the 15–20% UNESCO recommends, and
-          school libraries are among the first things to disappear when budgets
-          are stretched. Enrolment programmes will not close this gap. Reading
-          resources will. Lagos is where we prove the model; Nigeria is where we
-          take it.
+        <p class="muted mt-5 text-small">
+          School libraries are among the first things to go when budgets are
+          stretched. Enrolment programmes will not close this gap. Reading
+          resources will.
         </p>
-        <p class="muted text-tag">
-          Figures drawn from UNESCO, UNICEF and published Nigerian education
+        <p class="muted mt-6 text-tag">
+          Sources: UNESCO, UNICEF (2024), and published Nigerian education
           statistics.
         </p>
       </div>
@@ -302,11 +310,12 @@ const byBand = bands.map((band) => ({
               true.
             </p>
             <p class="muted mt-4 max-w-2xl">
-              We are selecting our first schools in Lagos. When the first library
-              opens, its record appears on this wall: the school's name, what we
-              did, what it cost, and what changed for the pupils in it. If you
-              are reading this page in a year and it is still empty, that will
-              tell you something too.
+              We are selecting our first schools in Lagos. When one opens, its
+              record appears here: the school, what we did, what it cost, what
+              changed.
+            </p>
+            <p class="muted mt-3 max-w-2xl text-small">
+              If this page is still empty in a year, that tells you something too.
             </p>
             <div class="mt-7 flex flex-wrap gap-3">
               <DonateButton label="Fund the first library" />

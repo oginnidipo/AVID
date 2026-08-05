@@ -12,35 +12,35 @@ export const COMPONENTS = [
     key: "space",
     name: "The space",
     short: "A room fit to read in.",
-    body: "Repair and preparation of the room — flooring, ceiling, windows, lighting, ventilation, security and, where required, basic electrical work.",
+    body: "Flooring, ceiling, windows, lighting, ventilation, security, and wiring where it is needed.",
   },
   {
     n: 2,
     key: "furniture",
     name: "The furniture",
     short: "Built locally, repairable locally.",
-    body: "Shelving, reading tables, chairs and storage, sourced and built locally wherever possible to support the local economy and simplify repair.",
+    body: "Shelving, tables, chairs and storage — built locally, so a broken chair is mended in an afternoon.",
   },
   {
     n: 3,
     key: "collection",
     name: "The collection",
     short: "Books children want to read.",
-    body: "Age-appropriate books selected with the school, weighted towards Nigerian and African authors alongside international titles, plus reference and curriculum-support material.",
+    body: "Chosen with the school's teachers. Weighted towards Nigerian and African authors, plus reference and curriculum titles.",
   },
   {
     n: 4,
     key: "systems",
     name: "The systems",
     short: "A catalogue the school can keep.",
-    body: "A simple catalogue, a borrowing and returns process, labelling, and a record-keeping method the school can maintain without specialist software.",
+    body: "A catalogue, a borrowing process and labelling the school can keep up without special software.",
   },
   {
     n: 5,
     key: "people",
     name: "The people",
     short: "A trained adult, and time to read.",
-    body: "Training for the teacher or staff member responsible for the library, guidance on timetabling reading periods, and a follow-up visit schedule.",
+    body: "We train the staff member who will run it, help timetable reading periods, and come back.",
   },
 ] as const;
 
@@ -50,11 +50,11 @@ export type ComponentKey = (typeof COMPONENTS)[number]["key"];
 export const DELIVERY_STEPS = [
   {
     title: "We vet a local partner",
-    body: "An established organisation, contractor or school network with a verifiable track record in the community we are serving.",
+    body: "An organisation or contractor with a verifiable record in that community.",
   },
   {
     title: "We sign a written agreement",
-    body: "Setting out the scope of work, the standards to be met, the reporting required, and the conditions under which funds are released.",
+    body: "Scope, standards, reporting, and the conditions for releasing funds.",
   },
   {
     title: "Funds move in stages",
@@ -62,7 +62,7 @@ export const DELIVERY_STEPS = [
   },
   {
     title: "Evidence comes back at every stage",
-    body: "Receipts, photographic records, inventory and progress reports from our partner.",
+    body: "Receipts, photographs, inventory and progress reports.",
   },
   {
     title: "We verify",
@@ -70,7 +70,7 @@ export const DELIVERY_STEPS = [
   },
   {
     title: "The decision stays with our board",
-    body: "We retain authority over how our resources are used at every point.",
+    body: "We retain authority over our resources at every point.",
   },
 ] as const;
 
@@ -119,23 +119,23 @@ export const MEASURES = [
   { name: "Reach", body: "Libraries refurbished; pupils with access; schools served." },
   {
     name: "Usage",
-    body: "Books borrowed per pupil per term; library visits per week; reading periods timetabled.",
+    body: "Books borrowed per pupil; library visits per week; reading periods timetabled.",
   },
   {
     name: "Learning",
-    body: "Reading fluency and comprehension assessed at baseline and at follow-up intervals.",
+    body: "Reading fluency and comprehension, at baseline and at follow-up.",
   },
   {
     name: "Equity",
-    body: "Participation disaggregated by gender, with specific attention to girls' access and usage.",
+    body: "Participation by gender, with specific attention to girls' access.",
   },
   {
     name: "Durability",
-    body: "Proportion of libraries still open, stocked and staffed at 12 and 24 months.",
+    body: "Libraries still open, stocked and staffed at 12 and 24 months.",
   },
   {
     name: "Stewardship",
-    body: "Cost per pupil reached; proportion of expenditure reaching programme delivery.",
+    body: "Cost per pupil; share of spending reaching delivery.",
   },
 ] as const;
 
@@ -143,23 +143,23 @@ export const MEASURES = [
 export const VALUES = [
   {
     name: "Dignity",
-    body: "We refurbish to a standard we would accept for our own children. We do not send what we would not use.",
+    body: "We refurbish to a standard we would accept for our own children.",
   },
   {
     name: "Local leadership",
-    body: "Nigerian educators know what Nigerian schools need. We fund and support their judgement rather than substituting our own.",
+    body: "Nigerian educators know what Nigerian schools need. We fund their judgement rather than replace it.",
   },
   {
     name: "Accountability",
-    body: "Every dollar is traceable to a school, a receipt and a result. We report to our donors as rigorously as we are required to report to regulators.",
+    body: "Every dollar is traceable to a school, a receipt and a result.",
   },
   {
     name: "Durability",
-    body: "A library that closes within a year is a failure, however good the photographs. We fund maintenance, training and follow-up as part of every project.",
+    body: "A library that closes within a year is a failure, however good the photographs.",
   },
   {
     name: "Evidence",
-    body: "We measure whether children are reading more — not merely how many books we delivered.",
+    body: "We measure whether children read more, not how many books we delivered.",
   },
 ] as const;
 
@@ -185,7 +185,7 @@ export const GIVING_TIERS: GivingTier[] = [
     name: "Sponsor a library",
     amount: "",
     delivers:
-      "A complete refurbishment of one school library, named in your honour, with a full report and photographic record.",
+      "One school library, complete and named in your honour, with a full report.",
     featured: true,
   },
   {
@@ -199,7 +199,7 @@ export const GIVING_TIERS: GivingTier[] = [
     name: "Adopt a shelf",
     amount: "",
     delivers:
-      "One named shelf, stocked and labelled, in a named school — with a photograph of it once it is full.",
+      "One named shelf in a named school, with a photograph once it is full.",
   },
   {
     key: "systems",
@@ -212,13 +212,13 @@ export const GIVING_TIERS: GivingTier[] = [
     name: "Give monthly",
     amount: "",
     delivers:
-      "A standing amount that funds maintenance, follow-up visits and restocking — the part of the work that keeps a library open after the opening.",
+      "Funds maintenance, follow-up and restocking — what keeps a library open after the opening.",
   },
   {
     key: "grants",
     name: "Institutional grants",
     amount: "By agreement",
-    delivers: "Multi-school programmes with formal reporting, monitoring and evaluation.",
+    delivers: "Multi-school programmes with formal monitoring and evaluation.",
   },
   {
     key: "inkind",
