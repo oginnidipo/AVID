@@ -15,18 +15,18 @@ const bands: Band[] = ["early", "middle", "upper"];
 const byBand = bands.map((band) => ({
   band,
   label: BAND_LABELS[band],
-  titles: BOOKS.filter((b) => b.band === band),
+  titles: BOOKS.filter((b) => b.band === band && b.featured),
 }));
 ---
 
 <Base
   title="Our Work"
-  description="The five-part refurbishment package, how we deliver it in Nigeria, our theory of change, what we measure, and every library we have built — named."
+  description="The five-part refurbishment package, how we deliver it in Nigeria, our theory of change, what we measure, and every library we have built, named."
 >
   <PageHeader
     eyebrow="Our work"
-    title="A refurbished library is a small intervention with a long tail."
-    lead="It serves every pupil in the school, every year, for as long as it is maintained — which makes it one of the most cost-efficient literacy interventions available, and one that scales school by school."
+    title="A small intervention with a long tail."
+    lead="One library serves every pupil in the school, every year, for as long as it is maintained."
   />
 
   <!-- ══ THE CASE ══════════════════════════════════════════════════════ -->
@@ -65,9 +65,8 @@ const byBand = bands.map((band) => ({
         <div class="shelf-rule mt-10"></div>
 
         <p class="mt-8">
-          Lagos makes the case with unusual clarity. Enrolment is strong — around
-          3% of primary-age children are out of school, far below the national
-          figure.
+          Lagos makes the case with unusual clarity. Enrolment is strong: around 3% of
+          primary-age children are out of school, far below the national figure.
         </p>
         <p class="mt-5 text-lead font-display" style="font-variation-settings:'opsz' 40">
           The children are already in the classroom. What they lack is behind it.
@@ -115,10 +114,13 @@ const byBand = bands.map((band) => ({
           What we actually put on the shelves.
         </h2>
         <p class="muted mt-5">
-          Weighted towards Nigerian and African authors alongside international
-          titles — including work in Yorùbá, Igbo and Hausa, because a child
-          should be able to find their own language on a shelf. Final selections
-          are made with each school's teachers.
+          Weighted towards Nigerian and African authors, including work in
+          Yorùbá, Igbo and Hausa, so a child can find their own language on a
+          shelf.
+        </p>
+        <p class="muted mt-3 text-small">
+          A sample of the list. Final selections are made with each school's
+          teachers.
         </p>
       </div>
 
@@ -137,11 +139,13 @@ const byBand = bands.map((band) => ({
                       aria-hidden="true"
                     />
                     <span class="text-small">
-                      <span class="font-semibold">{book.title}</span>
-                      <span class="muted"> — {book.author}</span>
-                      {book.language && (
-                        <span class="tag ml-2 align-middle">{book.language}</span>
-                      )}
+                      <span class="block font-semibold">{book.title}</span>
+                      <span class="muted block text-tag">
+                        {book.author}
+                        {book.language && (
+                          <span class="tag ml-2 align-middle">{book.language}</span>
+                        )}
+                      </span>
                     </span>
                   </li>
                 ))}

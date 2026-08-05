@@ -19,7 +19,7 @@ export const COMPONENTS = [
     key: "furniture",
     name: "The furniture",
     short: "Built locally, repairable locally.",
-    body: "Shelving, tables, chairs and storage — built locally, so a broken chair is mended in an afternoon.",
+    body: "Shelving, tables, chairs and storage, built locally so a broken chair is mended in an afternoon.",
   },
   {
     n: 3,
@@ -212,7 +212,7 @@ export const GIVING_TIERS: GivingTier[] = [
     name: "Give monthly",
     amount: "",
     delivers:
-      "Funds maintenance, follow-up and restocking — what keeps a library open after the opening.",
+      "Funds maintenance, follow-up and restocking: what keeps a library open after the opening.",
   },
   {
     key: "grants",

@@ -27,24 +27,38 @@ export interface Book {
   band: Band;
   /** Optional: the language, when it is not English. */
   language?: string;
+  /**
+   * Shown in the reading list on Our Work.
+   *
+   * The full list feeds the wall of spines on the home page, where variety is
+   * the point. The page, though, is not a catalogue — a dozen titles make the
+   * argument (Nigerian and African authors, all three major languages, every
+   * reading stage) and thirty-seven only make it harder to read.
+   */
+  featured?: boolean;
 }
 
 export const BOOKS: Book[] = [
   // ── First readers ───────────────────────────────────────────────────────
-  { title: "Anna Hibiscus", author: "Atinuke", origin: "Nigeria", band: "early" },
+  { title: "Anna Hibiscus",
+    featured: true, author: "Atinuke", origin: "Nigeria", band: "early" },
   { title: "The No. 1 Car Spotter", author: "Atinuke", origin: "Nigeria", band: "early" },
   { title: "Africa, Amazing Africa", author: "Atinuke", origin: "Nigeria", band: "early" },
   { title: "A is for Africa", author: "Ifeoma Onyefulu", origin: "Nigeria", band: "early" },
-  { title: "Chidi Only Likes Blue", author: "Ifeoma Onyefulu", origin: "Nigeria", band: "early" },
+  { title: "Chidi Only Likes Blue",
+    featured: true, author: "Ifeoma Onyefulu", origin: "Nigeria", band: "early" },
   { title: "Ikenna Goes to Nigeria", author: "Ifeoma Onyefulu", origin: "Nigeria", band: "early" },
-  { title: "Chike and the River", author: "Chinua Achebe", origin: "Nigeria", band: "early" },
+  { title: "Chike and the River",
+    featured: true, author: "Chinua Achebe", origin: "Nigeria", band: "early" },
   { title: "The Drummer Boy", author: "Cyprian Ekwensi", origin: "Nigeria", band: "early" },
   { title: "Sugar Girl", author: "Kola Onadipe", origin: "Nigeria", band: "early" },
-  { title: "Eze Goes to School", author: "Onuora Nzekwu", origin: "Nigeria", band: "early" },
+  { title: "Eze Goes to School",
+    featured: true, author: "Onuora Nzekwu", origin: "Nigeria", band: "early" },
 
   // ── Confident readers ───────────────────────────────────────────────────
   {
     title: "An African Night's Entertainment",
+    featured: true,
     author: "Cyprian Ekwensi",
     origin: "Nigeria",
     band: "middle",
@@ -57,13 +71,15 @@ export const BOOKS: Book[] = [
   },
   { title: "Without a Silver Spoon", author: "Eddie Iroh", origin: "Nigeria", band: "middle" },
   { title: "The Bottled Leopard", author: "Chukwuemeka Ike", origin: "Nigeria", band: "middle" },
-  { title: "Weep Not, Child", author: "Ngũgĩ wa Thiong'o", origin: "Kenya", band: "middle" },
+  { title: "Weep Not, Child",
+    featured: true, author: "Ngũgĩ wa Thiong'o", origin: "Kenya", band: "middle" },
   { title: "The Boy Who Harnessed the Wind", author: "William Kamkwamba", origin: "Malawi", band: "middle" },
   { title: "Akissi", author: "Marguerite Abouet", origin: "Côte d'Ivoire", band: "middle" },
 
   // ── In Nigerian languages ───────────────────────────────────────────────
   {
     title: "Ògbójú Ọdẹ Nínú Igbó Irúnmalẹ̀",
+    featured: true,
     author: "D. O. Fágúnwà",
     origin: "Nigeria",
     band: "middle",
@@ -76,9 +92,11 @@ export const BOOKS: Book[] = [
     band: "upper",
     language: "Yorùbá",
   },
-  { title: "Omenuko", author: "Pita Nwana", origin: "Nigeria", band: "middle", language: "Igbo" },
+  { title: "Omenuko",
+    featured: true, author: "Pita Nwana", origin: "Nigeria", band: "middle", language: "Igbo" },
   {
     title: "Shaihu Umar",
+    featured: true,
     author: "Abubakar Tafawa Balewa",
     origin: "Nigeria",
     band: "upper",
@@ -86,12 +104,16 @@ export const BOOKS: Book[] = [
   },
 
   // ── Older pupils and the reference shelf ────────────────────────────────
-  { title: "Things Fall Apart", author: "Chinua Achebe", origin: "Nigeria", band: "upper" },
-  { title: "Purple Hibiscus", author: "Chimamanda Ngozi Adichie", origin: "Nigeria", band: "upper" },
+  { title: "Things Fall Apart",
+    featured: true, author: "Chinua Achebe", origin: "Nigeria", band: "upper" },
+  { title: "Purple Hibiscus",
+    featured: true, author: "Chimamanda Ngozi Adichie", origin: "Nigeria", band: "upper" },
   { title: "Half of a Yellow Sun", author: "Chimamanda Ngozi Adichie", origin: "Nigeria", band: "upper" },
   { title: "The Famished Road", author: "Ben Okri", origin: "Nigeria", band: "upper" },
-  { title: "Aké: The Years of Childhood", author: "Wole Soyinka", origin: "Nigeria", band: "upper" },
-  { title: "Efuru", author: "Flora Nwapa", origin: "Nigeria", band: "upper" },
+  { title: "Aké: The Years of Childhood",
+    featured: true, author: "Wole Soyinka", origin: "Nigeria", band: "upper" },
+  { title: "Efuru",
+    featured: true, author: "Flora Nwapa", origin: "Nigeria", band: "upper" },
   { title: "The Joys of Motherhood", author: "Buchi Emecheta", origin: "Nigeria", band: "upper" },
   { title: "Second Class Citizen", author: "Buchi Emecheta", origin: "Nigeria", band: "upper" },
   { title: "The Concubine", author: "Elechi Amadi", origin: "Nigeria", band: "upper" },
