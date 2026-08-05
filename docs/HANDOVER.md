@@ -321,13 +321,26 @@ Set up these four:
 Then put them into `SITE.email`. They are already written into the site with
 these names, so if you use exactly these, nothing needs changing.
 
-**Avoid the forwarding-only option.** It receives but cannot send, so replies
-would go out from someone's personal address rather than from
-`applications@theavidfoundation.org`. For an organisation asking schools and
-funders to trust it, that matters.
+**Where forwarding lives, and the trap in it.** Email forwarding is *not* under
+the Email menu — that is Email Hosting, a different product. It is at
+**My Domains → Manage Domains → tick the domain → Action → Email Settings**,
+then choose **Forwarding Email** from the dropdown at the top.
 
-Dynadot's email requires their nameservers, which is another reason to leave DNS
-where it is.
+⚠ **Switching that dropdown to Forwarding Email disconnects Dynadot Email
+Hosting for the domain.** If you already have a mailbox there, you lose it as a
+mailbox: the address keeps receiving, but it becomes a forward and can no longer
+send. For an organisation writing to schools and funders, replying from a
+personal address is a real cost.
+
+So the two routes are:
+
+| | Cost | Gets you | Costs you |
+|---|---|---|---|
+| **Pro Email** | ~C$41/yr | All four as real mailboxes that send *and* receive | The fee |
+| **Forwarding Email** | Free | Up to 10 addresses receiving | Your existing mailbox stops being a mailbox; nothing can send |
+
+Pro Email is the recommendation: it is about a pound a week, and it keeps
+`applications@` working while adding the rest.
 
 **Later:** once charitable registration is granted, Google Workspace for
 Nonprofits is free and you may prefer to move. That is a DNS change and a
