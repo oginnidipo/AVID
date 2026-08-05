@@ -8,10 +8,94 @@ interface Props {
 const { eyebrow, title, lead } = Astro.props;
 ---
 
-<section class="on-dark grain bg-teal">
-  <div class="shell py-16 md:py-20">
+<!--
+  Interior page header.
+
+  The band of spines behind it is drawn in CSS — repeating gradients, no image,
+  no extra bytes — so every interior page carries a trace of the home page's
+  shelf without downloading anything. It also gives these headers a horizon,
+  which is what stops a text-led page opening as a flat wall of type.
+-->
+<section class="page-header on-dark relative isolate overflow-hidden bg-teal">
+  <div class="page-header-shelf" aria-hidden="true"></div>
+
+  <div class="shell relative py-16 md:py-20">
     <p class="eyebrow"><span>{eyebrow}</span></p>
     <h1 class="text-h1 mt-5 max-w-4xl font-display">{title}</h1>
     {lead && <p class="mt-6 max-w-2xl text-lead text-paper/88">{lead}</p>}
   </div>
 </section>
+
+<style>
+  .page-header-shelf {
+    position: absolute;
+    inset-inline: 0;
+    bottom: 0;
+    height: 42%;
+    pointer-events: none;
+
+    /*
+      Spines of uneven width and height, then a shelf board beneath them.
+      `repeating-linear-gradient` gives the verticals; the varied stops are what
+      keep it from reading as a barcode. Kept low-contrast on purpose — this is
+      texture behind type, not an illustration competing with it.
+    */
+    background-image:
+      /* the board the spines stand on */
+      linear-gradient(
+        to bottom,
+        transparent calc(100% - 0.5rem),
+        color-mix(in oklab, var(--color-ochre-500) 55%, transparent) calc(100% - 0.5rem)
+      ),
+      /* Tall spines */
+      repeating-linear-gradient(
+        90deg,
+        color-mix(in oklab, var(--color-paper) 8%, transparent) 0 0.6rem,
+        transparent 0.6rem 0.85rem,
+        color-mix(in oklab, var(--color-ochre-200) 7%, transparent) 0.85rem 1.7rem,
+        transparent 1.7rem 3.4rem
+      ),
+      /* Short spines, on a different period so the tops never line up. Two
+         layers at different heights is what stops the band reading as a fence. */
+      repeating-linear-gradient(
+        90deg,
+        color-mix(in oklab, var(--color-sage) 9%, transparent) 0 0.9rem,
+        transparent 0.9rem 1.15rem,
+        color-mix(in oklab, var(--color-paper) 6%, transparent) 1.15rem 1.75rem,
+        transparent 1.75rem 2.45rem
+      );
+    background-repeat: no-repeat, repeat-x, repeat-x;
+    background-size:
+      100% 100%,
+      auto 82%,
+      auto 58%;
+    background-position:
+      bottom,
+      left bottom,
+      0.7rem bottom;
+
+    /* Fade the spines out upward so they never crowd the headline. */
+    mask-image: linear-gradient(to top, #000 0%, #000 35%, transparent 100%);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    /* The band drifts a little as the page scrolls — the same shelf idea as the
+       home page, at a fraction of the cost. Off the main thread, and skipped
+       entirely where scroll-driven animation is unsupported. */
+    @supports (animation-timeline: view()) {
+      .page-header-shelf {
+        animation: shelf-drift linear both;
+        animation-timeline: view();
+        animation-range: entry 0% exit 100%;
+      }
+      @keyframes shelf-drift {
+        from {
+          transform: translateX(-1.5rem);
+        }
+        to {
+          transform: translateX(1.5rem);
+        }
+      }
+    }
+  }
+</style>
