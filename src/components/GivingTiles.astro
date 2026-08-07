@@ -48,6 +48,7 @@ const amountLabel = (amount: string) => (amount === "" ? "By arrangement" : amou
             <DonateButton
               label={tier.key === "monthly" ? "Give monthly" : "Give"}
               variant={tier.featured ? "primary" : "secondary"}
+              inGivingSection={variant === "full"}
               class="w-full"
             />
           )}

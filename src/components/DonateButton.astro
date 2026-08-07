@@ -1,23 +1,48 @@
 ---
-import { DONATE } from "../data/site";
+import { DONATE, SITE } from "../data/site";
 
 /**
  * Every "give" call to action on the site goes through this component, so the
  * destination is a one-line change in src/data/site.ts when the donation
  * platform is confirmed.
  *
- * While DONATE.url is empty it routes to /get-involved#give, which explains
- * how to give by direct arrangement. Nothing is ever a dead link.
+ * While DONATE.url is empty it routes to /get-involved#give, except for buttons
+ * already in that section, which go to the donations inbox. Nothing is ever a
+ * dead link, and nothing links to itself.
  */
 interface Props {
   label?: string;
   variant?: "primary" | "on-dark" | "ghost-dark" | "secondary";
+  /**
+   * Set on buttons that sit inside the giving section itself. Without a donation
+   * platform those cannot link to that section — they would point at the block
+   * the reader is already looking at.
+   */
+  inGivingSection?: boolean;
   class?: string;
 }
-const { label = "Donate", variant = "primary", class: className = "" } = Astro.props;
+const {
+  label = "Donate",
+  variant = "primary",
+  inGivingSection = false,
+  class: className = "",
+} = Astro.props;
 
 const external = DONATE.url !== "";
-const href = external ? DONATE.url : "/get-involved#give";
+/*
+  Where a "give" button goes.
+
+  With a platform connected, straight to it. Without one, buttons elsewhere on
+  the site route to the giving section on Get Involved — but a button *on* that
+  page would then link to the section it already sits in, which is a dead end.
+  Those route to the donations inbox instead, so every give button does
+  something until the platform is live.
+*/
+const href = external
+  ? DONATE.url
+  : inGivingSection
+    ? `mailto:${SITE.email.donate}?subject=${encodeURIComponent("Giving to The AVID Foundation")}`
+    : "/get-involved#give";
 const variantClass = {
   primary: "btn-primary",
   "on-dark": "btn-on-dark",

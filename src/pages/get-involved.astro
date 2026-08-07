@@ -98,23 +98,6 @@ const VOLUNTEER_SKILLS = [
       </div>
 
       {
-        !DONATE.url && (
-          /* No platform wired up yet. Rather than a button that goes nowhere,
-             give a willing donor a route that actually works today. */
-          <div class="card mt-8 p-6">
-            <h3 class="text-h4 font-display">Giving online, right now</h3>
-            <p class="muted mt-3 max-w-2xl text-small">
-              Card and bank giving is being set up. In the meantime email{" "}
-              <a class="link" href={`mailto:${SITE.email.donate}`}>
-                {SITE.email.donate}
-              </a>{" "}
-              and we will send transfer details and name the school your gift goes to.
-            </p>
-          </div>
-        )
-      }
-
-      {
         DONATE.url && (
           <p class="muted mt-8 text-small">
             Card and bank giving is handled by{" "}
@@ -175,12 +158,12 @@ const VOLUNTEER_SKILLS = [
       <div class="md:col-span-5">
         <p class="eyebrow"><span>In-kind and pro bono</span></p>
         <h2 id="volunteer-heading" class="text-h2 mt-5 font-display">
-          Not everything we need is money.
+          We also need expertise.
         </h2>
         <p class="muted mt-5">
           A small organisation moves faster with the right professional in the
-          room. If you have expertise in any of these and a few hours to give,
-          we would like to hear from you.
+          room. If you have a few hours and skill in any of these, we would like
+          to hear from you.
         </p>
         <p class="mt-6">
           <a class="btn btn-primary" href={`mailto:${SITE.email.general}?subject=Offering%20pro%20bono%20help`}>
