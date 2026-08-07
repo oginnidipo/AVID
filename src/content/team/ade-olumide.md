@@ -2,6 +2,7 @@
 name: Ade Olumide
 role: Founder
 order: 1
+photo: ../../assets/uploads/ade-olumide.jpg
 highlight: The Library Prefect who now builds libraries.
 ---
 

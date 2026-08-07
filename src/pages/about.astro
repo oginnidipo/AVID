@@ -160,12 +160,17 @@ const GOVERNANCE = [
             <article class="grid gap-x-12 gap-y-6 md:grid-cols-12">
               <div class="md:col-span-4">
                 {member.data.photo ? (
+                  /* Cropped to 4:5 rather than left at the source ratio: a
+                     full-length 2:3 frame runs far taller than the biography
+                     beside it, leaving a column of empty space. Centre crop —
+                     tried biasing upward and it took too much of the shelf
+                     above and cut the figure awkwardly below. */
                   <Image
                     src={member.data.photo}
                     alt={`${member.data.name}, ${member.data.role} of The AVID Foundation`}
-                    widths={[320, 560]}
+                    widths={[320, 560, 900]}
                     sizes="(min-width: 768px) 30vw, 92vw"
-                    class="w-full rounded-sm border border-teal/15 object-cover"
+                    class="aspect-[4/5] w-full rounded-sm border border-teal/15 object-cover"
                   />
                 ) : (
                   /* No photograph supplied yet. Rather than a grey silhouette,
