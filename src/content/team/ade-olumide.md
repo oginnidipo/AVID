@@ -2,7 +2,9 @@
 name: Ade Olumide
 role: Founder
 order: 1
+photo: ../../assets/uploads/IMG_0987.jpeg
 highlight: The Library Prefect who now builds libraries.
+linkedin: ''
 ---
 
 Ade Olumide is a Nigerian-Canadian who grew up in Nigeria and settled in Canada
