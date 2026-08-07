@@ -30,7 +30,7 @@ const VOLUNTEER_SKILLS = [
        The brief is explicit that the site must not imply tax receipts before
        registration is granted, and that a donor should know exactly what they
        receive now versus later. This band says it plainly and up front, rather
-       than in small print after the card details. -->
+       than in small print at the point of payment. -->
   <section class="border-b border-teal/12 bg-cream" aria-labelledby="receipt-heading">
     <div class="shell py-10">
       <div class="checkout-card p-6 pl-12 md:p-8 md:pl-16">
@@ -100,10 +100,9 @@ const VOLUNTEER_SKILLS = [
       {
         DONATE.url && (
           <p class="muted mt-8 text-small">
-            Card and bank giving is handled by{" "}
-            <strong>{DONATE.platformName || "our donation platform"}</strong>, which
-            accepts {DONATE.currencies.join(", ")}. AVID never sees or stores your
-            card details.
+            Giving is handled by{" "}
+            <strong>{DONATE.platformName || "our donation provider"}</strong>. AVID
+            never sees or stores your payment details.
           </p>
         )
       }

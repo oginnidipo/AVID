@@ -96,25 +96,13 @@ export const SITE: SiteConfig = {
    * site tells people to write to these; one that bounces is worse than no
    * address at all, because the sender believes they have made contact.
    *
-   * RIGHT NOW: only `applications@` exists (Dynadot free tier — one mailbox),
-   * so everything points there. It is a real inbox, so nothing is lost.
-   *
-   * TO RESTORE THE PROPER ADDRESSES — about five minutes, free:
-   * in Dynadot, open Email → Email Forwarding and forward
-   *     info@ → applications@
-   *     partners@ → applications@
-   *     donate@ → applications@
-   * (Forwarding allows 10 addresses at no cost and needs Dynadot's own
-   * nameservers, which is where DNS already lives.) Then put the real
-   * addresses back below. Upgrading to Dynadot Pro Email instead gives each
-   * one its own mailbox that can also *send*, which is worth having before
-   * approaching funders.
+   * All four are live mailboxes on Dynadot Pro Email, verified as accepting.
    */
   email: {
-    general: "applications@theavidfoundation.org",
+    general: "info@theavidfoundation.org",
     applications: "applications@theavidfoundation.org",
-    partnerships: "applications@theavidfoundation.org",
-    donate: "applications@theavidfoundation.org",
+    partnerships: "partners@theavidfoundation.org",
+    donate: "donate@theavidfoundation.org",
   },
 
   /** TODO(AVID): supply a phone number, or leave empty to hide it everywhere. */
@@ -149,19 +137,29 @@ interface DonateConfig {
 
 export const DONATE: DonateConfig = {
   /**
-   * TODO(AVID): paste the donation page URL from your chosen platform.
-   * Likely CanadaHelps once registered; Zeffy or Stripe in the interim.
-   * While this is empty, donate buttons route to an internal page that
-   * explains how to give by direct arrangement — so nothing is ever broken.
+   * TODO(AVID): the giving route, once it exists.
+   *
+   * An Interac account is being set up. Until the client is ready to announce
+   * it, leave this empty: the site then says nothing at all about how to give,
+   * and the give buttons open the donations inbox so no one is stranded.
+   *
+   * ⚠ Before setting this, read the copy it switches on — Get Involved and the
+   * privacy policy both gain a line about a donation provider handling payment.
+   * That wording is deliberately method-neutral, but an Interac transfer goes
+   * to AVID's own bank rather than through a provider, so those two sentences
+   * will need a pass rather than just a URL.
    */
   url: "",
 
-  /** Shown to donors so they know where their card details are going. */
+  /** Shown to donors so they know where their payment details are going. */
   platformName: "",
 
   taxReceiptsAvailable: false,
 
-  /** Currencies the chosen platform accepts. Shown on Get Involved. */
+  /**
+   * Currencies accepted. Only shown once `url` is set; revise it then — an
+   * Interac transfer is Canadian dollars only.
+   */
   currencies: ["CAD", "USD", "GBP", "NGN"],
 };
 
