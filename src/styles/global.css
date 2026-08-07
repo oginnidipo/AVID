@@ -216,6 +216,11 @@
   }
 
   body {
+    /* Long unbreakable strings — email addresses especially — otherwise push
+       the page sideways at whatever width they happen to land near the edge.
+       `break-word` only breaks when there is no other option, so ordinary prose
+       is untouched. */
+    overflow-wrap: break-word;
     background-color: var(--color-paper);
     color: var(--color-ink);
     font-family: var(--font-sans);

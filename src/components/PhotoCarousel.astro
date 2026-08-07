@@ -49,19 +49,22 @@ const { photos, label, perView = 2, class: className = "" } = Astro.props;
    several carousels on a page. */
 const id = `carousel-${Math.random().toString(36).slice(2, 9)}`;
 
-/* Slide width per breakpoint. Slides are always wider than the container on
-   small screens, so the next photo peeks in and the strip reads as scrollable
-   without needing an affordance drawn on top of it. */
-const widths = {
-  1: "basis-[86%] sm:basis-[70%] lg:basis-full",
-  2: "basis-[86%] sm:basis-[62%] lg:basis-[calc(50%-0.625rem)]",
-  3: "basis-[86%] sm:basis-[52%] lg:basis-[calc(33.333%-0.834rem)]",
-}[perView];
+/*
+  Slide width.
 
+  Deliberately NOT a percentage flex-basis. The track is a flex container inside
+  a horizontally scrolling parent, so its own width is content-derived — a
+  percentage basis resolves against a width that depends on the items it is
+  sizing, and browsers settle that circularity inconsistently. The result was
+  four slides rendering at 527, 511, 402 and 371px on the same row.
+
+  The widths are computed in CSS instead, from the page shell's real inner
+  width, so every slide is identical by construction. See the style block.
+*/
 const sizes = {
-  1: "(min-width: 1024px) 1200px, 86vw",
-  2: "(min-width: 1024px) 600px, (min-width: 640px) 62vw, 86vw",
-  3: "(min-width: 1024px) 400px, (min-width: 640px) 52vw, 86vw",
+  1: "(min-width: 1024px) 1200px, 84vw",
+  2: "(min-width: 1024px) 600px, (min-width: 640px) 58vw, 84vw",
+  3: "(min-width: 1024px) 400px, (min-width: 640px) 48vw, 84vw",
 }[perView];
 ---
 
@@ -69,6 +72,7 @@ const sizes = {
   photos.length > 0 && (
     <section
       class={`carousel ${className}`}
+      style={`--per-view:${perView}`}
       data-carousel
       aria-roledescription="carousel"
       aria-label={label}
@@ -137,7 +141,7 @@ const sizes = {
         <ul class="carousel-track">
           {photos.map((photo, i) => (
             <li
-              class={`carousel-slide ${widths}`}
+              class="carousel-slide"
               data-carousel-slide
               role="group"
               aria-roledescription="slide"
@@ -199,10 +203,33 @@ const sizes = {
      strip itself still bleeds to the viewport edge. */
   .carousel {
     --carousel-gutter: var(--spacing-gutter);
+    --carousel-gap: 1.25rem;
+    /* One slide, plus a sliver of the next so the strip reads as scrollable. */
+    --slide-w: 84vw;
   }
   @media (min-width: 78rem) {
     .carousel {
       --carousel-gutter: max(var(--spacing-gutter), calc((100vw - 78rem) / 2 + var(--spacing-gutter)));
+    }
+  }
+
+  @media (min-width: 40rem) {
+    .carousel {
+      --slide-w: 58vw;
+    }
+  }
+  @media (min-width: 64rem) {
+    /*
+      Exactly `--per-view` slides inside the shell's content box, gaps included.
+      `.shell` is max-width 78rem with a gutter each side, so its inner width is
+      min(78rem, 100vw) minus two gutters — the same number the headline above
+      the strip is measured against, which is why the slides line up with it.
+    */
+    .carousel {
+      --shell-inner: calc(min(78rem, 100vw) - 2 * var(--spacing-gutter));
+      --slide-w: calc(
+        (var(--shell-inner) - (var(--per-view) - 1) * var(--carousel-gap)) / var(--per-view)
+      );
     }
   }
 
@@ -244,7 +271,7 @@ const sizes = {
 
   .carousel-track {
     display: flex;
-    gap: 1.25rem;
+    gap: var(--carousel-gap);
     padding-inline-start: var(--carousel-gutter);
     /* Trailing space so the final photo can still snap to the left edge rather
        than being pinned against the end of the scroll range. */
@@ -252,7 +279,8 @@ const sizes = {
   }
 
   .carousel-slide {
-    flex: 0 0 auto;
+    flex: 0 0 var(--slide-w);
+    width: var(--slide-w);
     scroll-snap-align: start;
   }
 
