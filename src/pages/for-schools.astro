@@ -10,6 +10,48 @@ import { galleryFor } from "../lib/gallery";
    the carousel renders nothing at all rather than an empty frame. */
 const photos = await galleryFor("for-schools");
 
+/**
+ * Questions head teachers actually ask, answered on the page.
+ *
+ * This single list feeds both the visible FAQ and the FAQPage structured data.
+ * They must match: Google's policy is that FAQ markup describes content visible
+ * on the page, and an earlier version had the markup without the content.
+ */
+const FAQS = [
+  {
+    q: "Which schools can apply?",
+    a: "Under-resourced public (government), low-fee private and community schools in Lagos State. Schools elsewhere in Nigeria are still welcome to apply — it tells us where to go next.",
+  },
+  {
+    q: "Does it cost the school anything?",
+    a: "No. AVID funds the room repairs, the furniture, the books, the cataloguing systems and the staff training. There is no fee, no contribution and no matched funding.",
+  },
+  {
+    q: "What if we have no library room at all?",
+    a: "You can still apply. We plan for schools that have no dedicated space, and finding the room is part of the work we do with you.",
+  },
+  {
+    q: "What do we have to provide?",
+    a: "Two things: a member of staff who will take responsibility for the library, whom we train, and timetabled reading periods so the room is used rather than admired.",
+  },
+  {
+    q: "How long does the application take?",
+    a: "About ten minutes. Fifteen questions, five of them optional. You do not need to prepare anything in advance.",
+  },
+  {
+    q: "How long until we hear back?",
+    a: "We aim to reply within three weeks. We answer every school that applies, including the ones we cannot take on, and where we can we say why.",
+  },
+  {
+    q: "Do we need to send photographs?",
+    a: "They are optional but they genuinely strengthen an application, because we can see what we would be working with. Email them separately after you send the form.",
+  },
+  {
+    q: "Who chooses the books?",
+    a: "You do, with us. Selections are made with your teachers, weighted towards Nigerian and African authors alongside international titles, including work in Yoruba, Igbo and Hausa.",
+  },
+];
+
 const PROCESS = [
   {
     title: "You apply",
@@ -31,37 +73,16 @@ const PROCESS = [
 ---
 
 <Base
-  title="For Schools"
-  description="Under-resourced public, low-fee private and community schools in Lagos can apply for a complete library refurbishment: the space, the furniture, the collection, the systems and staff training."
+  title="Apply for a Free School Library"
+  description="Lagos schools can apply for a complete library refurbishment at no cost: the room, furniture, books, cataloguing and staff training. Ten minutes to apply."
   extraJsonLd={{
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: [
-      {
-        "@type": "Question",
-        name: "Which schools can apply for an AVID library?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "Under-resourced public, low-fee private and community schools in Lagos State. You do not need an existing library room to apply.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "Does it cost the school anything?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "No. AVID funds the refurbishment, the furniture, the books, the cataloguing systems and the staff training. We ask the school to commit a member of staff and timetabled reading periods.",
-        },
-      },
-      {
-        "@type": "Question",
-        name: "How long does an application take to complete?",
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: "About ten minutes. Photographs of the current space are optional but strengthen an application, and can be emailed separately.",
-        },
-      },
-    ],
+    mainEntity: FAQS.map((f) => ({
+      "@type": "Question",
+      name: f.q,
+      acceptedAnswer: { "@type": "Answer", text: f.a },
+    })),
   }}
 >
   <!-- ══ HEADER ════════════════════════════════════════════════════════
@@ -310,6 +331,38 @@ const PROCESS = [
           ))
         }
       </ol>
+    </div>
+  </section>
+
+  <!-- ══ QUESTIONS ═════════════════════════════════════════════════════
+       Generated from the same FAQS list as the structured data above, so the
+       two cannot drift apart. Answers the things a head teacher would otherwise
+       have to email and wait for. -->
+  <section class="section" aria-labelledby="faq-heading">
+    <div class="shell">
+      <div class="max-w-3xl">
+        <p class="eyebrow"><span>Questions</span></p>
+        <h2 id="faq-heading" class="text-h2 mt-5 font-display">
+          What head teachers usually ask.
+        </h2>
+      </div>
+
+      <dl class="mt-12 grid gap-x-12 gap-y-8 md:grid-cols-2">
+        {
+          FAQS.map((f, i) => (
+            <div class="reveal" data-reveal-delay={i * 40}>
+              <dt class="flex gap-3">
+                <span
+                  class="mt-1.5 block h-4 w-1 flex-none rounded-sm bg-ochre-500"
+                  aria-hidden="true"
+                />
+                <span class="text-h4 font-display">{f.q}</span>
+              </dt>
+              <dd class="muted mt-2 pl-4 text-small leading-relaxed">{f.a}</dd>
+            </div>
+          ))
+        }
+      </dl>
     </div>
   </section>
 

@@ -9,7 +9,33 @@ export default defineConfig({
   trailingSlash: "ignore",
   integrations: [
     sitemap({
-      filter: (page) => !page.includes("/thank-you"),
+      /* /admin is the content editor and /thank-you is a form destination.
+         Neither belongs in search results; robots.txt blocks them too. */
+      filter: (page) => !page.includes("/thank-you") && !page.includes("/admin"),
+
+      /* Weight the pages a school or a funder actually needs above the legal
+         boilerplate. Priority is a hint rather than an instruction, but it
+         costs nothing to be accurate about which pages matter. */
+      serialize(item) {
+        const path = new URL(item.url).pathname;
+        if (path === "/") {
+          item.priority = 1.0;
+          item.changefreq = "weekly";
+        } else if (["/for-schools/", "/get-involved/", "/our-work/"].includes(path)) {
+          item.priority = 0.9;
+          item.changefreq = "monthly";
+        } else if (path.startsWith("/our-work/") || path.startsWith("/news/")) {
+          item.priority = 0.8;
+          item.changefreq = "monthly";
+        } else if (["/privacy/", "/terms/"].includes(path)) {
+          item.priority = 0.2;
+          item.changefreq = "yearly";
+        } else {
+          item.priority = 0.7;
+          item.changefreq = "monthly";
+        }
+        return item;
+      },
     }),
   ],
   vite: {

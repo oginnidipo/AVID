@@ -256,6 +256,31 @@ export const IMPACT: ImpactConfig = {
 };
 
 /** Analytics. Privacy-friendly and cookieless by default — see docs/HANDOVER.md. */
+/**
+ * ─────────────────────────────────────────────────────────────────────────────
+ *  SEARCH ENGINES
+ * ─────────────────────────────────────────────────────────────────────────────
+ *  Verification tokens prove to Google and Bing that you own the domain, which
+ *  is what unlocks Search Console — where you see the queries people used to
+ *  find you, and can ask for pages to be re-crawled.
+ *
+ *  Get the Google one at search.google.com/search-console → add
+ *  theavidfoundation.org → choose "HTML tag" → copy the `content` value only
+ *  (not the whole tag). Bing: bing.com/webmasters.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+interface SearchConfig {
+  googleSiteVerification: string;
+  bingSiteVerification: string;
+}
+
+export const SEARCH: SearchConfig = {
+  /** TODO(AVID): paste the content value from Search Console's HTML tag. */
+  googleSiteVerification: "",
+  /** TODO(AVID): optional — Bing Webmaster Tools. */
+  bingSiteVerification: "",
+};
+
 interface AnalyticsConfig {
   plausibleDomain: string;
   googleAnalyticsId: string;

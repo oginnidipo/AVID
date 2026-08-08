@@ -19,6 +19,7 @@ Where a step genuinely needs technical help, it says so.
 8. [Analytics](#8-analytics)
 9. [Reading form submissions](#9-reading-form-submissions)
 9b. [The logo and brand assets](#9b-the-logo-and-brand-assets)
+10b. [Being found in search](#10b-being-found-in-search)
 10. [Adding photographs](#10-adding-photographs)
 11. [When registration is granted](#11-when-charitable-registration-is-granted)
 12. [Ownership and accounts](#12-ownership-and-accounts)
@@ -66,6 +67,7 @@ Work through this in order. Nothing here needs a developer except where noted.
 | 9 | Add photographs to the galleries | `/admin` → Photos | No |
 | 10 | Add board members as appointed | `/admin` → Board & Team | No |
 | 11 | Decide on analytics | `src/data/site.ts` → `ANALYTICS` | No |
+| 11c | Verify in Google Search Console, submit the sitemap | See §10b | No |
 | 11b | Supply the original logo vector, if you have one | `public/logo-*.svg` | Yes — 10 minutes |
 | 12 | Have a lawyer review Privacy and Terms | `src/pages/privacy.astro`, `terms.astro` | No |
 | 13 | ~~Point the domain at GitHub Pages~~ | Done — HTTPS enforced | ✅ |
@@ -485,6 +487,74 @@ and a consent form you can adapt — **set this up before the first visit**, not
 after, because retrospective consent is very hard to obtain.
 
 ---
+
+## 10b. Being found in search
+
+The site is built for it: every page has a descriptive title and description,
+structured data describing AVID as an organisation, breadcrumbs, a weighted
+sitemap, clean URLs, and pages that load in a quarter of a second — which is
+itself a ranking factor and the one most sites fail.
+
+**But the technical part is the smaller half.** A brand-new domain has no
+history and nobody linking to it. Google has nothing to go on beyond the pages
+themselves. The three things below matter more than anything further we could do
+in the code, and they are all yours rather than a developer's.
+
+### 1. Verify the site in Google Search Console — do this first
+
+Go to [search.google.com/search-console](https://search.google.com/search-console),
+add `theavidfoundation.org`, choose the **HTML tag** method, and copy the long
+`content` value from the tag it shows you. Paste that into `SEARCH.googleSiteVerification`
+in [`src/data/site.ts`](../src/data/site.ts) and save. Once verified:
+
+- **Submit the sitemap**: `https://theavidfoundation.org/sitemap-index.xml`
+- Use **URL Inspection → Request indexing** on the home page and For Schools, so
+  you are not waiting on Google to find you
+- Come back monthly. It shows the actual queries people used, which tells you
+  what to write next far better than guesswork
+
+[Bing Webmaster Tools](https://www.bing.com/webmasters) is the same job in five
+minutes and feeds ChatGPT and Copilot search as well.
+
+### 2. Get listed and linked
+
+Links from established sites are still the strongest signal there is, and a
+charity has legitimate places to get them:
+
+- **CanadaHelps and Charity Village** once registration is granted
+- **Nigerian and diaspora education directories**
+- **Partner schools and delivery partners** — ask them to link to you
+- **LinkedIn, Instagram** — create the profiles, put the URL in the bio, then
+  add those URLs to `SITE.social` so the structured data can connect them to the
+  organisation. Search engines use that to confirm you are who you say you are
+- **Local press** in Lagos and in the Canadian Nigerian community when the first
+  library opens
+
+One genuine mention in a news article is worth more than any amount of further
+technical tuning.
+
+### 3. Publish the work
+
+The single biggest thing you can do is **write up each library on the
+transparency wall, and post to News when something happens**. Every entry is a
+new page, on a specific school, with specific details — exactly the kind of page
+that gets found by long-tail searches, and the kind nobody else can write.
+
+Search engines reward sites that keep changing. A site that has not been touched
+in a year slides.
+
+### What not to do
+
+Do not buy links, do not pay an agency promising rankings, and do not stuff
+keywords into the copy. Google penalises all three, and recovery is slow. The
+honest version works better and is what the site is already set up for.
+
+### Timeline, honestly
+
+Expect a few weeks before pages are indexed at all, and several months before
+you rank for anything competitive. Searches for "The AVID Foundation" should
+work within weeks. Searches like "school library charity Nigeria" depend on
+links and content, so they follow the work rather than lead it.
 
 ## 11. When charitable registration is granted
 

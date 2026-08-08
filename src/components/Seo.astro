@@ -1,5 +1,5 @@
 ---
-import { SITE, ANALYTICS } from "../data/site";
+import { SITE, ANALYTICS, SEARCH } from "../data/site";
 import { IS_PRODUCTION } from "../lib/env";
 
 interface Props {
@@ -27,10 +27,15 @@ const {
 const canonical = new URL(Astro.url.pathname.replace(/\/$/, "") || "/", SITE.url);
 const ogImage = new URL(image, SITE.url);
 
-/* Every page carries the same title suffix except the home page, which leads
-   with the organisation name so the tab reads sensibly when pinned. */
+/* Every page carries the same brand suffix except the home page.
+   The home title pairs the name with what AVID does rather than the tagline:
+   the tagline is 46 characters and pushed the title to 68, well past the ~60
+   Google shows, so the distinctive half was the half being cut. It still leads
+   the page as the h1, where it has room. */
 const fullTitle =
-  Astro.url.pathname === "/" ? `${SITE.name} — ${SITE.tagline}` : `${title} · ${SITE.name}`;
+  Astro.url.pathname === "/"
+    ? `${SITE.name} — School Libraries in Nigeria`
+    : `${title} · ${SITE.name}`;
 
 /* Structured data. Declaring the organisation on every page lets Google
    associate the pages, the logo and the registration details with one entity —
@@ -57,7 +62,48 @@ const orgJsonLd: Record<string, unknown> = {
     { "@type": "Country", name: "Nigeria" },
     { "@type": "AdministrativeArea", name: "Lagos State" },
   ],
-  knowsAbout: ["School libraries", "Childhood literacy", "Education in Nigeria"],
+  knowsAbout: [
+    "School libraries",
+    "Childhood literacy",
+    "Library refurbishment",
+    "Education in Nigeria",
+    "Education in Lagos",
+    "Nigerian and African children's literature",
+  ],
+  foundingLocation: {
+    "@type": "Place",
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: SITE.location.city,
+      addressRegion: SITE.location.region,
+      addressCountry: "CA",
+    },
+  },
+  /* Separate contact points, so a search engine can surface the right one and
+     a school is not routed to the partnerships inbox. */
+  contactPoint: [
+    {
+      "@type": "ContactPoint",
+      contactType: "general enquiries",
+      email: SITE.email.general,
+      areaServed: ["CA", "NG"],
+      availableLanguage: ["English"],
+    },
+    {
+      "@type": "ContactPoint",
+      contactType: "school applications",
+      email: SITE.email.applications,
+      areaServed: "NG",
+      availableLanguage: ["English"],
+    },
+    {
+      "@type": "ContactPoint",
+      contactType: "partnerships and grants",
+      email: SITE.email.partnerships,
+      areaServed: ["CA", "NG"],
+      availableLanguage: ["English"],
+    },
+  ],
   ...(SITE.charitableRegistrationNumber
     ? {
         identifier: {
@@ -72,7 +118,44 @@ const orgJsonLd: Record<string, unknown> = {
     : {}),
 };
 
-const jsonLdBlocks = [orgJsonLd, ...(extraJsonLd ? [extraJsonLd] : [])];
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: SITE.name,
+  url: SITE.url,
+  inLanguage: "en-CA",
+  publisher: { "@type": "NGO", name: SITE.name, url: SITE.url },
+};
+
+/* Breadcrumbs, derived from the URL. Google shows these in place of the raw
+   path in a result, which reads far better than a bare URL. */
+const segments = Astro.url.pathname.split("/").filter(Boolean);
+const breadcrumbJsonLd =
+  segments.length > 0
+    ? {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Home", item: SITE.url },
+          ...segments.map((seg, i) => ({
+            "@type": "ListItem",
+            position: i + 2,
+            name:
+              i === segments.length - 1
+                ? title
+                : seg.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
+            item: `${SITE.url}/${segments.slice(0, i + 1).join("/")}`,
+          })),
+        ],
+      }
+    : null;
+
+const jsonLdBlocks = [
+  orgJsonLd,
+  websiteJsonLd,
+  ...(breadcrumbJsonLd && !noindex ? [breadcrumbJsonLd] : []),
+  ...(extraJsonLd ? [extraJsonLd] : []),
+];
 ---
 
 <meta charset="utf-8" />
@@ -104,6 +187,13 @@ const jsonLdBlocks = [orgJsonLd, ...(extraJsonLd ? [extraJsonLd] : [])];
 <meta name="twitter:title" content={fullTitle} />
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={ogImage.href} />
+
+{SEARCH.googleSiteVerification && (
+  <meta name="google-site-verification" content={SEARCH.googleSiteVerification} />
+)}
+{SEARCH.bingSiteVerification && (
+  <meta name="msvalidate.01" content={SEARCH.bingSiteVerification} />
+)}
 
 <meta name="theme-color" content="#133B42" />
 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
