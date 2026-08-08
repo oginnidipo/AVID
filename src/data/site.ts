@@ -275,8 +275,11 @@ interface SearchConfig {
 }
 
 export const SEARCH: SearchConfig = {
-  /** TODO(AVID): paste the content value from Search Console's HTML tag. */
-  googleSiteVerification: "",
+  /**
+   * Google Search Console. This is a public token by design — it is served in a
+   * meta tag on every page, so it is not a secret and belongs in the repository.
+   */
+  googleSiteVerification: "tDzNGTTInbEyLg_ix_f0mmlRjbPK920iERemS0UKFwo",
   /** TODO(AVID): optional — Bing Webmaster Tools. */
   bingSiteVerification: "",
 };
