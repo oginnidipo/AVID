@@ -24,7 +24,14 @@ const {
   extraJsonLd,
 } = Astro.props;
 
-const canonical = new URL(Astro.url.pathname.replace(/\/$/, "") || "/", SITE.url);
+/* The canonical must be the URL the server actually serves, trailing slash and
+   all. GitHub Pages serves each page from a directory index and 301-redirects
+   the slashless form, so declaring the slashless URL here pointed every page's
+   canonical at a redirect: Google read the sitemap, fetched the page, followed
+   the canonical it declared, hit the 301, and filed all nine interior pages
+   under "Page with redirect" rather than indexing them. */
+const path = Astro.url.pathname;
+const canonical = new URL(path.endsWith("/") ? path : `${path}/`, SITE.url);
 const ogImage = new URL(image, SITE.url);
 
 /* Every page carries the same brand suffix except the home page.
@@ -136,7 +143,7 @@ const breadcrumbJsonLd =
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Home", item: SITE.url },
+          { "@type": "ListItem", position: 1, name: "Home", item: `${SITE.url}/` },
           ...segments.map((seg, i) => ({
             "@type": "ListItem",
             position: i + 2,
@@ -144,7 +151,8 @@ const breadcrumbJsonLd =
               i === segments.length - 1
                 ? title
                 : seg.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
-            item: `${SITE.url}/${segments.slice(0, i + 1).join("/")}`,
+            /* Trailing slash for the same reason as the canonical above. */
+            item: `${SITE.url}/${segments.slice(0, i + 1).join("/")}/`,
           })),
         ],
       }
