@@ -347,25 +347,37 @@
       <div class="part-head"><span class="part-n">Part 00</span><h2>Three things to do first</h2></div>
       <p>Handover is not complete until these are done.</p>
 
-      <h3>1. Look after your access key, and know when it expires</h3>
+      <h3>1. Look after your access key</h3>
       <p>
         You already have what you need to sign in: your developer has issued you
         an <strong>access token</strong>, a long string of characters that lets
         you edit the site. Part 2 explains how to use it.
       </p>
-      <p>Three things to do with it now.</p>
       <p>
-        <strong>Put it in a password manager today.</strong> That token is the
+        <strong>It does not expire.</strong> You will never be locked out one
+        morning without warning, and there is no renewal date to diarise. That
+        cuts both ways: it stays valid until somebody deliberately replaces it,
+        so how you keep it matters more, not less.
+      </p>
+      <p>It is scoped to this website alone, and there are three rules.</p>
+      <p>
+        <strong>Keep it in a password manager.</strong> That token is the
         equivalent of a password for the live website. If it is currently sitting
         in a WhatsApp thread or an email, move it somewhere safe and delete it
         from there. Anyone who has it can change the site.
       </p>
       <p>
-        <strong>Find out its expiry date and put it in the calendar.</strong>
-        Access tokens usually expire, often after a year. When it does, you will
-        simply be refused at sign-in with no warning beforehand. Ask your
-        developer for the exact date, diarise it a fortnight early, and ask for a
-        fresh token before it lapses rather than after.
+        <strong>Never forward it.</strong> Not to a volunteer, not to a designer,
+        not to another director. Anyone else who needs to edit should be given
+        their own, which costs your developer a minute and keeps it clear who
+        changed what.
+      </p>
+      <p>
+        <strong>Say so straight away if it gets out.</strong> A message forwarded
+        by mistake, a lost phone, a shared laptop. Tell your developer and ask
+        for a replacement: the old one stops working, the new one arrives, and
+        nothing you have published is affected. There is no embarrassment in it,
+        and it is far cheaper than the alternative.
       </p>
       <p>
         <strong>Know what it does not give you.</strong> The token lets you edit
@@ -377,8 +389,9 @@
       <p class="note">
         When AVID is ready, the tidier arrangement is your own free github.com
         account added as a collaborator, registered to an AVID address, with
-        two-factor authentication switched on. That gives you a proper trail and
-        access that does not expire. Worth doing when more than one person is
+        two-factor authentication switched on. That gives you a record in your
+        own name, and lets access be granted and withdrawn person by person
+        rather than by passing one key around. Worth doing when more than one person is
         editing, and worth doing for a second director regardless, so the
         foundation is never one person away from losing control of its own site.
       </p>
@@ -463,8 +476,9 @@
       </p>
       <p>
         Do this once now, while nothing is urgent, so you know it works and you
-        are not learning it the first time you need it. If it is refused, the
-        likely reason is that the token has expired.
+        are not learning it the first time you need it. If it is refused, paste
+        the token again straight from your password manager: a dropped character
+        is much the most common cause.
       </p>
       <p>You will then see four sections.</p>
       <div class="table-wrap">
@@ -775,9 +789,9 @@
           <thead><tr><th>When</th><th>What</th></tr></thead>
           <tbody>
             <tr><td><strong>Now</strong></td><td>Confirm Dynadot auto-renew, and the card on file</td></tr>
-            <tr><td><strong>Now</strong></td><td>Access token stored in the password manager, expiry date diarised</td></tr>
+            <tr><td><strong>Now</strong></td><td>Access token in the password manager, deleted from chat and email</td></tr>
             <tr><td><strong>Now</strong></td><td>Second director has Dynadot access, and access to the site</td></tr>
-            <tr><td><strong>Two weeks before the token expires</strong></td><td>Ask your developer for a fresh one</td></tr>
+            <tr><td><strong>Same day, if it ever gets out</strong></td><td>Ask your developer to replace the token</td></tr>
             <tr><td><strong>Yearly, before renewal</strong></td><td>Check the Dynadot payment went through</td></tr>
             <tr><td><strong>Monthly, weekly in a campaign</strong></td><td>Glance at Formspree usage</td></tr>
             <tr><td><strong>Yearly</strong></td><td>Review the privacy policy and terms with a lawyer</td></tr>
@@ -848,9 +862,11 @@
       <div class="fault">
         <h3>I cannot sign in to /admin</h3>
         <p>
-          Almost always the access token has expired. Ask your developer for a
-          fresh one. Nothing is lost and the site is unaffected: an expired token
-          stops you editing, it does not touch anything already published.
+          The token does not expire, so the usual cause is a copy-paste that
+          dropped a character. Paste it again straight from your password
+          manager. If it still refuses, it has probably been replaced, so ask
+          your developer. Nothing is lost either way: a token that will not sign
+          in stops you editing, it does not touch anything already published.
         </p>
       </div>
       <div class="fault">
@@ -926,7 +942,7 @@
       <h2>The short version</h2>
       <p>If you remember five things:</p>
       <ol>
-        <li><strong>Store your access token safely, and diarise the day it expires.</strong> Sign in once this week so you know it works.</li>
+        <li><strong>Keep your access token in a password manager, and never forward it.</strong> It does not expire, so it is only ever as safe as you keep it. Sign in once this week so you know it works.</li>
         <li><strong>Keep the domain paid.</strong> It is the only unrecoverable failure.</li>
         <li><strong>Add every library to the Libraries section.</strong> The impact numbers count themselves from it.</li>
         <li><strong>Never publish a photograph of a child without written consent.</strong> The site will stop you, and it is right to.</li>

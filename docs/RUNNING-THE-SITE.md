@@ -36,23 +36,33 @@ Read Part 1 now. Come back to the rest when you need it.
 
 Handover is not complete until these are done.
 
-### 1. Look after your access key, and know when it expires
+### 1. Look after your access key
 
 You already have what you need to sign in: your developer has issued you an
 **access token**, a long string of characters that lets you edit the site. Part 2
 explains how to use it.
 
-Three things to do with it now.
+**It does not expire.** You will never be locked out one morning without warning,
+and there is no renewal date to diarise. That cuts both ways: it stays valid
+until somebody deliberately replaces it, so how you keep it matters more, not
+less.
 
-**Put it in a password manager today.** That token is the equivalent of a
-password for the live website. If it is currently sitting in a WhatsApp thread or
-an email, move it somewhere safe and delete it from there. Anyone who has it can
-change the site.
+It is scoped to this website alone, and there are three rules.
 
-**Find out its expiry date and put it in the calendar.** Access tokens usually
-expire, often after a year. When it does, you will simply be refused at sign-in
-with no warning beforehand. Ask your developer for the exact date, diarise it a
-fortnight early, and ask for a fresh token before it lapses rather than after.
+**Keep it in a password manager.** That token is the equivalent of a password for
+the live website. If it is currently sitting in a WhatsApp thread or an email,
+move it somewhere safe and delete it from there. Anyone who has it can change the
+site.
+
+**Never forward it.** Not to a volunteer, not to a designer, not to another
+director. Anyone else who needs to edit should be given their own, which costs
+your developer a minute and keeps it clear who changed what.
+
+**Say so straight away if it gets out.** A message forwarded by mistake, a lost
+phone, a shared laptop. Tell your developer and ask for a replacement: the old
+one stops working, the new one arrives, and nothing you have published is
+affected. There is no embarrassment in it, and it is far cheaper than the
+alternative.
 
 **Know what it does not give you.** The token lets you edit content. It is not an
 account of your own, so every change you make is recorded under your developer's
@@ -61,8 +71,9 @@ do, but it means there is no record of who changed what.
 
 When AVID is ready, the tidier arrangement is your own free **github.com** account
 added as a collaborator, registered to an AVID address, with two-factor
-authentication switched on. That gives you a proper trail and access that does not
-expire. Worth doing when there is more than one person editing, and worth doing
+authentication switched on. That gives you a record in your own name, and lets
+access be granted and withdrawn person by person rather than by passing one key
+around. Worth doing when there is more than one person editing, and worth doing
 for a second director regardless, so the foundation is never one person away from
 losing control of its own site.
 
@@ -134,8 +145,9 @@ Go to **theavidfoundation.org/admin**. Choose the option to sign in with a
 **personal access token** and paste in the token your developer gave you.
 
 Do this once now, while nothing is urgent, so you know it works and you are not
-learning it the first time you need it. If it is refused, the likely reason is
-that the token has expired. See Part 0.
+learning it the first time you need it. If it is refused, paste the token again
+straight from your password manager: a dropped character is much the most common
+cause. See Part 0.
 
 You will then see four sections.
 
@@ -399,9 +411,9 @@ Six recurring items. Put them in a shared calendar rather than one person's head
 | When | What |
 |---|---|
 | **Now** | Confirm Dynadot auto-renew, and the card on file |
-| **Now** | Access token stored in the password manager, expiry date diarised |
+| **Now** | Access token in the password manager, deleted from chat and email |
 | **Now** | Second director has Dynadot access, and access to the site |
-| **Two weeks before the token expires** | Ask your developer for a fresh one |
+| **Same day, if it ever gets out** | Ask your developer to replace the token |
 | **Yearly, before the renewal date** | Check the Dynadot payment went through |
 | **Monthly, while quiet** | Glance at Formspree usage. Weekly during a campaign |
 | **Yearly** | Review the privacy policy and terms with a lawyer |
@@ -462,9 +474,11 @@ depend far more on the two things above than on anything technical.
 
 ### I cannot sign in to /admin
 
-Almost always the access token has expired. Ask your developer for a fresh one.
-Nothing is lost and the site is unaffected: an expired token stops you editing,
-it does not touch anything that is already published.
+The token does not expire, so the usual cause is a copy-paste that dropped a
+character. Paste it again straight from your password manager. If it still
+refuses, it has probably been replaced, so ask your developer. Nothing is lost
+either way: a token that will not sign in stops you editing, it does not touch
+anything that is already published.
 
 ### A change I published is not showing
 
@@ -534,8 +548,9 @@ as somebody remembers to keep it true.
 
 If you remember five things:
 
-1. **Store your access token safely, and diarise the day it expires.** Sign in
-   once this week so you know it works.
+1. **Keep your access token in a password manager, and never forward it.** It
+   does not expire, so it is only ever as safe as you keep it. Sign in once this
+   week so you know it works.
 2. **Keep the domain paid.** It is the only unrecoverable failure.
 3. **Add every library to the Libraries section.** The impact numbers count
    themselves from it.
