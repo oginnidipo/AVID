@@ -18,6 +18,72 @@
       without a redeploy. This is the only third-party script anywhere on the
       site, and it is on /admin, which is noindex and never seen by visitors.
     -->
+    <!--
+      Shown until the editor finishes loading, and left on screen if it never
+      does. The editor has failed to load before now (a bad media path in
+      config.yml), and on that day this page was simply blank, which tells the
+      person standing in front of it nothing at all. This gives them the guide.
+    -->
+    <style>
+      /* The moment the CMS mounts anything of its own, the fallback goes. */
+      body:has(> *:not(#avid-fallback):not(script):not(style)) #avid-fallback {
+        display: none;
+      }
+    </style>
+    <div id="avid-fallback" style="
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      max-width: 34rem; margin: 12vh auto; padding: 0 1.5rem;
+      color: #16272e; line-height: 1.6;">
+      <p style="font-size: 0.72rem; font-weight: 600; letter-spacing: 0.16em;
+                text-transform: uppercase; color: #7e4212; margin: 0 0 0.75rem;">
+        The AVID Foundation
+      </p>
+      <h1 style="font-family: Georgia, serif; font-weight: 600; font-size: 1.8rem;
+                 line-height: 1.15; color: #133b42; margin: 0 0 0.75rem;">
+        Loading the editor&#8230;
+      </h1>
+      <p style="margin: 0 0 1.5rem; color: #3d5259;">
+        If this message is still here after a few seconds, the editor has failed
+        to load. Nothing is broken and the website itself is unaffected.
+      </p>
+      <p style="margin: 0 0 1.5rem;">
+        <a href="/guide" style="color: #7e4212; font-weight: 600;">Open the guide to running the site</a>
+        &#8201;&#183;&#8201;
+        <a href="https://github.com/oginnidipo/AVID" style="color: #7e4212;">Edit content on GitHub instead</a>
+      </p>
+      <p style="margin: 0; font-size: 0.9rem; color: #3d5259;">
+        Editing on GitHub always works and needs no setup, so a failure here
+        never leaves you unable to update the site.
+      </p>
+    </div>
+
     <script src="https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js" type="module"></script>
+
+    <script>
+      /* Hide the fallback once the editor has put its own element on the page.
+         Hidden rather than removed: Sveltia animates with view transitions, and
+         removing a node mid-transition aborts it. Toggling one style property
+         on an element the CMS does not own cannot.
+
+         CSS :has() does this without any script at all; the timer is only for
+         browsers that lack it. Polling rather than a load event, because the
+         CMS mounts asynchronously well after its module resolves. */
+      (function () {
+        if (CSS.supports("selector(body:has(div))")) return;
+        var el = document.getElementById("avid-fallback");
+        var tries = 0;
+        var timer = setInterval(function () {
+          var mounted = [].some.call(document.body.children, function (n) {
+            return n !== el && n.tagName !== "SCRIPT";
+          });
+          if (mounted) {
+            el.style.display = "none";
+            clearInterval(timer);
+          } else if (++tries > 40) {
+            clearInterval(timer);
+          }
+        }, 250);
+      })();
+    </script>
   </body>
 </html>

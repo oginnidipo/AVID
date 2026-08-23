@@ -2,6 +2,12 @@
 
 **A guide for Ade and the AVID team. No technical knowledge assumed.**
 
+> **Read this on the web at [theavidfoundation.org/guide](https://theavidfoundation.org/guide).**
+> Same guide, easier to read, and always reachable. It is not linked from the
+> menu and search engines are told to ignore it, so visitors will not find it,
+> but anyone who knows the address can open it. Never keep the access token or
+> any password in it.
+
 This is everything you need to run theavidfoundation.org yourself: how to change
 what is on it, who to contact when something breaks, what has to be paid for and
 when, and which few things still need a developer.

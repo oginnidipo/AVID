@@ -1,0 +1,956 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Running the AVID website</title>
+<meta name="description" content="A non-technical guide for the AVID team on running theavidfoundation.org." />
+
+<!--
+  UNLISTED, NOT SECRET.
+
+  This is AVID's own operating guide. It is deliberately not linked from the
+  navigation, not in the sitemap, and blocked in robots.txt, so it will not turn
+  up in search results or be stumbled on by a visitor.
+
+  It is still a public file: anyone who knows the address can read it. That is
+  fine for what it holds, and it is why it must never be used to store the
+  access token, a password, or anything else that would matter if read. Those
+  belong in the password manager.
+-->
+<meta name="robots" content="noindex, nofollow" />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+
+<style>
+  /* The site's own faces, served from the site itself. */
+  @font-face {
+    font-family: "Fraunces";
+    src: url("/fonts/fraunces-var-latin.woff2") format("woff2");
+    font-weight: 100 900;
+    font-display: swap;
+  }
+  @font-face {
+    font-family: "Public Sans";
+    src: url("/fonts/publicsans-var-latin.woff2") format("woff2");
+    font-weight: 100 900;
+    font-display: swap;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  * { margin: 0; padding: 0; }
+
+  /* AVID's tokens, taken from the site's stylesheet. */
+  :root {
+    --paper: #f6f1e7;
+    --surface: #fbf8f1;
+    --ink: #16272e;
+    --muted: #3d5259;
+    --structure: #133b42;
+    --accent: #7e4212;
+    --accent-rule: #c4762d;
+    --rule: #cfc7b4;
+    --rule-soft: #e2dbc9;
+    --stop-bg: #f7ecdd;
+    --display: "Fraunces", Georgia, serif;
+    --body: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #0d2a30;
+      --surface: #133b42;
+      --ink: #f0ead9;
+      --muted: #a7beae;
+      --structure: #c8d8cb;
+      --accent: #e8b87c;
+      --accent-rule: #c4762d;
+      --rule: #2c4d55;
+      --rule-soft: #1e3f47;
+      --stop-bg: #16323a;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0d2a30;
+    --surface: #133b42;
+    --ink: #f0ead9;
+    --muted: #a7beae;
+    --structure: #c8d8cb;
+    --accent: #e8b87c;
+    --accent-rule: #c4762d;
+    --rule: #2c4d55;
+    --rule-soft: #1e3f47;
+    --stop-bg: #16323a;
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 17px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+    overflow-wrap: break-word;
+  }
+
+  .page {
+    max-width: 78rem;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 6rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+  @media (min-width: 1080px) {
+    .page { grid-template-columns: 15rem minmax(0, 1fr); align-items: start; padding-top: 4.5rem; }
+  }
+
+  .masthead { grid-column: 1 / -1; border-bottom: 2px solid var(--structure); padding-bottom: 1.75rem; }
+  .eyebrow {
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 1rem;
+  }
+  .masthead h1 {
+    font-family: var(--display); font-weight: 600;
+    font-size: clamp(2.1rem, 1.4rem + 3vw, 3.4rem);
+    line-height: 1.06; letter-spacing: -0.02em; color: var(--structure); text-wrap: balance;
+  }
+  .standfirst { margin-top: 1.1rem; font-size: 1.1rem; color: var(--muted); max-width: 46ch; }
+
+  /* Quick links: this page is her hub, so the things she signs in to live here. */
+  /* Six links, so the columns are pinned to factors of six. auto-fill would
+     land on four across and leave two dead cells showing the rule colour. */
+  .quicklinks {
+    margin-top: 2rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+  @media (min-width: 34rem) { .quicklinks { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 56rem) { .quicklinks { grid-template-columns: repeat(3, 1fr); } }
+  .quicklinks a {
+    display: flex; flex-direction: column; gap: 0.15rem;
+    padding: 0.85rem 1rem; background: var(--surface);
+    text-decoration: none; color: var(--ink);
+  }
+  .quicklinks a:hover, .quicklinks a:focus-visible { background: var(--stop-bg); }
+  .ql-primary { box-shadow: inset 3px 0 0 var(--accent-rule); }
+  .ql-label { font-weight: 650; font-size: 0.94rem; }
+  .ql-sub { font-size: 0.78rem; color: var(--muted); }
+
+  .masthead-meta {
+    margin-top: 1.6rem; display: flex; flex-wrap: wrap;
+    gap: 0.5rem 2rem; font-size: 0.8rem; color: var(--muted);
+  }
+  .masthead-meta b { color: var(--ink); font-weight: 600; }
+
+  .toc { font-size: 0.85rem; }
+  @media (min-width: 1080px) {
+    .toc { position: sticky; top: 2rem; max-height: calc(100vh - 4rem); overflow-y: auto; }
+  }
+  .toc h2 {
+    font-size: 0.7rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--muted); padding-bottom: 0.75rem; border-bottom: 1px solid var(--rule); margin-bottom: 0.75rem;
+  }
+  .toc ol { list-style: none; display: flex; flex-direction: column; gap: 0.15rem; }
+  .toc a {
+    display: grid; grid-template-columns: 1.9rem 1fr; gap: 0.25rem;
+    padding: 0.4rem 0; color: var(--ink); text-decoration: none;
+  }
+  .toc a:hover, .toc a:focus-visible { color: var(--accent); }
+  .toc .n { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 0.78rem; }
+
+  .doc { min-width: 0; max-width: 40rem; display: flex; flex-direction: column; gap: 3.5rem; }
+
+  .part > .part-head {
+    display: grid; grid-template-columns: auto 1fr; align-items: baseline; gap: 0.9rem;
+    padding-bottom: 0.9rem; border-bottom: 1px solid var(--rule); margin-bottom: 1.75rem;
+  }
+  .part-n {
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--accent); font-variant-numeric: tabular-nums;
+  }
+  .part-head h2 {
+    font-family: var(--display); font-weight: 600;
+    font-size: clamp(1.5rem, 1.2rem + 1.2vw, 1.95rem);
+    line-height: 1.15; letter-spacing: -0.015em; color: var(--structure); text-wrap: balance;
+  }
+  .doc h3 {
+    font-family: var(--display); font-weight: 600; font-size: 1.18rem; line-height: 1.3;
+    color: var(--structure); margin-top: 2.25rem; margin-bottom: 0.6rem; text-wrap: balance;
+  }
+  .part-head + h3 { margin-top: 0; }
+
+  .doc p { margin-bottom: 1rem; max-width: 65ch; }
+  .doc p:last-child { margin-bottom: 0; }
+  .doc strong { font-weight: 650; color: var(--ink); }
+  .doc a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+
+  .mono {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.9em;
+    background: var(--surface); border: 1px solid var(--rule-soft);
+    border-radius: 3px; padding: 0.08em 0.34em; white-space: nowrap;
+  }
+
+  .doc ul, .doc ol {
+    margin-bottom: 1rem; padding-left: 0; list-style: none;
+    display: flex; flex-direction: column; gap: 0.6rem; max-width: 65ch;
+  }
+  .doc ul > li { padding-left: 1.15rem; position: relative; }
+  .doc ul > li::before {
+    content: ""; position: absolute; left: 0; top: 0.68em;
+    width: 5px; height: 5px; background: var(--accent-rule);
+  }
+  .doc ol { counter-reset: step; }
+  .doc ol > li { padding-left: 1.9rem; position: relative; counter-increment: step; }
+  .doc ol > li::before {
+    content: counter(step); position: absolute; left: 0; top: 0.1em;
+    font-size: 0.78rem; font-weight: 700; color: var(--accent); font-variant-numeric: tabular-nums;
+  }
+
+  .table-wrap {
+    overflow-x: auto; margin-bottom: 1.25rem;
+    border-top: 1px solid var(--structure); border-bottom: 1px solid var(--rule);
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+  th {
+    text-align: left; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--muted); padding: 0.65rem 1rem 0.65rem 0;
+    border-bottom: 1px solid var(--rule); vertical-align: bottom;
+  }
+  td { padding: 0.7rem 1rem 0.7rem 0; border-bottom: 1px solid var(--rule-soft); vertical-align: top; line-height: 1.5; }
+  tr:last-child td { border-bottom: none; }
+  td:last-child, th:last-child { padding-right: 0; }
+  .fill { display: inline-block; min-width: 7rem; border-bottom: 1px dashed var(--rule); height: 1.1em; }
+
+  .stop {
+    background: var(--stop-bg); border-left: 3px solid var(--accent-rule);
+    padding: 1.15rem 1.35rem; margin: 1.5rem 0; max-width: 65ch;
+  }
+  .stop-label {
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem;
+  }
+  .stop p { margin-bottom: 0.6rem; }
+  .stop p:last-child { margin-bottom: 0; }
+
+  .note {
+    border-left: 1px solid var(--rule); padding-left: 1.15rem; margin: 1.4rem 0;
+    color: var(--muted); font-size: 0.94rem; max-width: 62ch;
+  }
+
+  .fault { border-top: 1px solid var(--rule-soft); padding-top: 1rem; margin-top: 1rem; }
+  .fault:first-of-type { border-top: none; padding-top: 0; margin-top: 0; }
+  .fault h3 {
+    margin-top: 0; margin-bottom: 0.4rem; font-family: var(--body);
+    font-size: 1rem; font-weight: 650; color: var(--ink);
+  }
+  .fault p { margin-bottom: 0; font-size: 0.94rem; color: var(--muted); }
+
+  .closing { border-top: 2px solid var(--structure); padding-top: 2rem; }
+  .closing h2 {
+    font-family: var(--display); font-weight: 600; font-size: 1.6rem;
+    color: var(--structure); margin-bottom: 1.25rem;
+  }
+  .closing ol > li { padding-left: 2.2rem; }
+  .closing ol > li::before { font-size: 0.95rem; }
+
+  footer.colophon {
+    grid-column: 1 / -1; border-top: 1px solid var(--rule); padding-top: 1.25rem;
+    font-size: 0.8rem; color: var(--muted); max-width: 65ch;
+  }
+  footer.colophon p { margin-bottom: 0.75rem; }
+  footer.colophon p:last-child { margin-bottom: 0; }
+
+  :focus-visible { outline: 2px solid var(--accent-rule); outline-offset: 3px; }
+  html { scroll-behavior: smooth; scroll-padding-top: 2rem; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  @media print {
+    :root {
+      --paper: #fff; --surface: #fff; --ink: #000; --muted: #333;
+      --structure: #000; --accent: #000; --stop-bg: #f2f2f2;
+    }
+    .toc, .quicklinks { display: none; }
+    .page { display: block; max-width: none; padding: 0; }
+    .doc { max-width: none; display: block; }
+    .part { break-inside: avoid-page; margin-bottom: 2rem; }
+    a { text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="masthead">
+    <div class="eyebrow">The AVID Foundation</div>
+    <h1>Running the website</h1>
+    <p class="standfirst">
+      Everything you need to look after theavidfoundation.org yourself. No
+      technical knowledge assumed.
+    </p>
+
+    <nav class="quicklinks" aria-label="Everything you need">
+      <a href="/admin" class="ql-primary">
+        <span class="ql-label">Edit the site</span>
+        <span class="ql-sub">theavidfoundation.org/admin</span>
+      </a>
+      <a href="/">
+        <span class="ql-label">The website</span>
+        <span class="ql-sub">theavidfoundation.org</span>
+      </a>
+      <a href="https://search.google.com/search-console">
+        <span class="ql-label">Google Search Console</span>
+        <span class="ql-sub">How people find you</span>
+      </a>
+      <a href="https://formspree.io/forms">
+        <span class="ql-label">Formspree</span>
+        <span class="ql-sub">Form usage and the monthly limit</span>
+      </a>
+      <a href="https://www.dynadot.com">
+        <span class="ql-label">Dynadot</span>
+        <span class="ql-sub">Domain, email and renewals</span>
+      </a>
+      <a href="https://github.com/oginnidipo/AVID">
+        <span class="ql-label">The site's files</span>
+        <span class="ql-sub">Page wording lives here</span>
+      </a>
+    </nav>
+
+    <div class="masthead-meta">
+      <span>Prepared for <b>Ade Olumide</b> and the AVID team</span>
+      <span>August 2026</span>
+      <span>Read Part 0 now, the rest when you need it</span>
+    </div>
+  </header>
+
+  <nav class="toc" aria-label="Contents">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#p0"><span class="n">00</span><span>Three things to do first</span></a></li>
+      <li><a href="#p1"><span class="n">01</span><span>What the website is made of</span></a></li>
+      <li><a href="#p2"><span class="n">02</span><span>Changing things yourself</span></a></li>
+      <li><a href="#p3"><span class="n">03</span><span>Photographs, and the consent rule</span></a></li>
+      <li><a href="#p4"><span class="n">04</span><span>The four email addresses</span></a></li>
+      <li><a href="#p5"><span class="n">05</span><span>The forms, and the limit</span></a></li>
+      <li><a href="#p6"><span class="n">06</span><span>What is deliberately blank</span></a></li>
+      <li><a href="#p7"><span class="n">07</span><span>The yearly calendar</span></a></li>
+      <li><a href="#p8"><span class="n">08</span><span>Being found on Google</span></a></li>
+      <li><a href="#p9"><span class="n">09</span><span>If something looks wrong</span></a></li>
+      <li><a href="#p10"><span class="n">10</span><span>When you need a developer</span></a></li>
+      <li><a href="#short"><span class="n">&#8212;</span><span>The short version</span></a></li>
+    </ol>
+  </nav>
+
+  <main class="doc">
+    <section class="part" id="p0">
+      <div class="part-head"><span class="part-n">Part 00</span><h2>Three things to do first</h2></div>
+      <p>Handover is not complete until these are done.</p>
+
+      <h3>1. Look after your access key, and know when it expires</h3>
+      <p>
+        You already have what you need to sign in: your developer has issued you
+        an <strong>access token</strong>, a long string of characters that lets
+        you edit the site. Part 2 explains how to use it.
+      </p>
+      <p>Three things to do with it now.</p>
+      <p>
+        <strong>Put it in a password manager today.</strong> That token is the
+        equivalent of a password for the live website. If it is currently sitting
+        in a WhatsApp thread or an email, move it somewhere safe and delete it
+        from there. Anyone who has it can change the site.
+      </p>
+      <p>
+        <strong>Find out its expiry date and put it in the calendar.</strong>
+        Access tokens usually expire, often after a year. When it does, you will
+        simply be refused at sign-in with no warning beforehand. Ask your
+        developer for the exact date, diarise it a fortnight early, and ask for a
+        fresh token before it lapses rather than after.
+      </p>
+      <p>
+        <strong>Know what it does not give you.</strong> The token lets you edit
+        content. It is not an account of your own, so every change you make is
+        recorded under your developer's name rather than yours. That is fine for
+        now and does not limit what you can do, but it means there is no record
+        of who changed what.
+      </p>
+      <p class="note">
+        When AVID is ready, the tidier arrangement is your own free github.com
+        account added as a collaborator, registered to an AVID address, with
+        two-factor authentication switched on. That gives you a proper trail and
+        access that does not expire. Worth doing when more than one person is
+        editing, and worth doing for a second director regardless, so the
+        foundation is never one person away from losing control of its own site.
+      </p>
+
+      <h3>2. Move the accounts into AVID's name</h3>
+      <p>
+        Four accounts sit behind this website. Each should be registered to AVID,
+        with an AVID email address, and at least two directors able to get in.
+      </p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Account</th><th>What it does</th><th>Who has it today</th></tr></thead>
+          <tbody>
+            <tr><td>Dynadot</td><td>The domain name and the email addresses</td><td><span class="fill"></span></td></tr>
+            <tr><td>GitHub</td><td>The website's files, and the hosting</td><td>Your developer. You hold an access token</td></tr>
+            <tr><td>Formspree</td><td>Delivers the three contact forms</td><td><span class="fill"></span></td></tr>
+            <tr><td>Google Search Console</td><td>Shows how people find you on Google</td><td><span class="fill"></span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        Fill in the right-hand column, keep it with your governance records, and
+        store the passwords in a shared password manager rather than a
+        spreadsheet or a notebook. Turn on two-factor authentication on Dynadot
+        and GitHub at minimum.
+      </p>
+
+      <h3>3. Confirm the domain renews automatically</h3>
+      <p>
+        Sign in to Dynadot, find theavidfoundation.org, and check that
+        <strong>auto-renew is switched on</strong> for both the domain and the
+        email. Check the card on file has not expired.
+      </p>
+      <div class="stop">
+        <div class="stop-label">The one thing that cannot be undone</div>
+        <p>
+          If the domain lapses, the website goes dark, the email addresses stop
+          receiving, and someone else can buy the name. Every other problem in
+          this guide is recoverable. This one may not be.
+        </p>
+        <p>
+          Put the renewal date in the calendar as well, rather than relying on
+          auto-renew alone.
+        </p>
+      </div>
+    </section>
+
+    <section class="part" id="p1">
+      <div class="part-head"><span class="part-n">Part 01</span><h2>What the website is made of</h2></div>
+      <p>Five separate pieces, only two of which cost money.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Piece</th><th>What it does</th><th>Cost</th></tr></thead>
+          <tbody>
+            <tr><td>The domain name</td><td>theavidfoundation.org, bought from Dynadot. AVID's address on the internet</td><td>Yearly</td></tr>
+            <tr><td>The email addresses</td><td>Four mailboxes, also Dynadot, on the same bill</td><td>Yearly</td></tr>
+            <tr><td>The hosting</td><td>GitHub stores and serves the pages. Handles any amount of traffic</td><td>Free</td></tr>
+            <tr><td>The forms</td><td>Formspree delivers the three forms as email</td><td>Free plan</td></tr>
+            <tr><td>The editor</td><td>The page at /admin where you add content</td><td>Free</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        There is no database, no server to restart, and no software to update.
+        The site is built once and served as finished pages, which is why it is
+        fast and why there is so little that can break.
+      </p>
+      <p>
+        <strong>What this costs each year:</strong> the Dynadot bill for the
+        domain and email. Nothing else, unless you outgrow the free form plan.
+      </p>
+    </section>
+
+    <section class="part" id="p2">
+      <div class="part-head"><span class="part-n">Part 02</span><h2>Changing things yourself</h2></div>
+
+      <h3>Getting in</h3>
+      <p>
+        Go to <span class="mono">theavidfoundation.org/admin</span>. Choose the
+        option to sign in with a <strong>personal access token</strong> and paste
+        in the token your developer gave you.
+      </p>
+      <p>
+        Do this once now, while nothing is urgent, so you know it works and you
+        are not learning it the first time you need it. If it is refused, the
+        likely reason is that the token has expired.
+      </p>
+      <p>You will then see four sections.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Section</th><th>What it holds</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Libraries</strong></td><td>One entry per school. This is the transparency wall</td></tr>
+            <tr><td><strong>News</strong></td><td>Openings, updates, anything you want to announce</td></tr>
+            <tr><td><strong>Photos</strong></td><td>The sliding galleries on the home page and For Schools</td></tr>
+            <tr><td><strong>Board &amp; Team</strong></td><td>The founder, directors, key volunteers</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Every field has a label and a note explaining what to put in it. Nothing is guesswork.</p>
+
+      <h3>What happens when you save</h3>
+      <p>
+        Your change is saved as a <strong>draft</strong> first. Nothing is public
+        yet. You can leave it, come back, and change it again.
+      </p>
+      <p>
+        When you are ready, publish it. The site rebuilds itself and your change
+        is live in <strong>about two minutes</strong>. You do not need to tell
+        anyone or do anything else.
+      </p>
+
+      <h3>Adding a library</h3>
+      <p>
+        This is the most important thing you will do, because the Libraries
+        section is what makes the transparency claim on the site true rather than
+        decorative.
+      </p>
+      <ol>
+        <li>Open <strong>Libraries</strong>, then <strong>New Library</strong>.</li>
+        <li>Fill in the school's name, where it is, and the status: planned, in progress, or open.</li>
+        <li><strong>Month</strong> is the month it opened or is due to open, written as <span class="mono">2026-11</span>.</li>
+        <li><strong>Books placed</strong>, once you know the number.</li>
+        <li><strong>The one-line result</strong> is the sentence a donor reads. Be concrete. "412 pupils now have a timetabled reading period" says more than "a successful refurbishment".</li>
+        <li>Tick which of the five components the project included.</li>
+        <li><strong>Sponsor credit</strong> only if that donor has asked to be named. Leave it blank otherwise.</li>
+        <li><strong>The full record</strong> is the longer account: what the room was like, what you did, what it cost, what changed.</li>
+        <li>Save as draft, read it back, publish.</li>
+      </ol>
+      <p class="note">
+        The numbers on the Impact page are counted from these entries. Add a
+        library here and the totals update themselves. This is deliberate: no one
+        can type an impact figure into this website that is not backed by a real
+        record.
+      </p>
+
+      <h3>Adding a news story</h3>
+      <p>
+        <strong>News</strong>, then <strong>New News story</strong>. Title, a
+        short summary, then the story. The <strong>Draft</strong> switch keeps
+        something unpublished without deleting it, which is useful for writing
+        ahead of an announcement.
+      </p>
+      <p>
+        News stories also go out on the site's news feed, so anyone subscribed
+        sees them without you sending anything.
+      </p>
+
+      <h3>Adding a photograph</h3>
+      <p>
+        <strong>Photos</strong>, then <strong>New Photo</strong>. Read Part 3
+        before your first one, because there is a rule the site enforces.
+      </p>
+      <ul>
+        <li><strong>Description of the photograph</strong> is required. It is read aloud to blind visitors and shown if the image fails to load. Describe what is happening: "Children sitting on a mat while a teacher reads aloud", not "library photo".</li>
+        <li><strong>Caption</strong> is optional and appears under the picture.</li>
+        <li><strong>School or place</strong>, for example "St Mary's Primary, Surulere".</li>
+        <li><strong>Order</strong> controls the sequence. Lower numbers come first.</li>
+        <li><strong>Where it appears</strong>: the home page, For Schools, or both.</li>
+        <li><strong>Written photo consent is on file</strong> must be ticked.</li>
+      </ul>
+
+      <h3>Adding a board member</h3>
+      <p>
+        <strong>Board &amp; Team</strong>, then <strong>New Person</strong>. Name,
+        role, a short biography, and <strong>Order</strong> for where they appear.
+        The founder is 1.
+      </p>
+
+      <h3>Changing wording on the pages themselves</h3>
+      <p>
+        Headings, the mission statement, the case for action and similar text are
+        not in the editor. They live in the site's files.
+      </p>
+      <p>
+        You can still change them: go to
+        <a href="https://github.com/oginnidipo/AVID">github.com/oginnidipo/AVID</a>,
+        find the file, click the pencil icon, edit the plain English text, and
+        save. The site rebuilds itself the same way.
+      </p>
+      <p>
+        It is more exposed than the editor, in that you can see the code around
+        the words. <strong>The safety net is real, though: if you break
+        something, the build fails and the previous working version stays
+        live.</strong> A broken edit cannot take the site down. It simply does
+        not get published.
+      </p>
+      <p>For your first one, ask your developer to walk you through it. It is straightforward afterwards.</p>
+
+      <h3>If you make a mistake</h3>
+      <p>Every change is recorded and can be undone. There is a complete history of every edit, who made it and when.</p>
+      <p>
+        If you delete something by accident, do not panic and do not try to
+        retype it from memory. Ask your developer to restore it from the history.
+        It takes a minute and comes back exactly as it was.
+      </p>
+    </section>
+
+    <section class="part" id="p3">
+      <div class="part-head"><span class="part-n">Part 03</span><h2>Photographs, and the consent rule</h2></div>
+
+      <h3>The four pictures on the site are drawings</h3>
+      <p>
+        The pictures in the galleries are illustrations, drawn for AVID in the
+        site's own colours. They are placeholders, and they are honest ones: a
+        drawing makes no claim to be a particular child in a particular school.
+      </p>
+      <p>
+        They were not photographs because AVID has not photographed a library
+        yet, and freely usable photographs of Nigerian school libraries
+        essentially do not exist. A stock photograph of an unrelated Western
+        library sitting above AVID's transparency wall would quietly undermine
+        the thing that wall exists to do.
+      </p>
+      <p>
+        <strong>Replace them as soon as you have your own photographs.</strong>
+        Add the real ones in Photos and delete the drawings. Nothing else needs
+        to change.
+      </p>
+
+      <h3>The consent rule</h3>
+      <div class="stop">
+        <div class="stop-label">Before any photography of pupils</div>
+        <p>
+          Get <strong>written consent from the school and from a parent or
+          guardian for every identifiable child</strong>, and keep the signed
+          forms.
+        </p>
+        <p>
+          The website enforces this. If a photograph is added without the consent
+          box ticked, the site refuses to publish it and the build stops with a
+          message naming the file. This is intentional. It is a deliberate guard,
+          not a fault, and the way to clear it is to obtain the consent and then
+          tick the box, never to work around it.
+        </p>
+      </div>
+      <ul>
+        <li>Photographs of the room, the shelves and the books need no consent, and are often the better image anyway.</li>
+        <li>Children from behind, or in the middle distance, carry far less risk than faces.</li>
+        <li>If a parent later withdraws consent, delete the entry in Photos. It is gone from the live site within two minutes.</li>
+      </ul>
+      <p class="note">
+        There is a fuller note for whoever runs your first shoot in
+        <span class="mono">docs/PHOTO-CONSENT.md</span> in the repository.
+      </p>
+    </section>
+
+    <section class="part" id="p4">
+      <div class="part-head"><span class="part-n">Part 04</span><h2>The four email addresses</h2></div>
+      <p>All four are real mailboxes on Dynadot, and all four have been tested.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Address</th><th>For</th><th>Where it appears</th></tr></thead>
+          <tbody>
+            <tr><td><strong>info@</strong></td><td>General enquiries</td><td>Contact page, footer</td></tr>
+            <tr><td><strong>applications@</strong></td><td>Schools applying for a library</td><td>For Schools</td></tr>
+            <tr><td><strong>partners@</strong></td><td>Funders, corporate partners, in-kind offers</td><td>Get Involved</td></tr>
+            <tr><td><strong>donate@</strong></td><td>Anything about giving</td><td>The give buttons</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        Decide now who reads each one, and check them on a schedule. The site
+        tells people a real person will read what they send, so the promise needs
+        keeping.
+      </p>
+      <p>
+        <strong>Check the spam folder for the first few weeks.</strong> New
+        domains often land there until the address builds a history, and a
+        school's application going unread is the worst version of this problem.
+      </p>
+      <p class="note">
+        Applications contain personal information about named individuals at
+        named schools. The privacy policy commits AVID to storing them securely,
+        not sharing them beyond what delivery requires, and deleting unsuccessful
+        applications within 24 months. That is a real commitment. Decide who has
+        access, and diarise the deletion pass.
+      </p>
+    </section>
+
+    <section class="part" id="p5">
+      <div class="part-head"><span class="part-n">Part 05</span><h2>The forms, and the limit to watch</h2></div>
+      <p>
+        Three forms: the school application, the general enquiry, and the
+        partnership enquiry. Each sends an email with every answer laid out under
+        its real question, so an application arrives readable.
+      </p>
+
+      <h3>The limit</h3>
+      <p>
+        The free Formspree plan carries <strong>50 submissions per month across
+        all three forms combined.</strong> For a foundation at AVID's current
+        stage that is comfortable.
+      </p>
+      <p>
+        It will not stay comfortable. An application window, a press mention or a
+        successful campaign can pass 50 in days, and
+        <strong>once the limit is reached, further submissions are not
+        delivered.</strong> A head teacher who fills in a long application would
+        get an error rather than a confirmation, and you would never know they
+        had tried.
+      </p>
+      <p>
+        <strong>What to do:</strong> watch the Formspree dashboard when you open
+        an application window or launch a campaign. If you expect volume, upgrade
+        before it rather than after. It is inexpensive, and the cost of a lost
+        application is much higher.
+      </p>
+
+      <h3>Two things the free plan does not do</h3>
+      <p>
+        <strong>It does not keep your submissions.</strong> History is limited and
+        there is no permanent archive. Treat the email as the record, and move
+        applications into a spreadsheet once they start arriving, because you
+        will want to sort and compare them.
+      </p>
+      <p>
+        <strong>It does not accept file attachments.</strong> The application form
+        deliberately does not ask for photographs, and invites applicants to
+        email them instead, which always works. This is safer than the
+        alternative: an application carrying a file it cannot store could be
+        rejected outright, and the school would lose the whole form.
+      </p>
+    </section>
+
+    <section class="part" id="p6">
+      <div class="part-head"><span class="part-n">Part 06</span><h2>What is deliberately left blank</h2></div>
+      <p>
+        Four things are intentionally absent. Each is written so the site stays
+        truthful while it waits, and each has a note in the code saying exactly
+        what to do when the real answer arrives.
+      </p>
+
+      <h3>How to give</h3>
+      <p>
+        The site currently says nothing about how to donate, because the Interac
+        account is still being set up and AVID has not chosen to announce it. The
+        give buttons open the donate@ inbox, so nobody who wants to give is left
+        with nowhere to go.
+      </p>
+      <p>
+        <strong>When Interac is ready, tell your developer.</strong> It is a small
+        change, but not a one-line one: two sentences on Get Involved and in the
+        privacy policy currently describe a generic payment provider, and an
+        Interac transfer goes straight to AVID's own bank instead. Those need
+        rewording at the same time, or the site will describe something that is
+        not happening.
+      </p>
+      <p class="note">
+        You may want a neutral line in the meantime, along the lines of "Write to
+        donate@theavidfoundation.org and we will tell you how." That is your
+        call, and it is a five-minute change.
+      </p>
+
+      <h3>Charitable registration</h3>
+      <p>
+        The registration number is blank, so the site says registration is in
+        progress and <strong>never implies that tax receipts are issued</strong>.
+        This is deliberate. Under Canadian rules, official donation receipts can
+        only be issued once the CRA grants registered charity status.
+      </p>
+      <p>
+        <strong>When it is granted, give your developer the number.</strong>
+        Adding it switches on the receipt wording everywhere it belongs, in one
+        change. Do not add receipt wording by hand before then.
+      </p>
+
+      <h3>The impact figures</h3>
+      <p>
+        The site shows two sets of numbers, kept apart on purpose.
+        <strong>Goals</strong> are what the first cohort is funded to achieve.
+        <strong>Actual</strong> is what has been delivered and verified, and it
+        currently reads zero.
+      </p>
+      <p>
+        Zero is the correct and honest number today. The site will never present
+        a goal as an achievement, and the actual figures come from the Libraries
+        entries you add, so they cannot be inflated by typing.
+      </p>
+
+      <h3>Phone number and social media</h3>
+      <p>
+        Both blank, which hides them completely rather than showing an empty
+        space. Give your developer a phone number or social profile links
+        whenever you have them.
+      </p>
+    </section>
+
+    <section class="part" id="p7">
+      <div class="part-head"><span class="part-n">Part 07</span><h2>The yearly calendar</h2></div>
+      <p>Eight recurring items. Put them in a shared calendar rather than one person's head.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>When</th><th>What</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Now</strong></td><td>Confirm Dynadot auto-renew, and the card on file</td></tr>
+            <tr><td><strong>Now</strong></td><td>Access token stored in the password manager, expiry date diarised</td></tr>
+            <tr><td><strong>Now</strong></td><td>Second director has Dynadot access, and access to the site</td></tr>
+            <tr><td><strong>Two weeks before the token expires</strong></td><td>Ask your developer for a fresh one</td></tr>
+            <tr><td><strong>Yearly, before renewal</strong></td><td>Check the Dynadot payment went through</td></tr>
+            <tr><td><strong>Monthly, weekly in a campaign</strong></td><td>Glance at Formspree usage</td></tr>
+            <tr><td><strong>Yearly</strong></td><td>Review the privacy policy and terms with a lawyer</td></tr>
+            <tr><td><strong>Every 24 months</strong></td><td>Delete unsuccessful applications, as the privacy policy commits you to</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The single most important line here is the first one. Everything else is recoverable.</p>
+    </section>
+
+    <section class="part" id="p8">
+      <div class="part-head"><span class="part-n">Part 08</span><h2>Being found on Google</h2></div>
+      <p>
+        The site is built to be found: it describes itself to search engines in a
+        format they read directly, it lists all its pages for them, and it is
+        verified in Google Search Console under the account used at setup.
+      </p>
+      <p>
+        <strong>Search Console is worth ten minutes a month.</strong> Go to
+        search.google.com/search-console. It shows you the actual words people
+        typed before arriving at the site, which is genuinely useful for knowing
+        how AVID is being looked for.
+      </p>
+      <p>Two things you can do there yourself:</p>
+      <ul>
+        <li><strong>URL Inspection</strong>, then <strong>Request indexing</strong>, after publishing something important. It asks Google to look sooner.</li>
+        <li><strong>Indexing</strong>, then <strong>Pages</strong>, to see which pages Google has taken. This is the number that matters, more than the Sitemaps tab.</li>
+      </ul>
+
+      <h3>What actually moves the needle</h3>
+      <p>
+        The technical work is done and there is no more to extract from it. From
+        here, visibility comes from two things, and only two.
+      </p>
+      <p>
+        <strong>Real links from real sites.</strong> A school's website, a
+        partner, a funder's grantee list, a local news piece, a directory of
+        Canadian non-profits. Each genuine mention is worth more than any amount
+        of further tuning. Ask every partner to link to you.
+      </p>
+      <p>
+        <strong>Publishing the work.</strong> Each library you add and each news
+        story you publish is another page that can be found, and the ones
+        describing real named schools in Lagos are exactly what someone searching
+        for this kind of work would land on.
+      </p>
+
+      <h3>What not to do</h3>
+      <p>
+        Do not buy links, do not pay an SEO agency promising rankings, and do not
+        add hidden keywords. These carry real penalties, and a foundation's
+        reputation is worth more than a ranking.
+      </p>
+
+      <h3>Honest timeline</h3>
+      <p>
+        A brand new domain takes <strong>three to six months</strong> to be taken
+        seriously, regardless of what is done to it. Searches for "AVID
+        Foundation" should work within weeks. Competitive phrases like "school
+        libraries Nigeria" take longer, and depend far more on the two things
+        above than on anything technical.
+      </p>
+    </section>
+
+    <section class="part" id="p9">
+      <div class="part-head"><span class="part-n">Part 09</span><h2>If something looks wrong</h2></div>
+
+      <div class="fault">
+        <h3>I cannot sign in to /admin</h3>
+        <p>
+          Almost always the access token has expired. Ask your developer for a
+          fresh one. Nothing is lost and the site is unaffected: an expired token
+          stops you editing, it does not touch anything already published.
+        </p>
+      </div>
+      <div class="fault">
+        <h3>A change I published is not showing</h3>
+        <p>
+          Wait three minutes and refresh. If it is still missing, the build
+          probably failed, which means the previous version is still live and
+          nothing is broken. Send your developer a note saying what you changed.
+        </p>
+      </div>
+      <div class="fault">
+        <h3>The whole site is down</h3>
+        <p>
+          Check theavidfoundation.org from your phone on mobile data, not office
+          wifi. If it works there, the problem is your network and not the site.
+          If it is genuinely down, the two likely causes are the domain lapsing,
+          which Part 0 covers, or a GitHub outage, which you can confirm at
+          githubstatus.com and which resolves itself.
+        </p>
+      </div>
+      <div class="fault">
+        <h3>The build failed and mentions photo consent</h3>
+        <p>Working as designed. A photograph was added without the consent box ticked. See Part 3.</p>
+      </div>
+      <div class="fault">
+        <h3>Someone says a form did not reach us</h3>
+        <p>Check the Formspree dashboard for the monthly limit first, as that is the most likely cause. See Part 5.</p>
+      </div>
+      <div class="fault">
+        <h3>Email has stopped arriving</h3>
+        <p>Check Dynadot billing. Email and domain are on the same account, and an expired card stops both.</p>
+      </div>
+    </section>
+
+    <section class="part" id="p10">
+      <div class="part-head"><span class="part-n">Part 10</span><h2>When you need a developer</h2></div>
+      <p>
+        You can do all of this yourself: content, photographs, news, team, and
+        the page wording via GitHub. Ask a developer for these:
+      </p>
+      <ul>
+        <li>Adding the donation link, with the wording pass described in Part 6</li>
+        <li>Adding the charitable registration number</li>
+        <li>Adding a phone number or social media links</li>
+        <li>A new page, or a change to how a page is laid out</li>
+        <li>Restoring something deleted by accident</li>
+        <li>Anything where the build has failed and the message is not clear</li>
+      </ul>
+
+      <h3>If you engage a different developer</h3>
+      <p>
+        Everything they need is in the repository. Point them at
+        <span class="mono">README.md</span> and
+        <span class="mono">docs/HANDOVER.md</span>, which covers how the site is
+        built and, more usefully, which decisions were deliberate and should not
+        be undone.
+      </p>
+      <p>Two worth stating up front, because both look like omissions and neither is:</p>
+      <p>
+        <strong>The site refuses to publish a photograph without recorded
+        consent</strong>, and this is enforced by stopping the build. It is not a
+        bug to be routed around.
+      </p>
+      <p>
+        <strong>Impact figures are counted, never typed.</strong> They come from
+        the Libraries entries. Please keep it that way, because it is the
+        difference between a transparency page that is true by construction and
+        one that is true only as long as somebody remembers to keep it true.
+      </p>
+    </section>
+
+    <section class="part closing" id="short">
+      <h2>The short version</h2>
+      <p>If you remember five things:</p>
+      <ol>
+        <li><strong>Store your access token safely, and diarise the day it expires.</strong> Sign in once this week so you know it works.</li>
+        <li><strong>Keep the domain paid.</strong> It is the only unrecoverable failure.</li>
+        <li><strong>Add every library to the Libraries section.</strong> The impact numbers count themselves from it.</li>
+        <li><strong>Never publish a photograph of a child without written consent.</strong> The site will stop you, and it is right to.</li>
+        <li><strong>Watch the form limit before a campaign, not after.</strong></li>
+      </ol>
+      <p>Everything else can be fixed.</p>
+    </section>
+  </main>
+
+  <footer class="colophon">
+    <p>
+      <strong>This page lives at theavidfoundation.org/guide.</strong> Bookmark
+      it. It is not linked from the menu and search engines are told to ignore
+      it, so it will not turn up in front of visitors, but anyone who knows the
+      address can read it. Never put the access token, a password or anything
+      else confidential in here.
+    </p>
+    <p>
+      Set in Fraunces and Public Sans, the foundation's own typefaces. The same
+      guide is kept with the website's files at
+      <span class="mono">docs/RUNNING-THE-SITE.md</span>, so a developer can
+      update it alongside the site.
+    </p>
+  </footer>
+</div>
+</body>
+</html>
