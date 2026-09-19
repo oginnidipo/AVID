@@ -185,12 +185,25 @@ The token has to be **fine-grained**, not classic:
 | Metadata | Read-only — added automatically; the sign-in check uses it |
 | Expiration | Optional. GitHub still deletes any token unused for a year |
 
-This link pre-fills everything except the repository choice, which must be set
-by hand (the default, "Public repositories", is read-only and will fail):
+This link pre-fills the name, owner and expiry:
 
 ```
 https://github.com/settings/personal-access-tokens/new?name=AVID%20website%20editor&target_name=oginnidipo&expires_in=none&contents=write&pull_requests=write
 ```
+
+It also pre-selects the permissions, **but switching Repository access to "Only
+select repositories" clears them.** Set things in this order:
+
+1. Repository access → **Only select repositories** → `AVID`.
+2. *Then* Permissions → add **Contents** and **Pull requests**, each set to
+   **Read and write**. Metadata appears on its own.
+3. Check both are still there before clicking **Generate token**.
+
+Skip step 2 and the token is created with Metadata only. It passes the sign-in
+check and then fails as soon as the editor tries to read content, which looks
+like a sign-in fault but is not. (That is how the second attempt failed.) A
+fine-grained token's permissions can be edited after creation without changing
+the token itself, so a token created this way can be fixed rather than replaced.
 
 **Why not a classic token.** Sveltia's sign-in calls
 `GET /repos/{owner}/{repo}/collaborators/{login}` and refuses with "no access to
