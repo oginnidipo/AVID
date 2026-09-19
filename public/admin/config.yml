@@ -15,6 +15,17 @@ backend:
   name: github
   repo: oginnidipo/AVID
   branch: main
+  # Token sign-in only. The "Sign in with GitHub" button needs an OAuth helper
+  # service, and without one it sends people to api.netlify.com, which answers
+  # "Not Found" because this site is not on Netlify. AVID chose not to run that
+  # extra service, so the button is hidden rather than left as a dead end.
+  #
+  # The token must be FINE-GRAINED, scoped to this repository only, with:
+  #   Contents: Read and write        (saving, publishing, tidying branches)
+  #   Pull requests: Read and write   (drafts — see publish_mode below)
+  # A classic token will not work unless it carries the broad `repo` and
+  # `read:org` scopes, which would expose every repository on the account.
+  auth_methods: [token]
 
 # ── Where uploaded images go ───────────────────────────────────────────────
 #
@@ -32,6 +43,9 @@ media_folder: public/uploads
 public_folder: /uploads
 
 # Save as a draft, review, then publish — rather than every save going live.
+# Each draft is a branch and pull request; publishing merges it. Sveltia only
+# began honouring this in v0.192.0 (17 Aug 2026) — before that, saves went
+# straight to main. It is why the token needs Pull requests: write.
 publish_mode: editorial_workflow
 
 site_url: https://theavidfoundation.org

@@ -168,12 +168,53 @@ under `src/content/`, and click the pencil icon. Save, and the site rebuilds and
 republishes itself. This works today, for every kind of content, and adds
 nothing to maintain.
 
-**The `/admin` form editor is nicer but needs a sign-in step.** Signing in to
-GitHub from a browser-based editor requires a small OAuth helper somewhere,
-which means one more thing to run. Given AVID's preference for keeping the
-number of services down, it is reasonable to skip it and edit on github.com —
-the repository is already configured, so it can be switched on later at any
-time without touching the site.
+**Signing in to `/admin` is by access token only.** "Sign in with GitHub" needs
+an OAuth helper service; without one, Sveltia sends the popup to
+`api.netlify.com/auth`, which answers *Not Found* because this site is not on
+Netlify. AVID chose not to run that extra service, so `config.yml` sets
+`auth_methods: [token]` and the button is hidden rather than left as a dead end.
+
+The token has to be **fine-grained**, not classic:
+
+| Setting | Value |
+|---|---|
+| Resource owner | the account that owns the repo (`oginnidipo` today) |
+| Repository access | **Only select repositories** → `AVID` |
+| Contents | Read and write — saving, publishing, removing merged branches |
+| Pull requests | Read and write — every draft is a pull request (below) |
+| Metadata | Read-only — added automatically; the sign-in check uses it |
+| Expiration | Optional. GitHub still deletes any token unused for a year |
+
+This link pre-fills everything except the repository choice, which must be set
+by hand (the default, "Public repositories", is read-only and will fail):
+
+```
+https://github.com/settings/personal-access-tokens/new?name=AVID%20website%20editor&target_name=oginnidipo&expires_in=none&contents=write&pull_requests=write
+```
+
+**Why not a classic token.** Sveltia's sign-in calls
+`GET /repos/{owner}/{repo}/collaborators/{login}` and refuses with "no access to
+the repository" unless it returns 204. For a classic token GitHub requires the
+`repo` *and* `read:org` scopes on that endpoint, so a tightly scoped one
+(`public_repo`) fails — and a classic token that passes grants write access to
+every repository on the account. That is how the first token issued to AVID
+failed in September 2026.
+
+**Drafts are pull requests.** `publish_mode: editorial_workflow` was ignored by
+Sveltia until v0.192.0 (17 Aug 2026), so early edits went straight to `main`.
+From that release on, a draft is a branch plus a pull request with labels, and
+"publish" merges it. Hence Pull requests: write.
+
+**The editor is pinned to one version with an integrity hash** in
+`public/admin/index.html`. It used to load whatever was newest, and in September
+2026 Sveltia shipped eight releases in four days straight into AVID's editor. The
+page also holds a write-capable token, so an unpinned third-party script was
+trusted with it on every load. To upgrade, change the version, regenerate the
+hash with the command in that file's comment, and sign in and save a test draft.
+A wrong hash stops the editor loading; the page's fallback still offers the guide
+and GitHub, so it fails visibly rather than blank.
+
+Editing on github.com needs none of this and always works.
 
 ### Editing text that is not in `/admin`
 

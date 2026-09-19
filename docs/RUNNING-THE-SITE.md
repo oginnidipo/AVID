@@ -42,10 +42,10 @@ You already have what you need to sign in: your developer has issued you an
 **access token**, a long string of characters that lets you edit the site. Part 2
 explains how to use it.
 
-**It does not expire.** You will never be locked out one morning without warning,
-and there is no renewal date to diarise. That cuts both ways: it stays valid
-until somebody deliberately replaces it, so how you keep it matters more, not
-less.
+**It does not expire, with one exception:** GitHub deletes any token that goes a
+whole year without being used. Sign in at least once a year, even in a quiet
+year, and it keeps working indefinitely. Otherwise it stays valid until somebody
+deliberately replaces it, which is why how you keep it matters more, not less.
 
 It is scoped to this website alone, and there are three rules.
 
@@ -141,8 +141,8 @@ Nothing else, unless you outgrow the free form plan.
 
 ### Getting in
 
-Go to **theavidfoundation.org/admin**. Choose the option to sign in with a
-**personal access token** and paste in the token your developer gave you.
+Go to **theavidfoundation.org/admin**, click **Sign In Using Access Token**, and
+paste in the token your developer gave you. That is the only way in, by design.
 
 Do this once now, while nothing is urgent, so you know it works and you are not
 learning it the first time you need it. If it is refused, paste the token again
@@ -406,7 +406,7 @@ your developer a phone number or social profile links whenever you have them.
 
 ## Part 7: The yearly calendar
 
-Six recurring items. Put them in a shared calendar rather than one person's head.
+Nine recurring items. Put them in a shared calendar rather than one person's head.
 
 | When | What |
 |---|---|
@@ -414,6 +414,7 @@ Six recurring items. Put them in a shared calendar rather than one person's head
 | **Now** | Access token in the password manager, deleted from chat and email |
 | **Now** | Second director has Dynadot access, and access to the site |
 | **Same day, if it ever gets out** | Ask your developer to replace the token |
+| **At least once a year** | Sign in to /admin, even with nothing to change. GitHub deletes a token left unused for a year |
 | **Yearly, before the renewal date** | Check the Dynadot payment went through |
 | **Monthly, while quiet** | Glance at Formspree usage. Weekly during a campaign |
 | **Yearly** | Review the privacy policy and terms with a lawyer |
@@ -474,11 +475,13 @@ depend far more on the two things above than on anything technical.
 
 ### I cannot sign in to /admin
 
-The token does not expire, so the usual cause is a copy-paste that dropped a
-character. Paste it again straight from your password manager. If it still
-refuses, it has probably been replaced, so ask your developer. Nothing is lost
-either way: a token that will not sign in stops you editing, it does not touch
-anything that is already published.
+First paste the token again straight from your password manager: a dropped
+character is the most common cause. If the message says you **do not have access
+to the repository**, the token itself is the wrong kind or is missing a
+permission. That is a job for your developer, not something you did wrong. The
+same goes if it was replaced, or went a year unused. Nothing is lost either way:
+a token that will not sign in stops you editing, it does not touch anything that
+is already published.
 
 ### A change I published is not showing
 
@@ -524,6 +527,8 @@ Ask a developer for these:
 - Adding a phone number or social media links
 - A new page, or a change to how a page is laid out
 - Restoring something deleted by accident
+- Updating the editor at /admin. It is fixed to one version on purpose, so it
+  never changes under you without someone checking it first
 - Anything where the build has failed and the message is not clear
 
 ### If you engage a different developer
@@ -549,7 +554,7 @@ as somebody remembers to keep it true.
 If you remember five things:
 
 1. **Keep your access token in a password manager, and never forward it.** It
-   does not expire, so it is only ever as safe as you keep it. Sign in once this
+   does not expire, but it must be used at least once a year. Sign in once this
    week so you know it works.
 2. **Keep the domain paid.** It is the only unrecoverable failure.
 3. **Add every library to the Libraries section.** The impact numbers count

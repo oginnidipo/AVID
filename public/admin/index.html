@@ -14,9 +14,28 @@
       a form for each content type, and saves changes back to the repository —
       which triggers a rebuild and publishes the change.
 
-      It is loaded from a CDN here rather than bundled, so it stays current
-      without a redeploy. This is the only third-party script anywhere on the
-      site, and it is on /admin, which is noindex and never seen by visitors.
+      PINNED TO ONE EXACT VERSION, WITH AN INTEGRITY HASH. Deliberately.
+
+      This used to load whatever was newest. In September 2026 Sveltia shipped
+      eight releases in four days, and each went straight into AVID's editor with
+      no one choosing it. Two reasons that is the wrong trade here:
+
+        * AVID has no developer on call to notice when an update changes
+          behaviour. (One already did: v0.192.0 started honouring the
+          editorial_workflow setting, which changed what "save" means.)
+        * This page holds a token with write access to the site. An unpinned
+          third-party script is trusted with that token on every load. The
+          integrity hash means the browser refuses to run anything but the
+          exact file checked here.
+
+      TO UPGRADE: change the version in the URL, then regenerate the hash —
+        curl -sL <url> | openssl dgst -sha384 -binary | openssl base64 -A
+      — and sign in and save a test draft before relying on it. If the hash is
+      wrong the editor will not load at all; the fallback below still offers
+      the guide and GitHub, so AVID is never left without a way to edit.
+
+      This is the only third-party script anywhere on the site, and it is on
+      /admin, which is noindex and never seen by visitors.
     -->
     <!--
       Shown until the editor finishes loading, and left on screen if it never
@@ -57,7 +76,12 @@
       </p>
     </div>
 
-    <script src="https://unpkg.com/@sveltia/cms/dist/sveltia-cms.js" type="module"></script>
+    <script
+      type="module"
+      src="https://unpkg.com/@sveltia/cms@0.216.1/dist/sveltia-cms.js"
+      integrity="sha384-Xr/epW7eHEeLkYGAPr7TxTsS1ePHpWshWBpZ3Kw6O6BTGzV+mOudS3dPqL9qdZPa"
+      crossorigin="anonymous"
+    ></script>
 
     <script>
       /* Hide the fallback once the editor has put its own element on the page.

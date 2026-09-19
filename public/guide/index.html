@@ -354,10 +354,11 @@
         you edit the site. Part 2 explains how to use it.
       </p>
       <p>
-        <strong>It does not expire.</strong> You will never be locked out one
-        morning without warning, and there is no renewal date to diarise. That
-        cuts both ways: it stays valid until somebody deliberately replaces it,
-        so how you keep it matters more, not less.
+        <strong>It does not expire, with one exception:</strong> GitHub deletes
+        any token that goes a whole year without being used. Sign in at least
+        once a year, even in a quiet year, and it keeps working indefinitely.
+        Otherwise it stays valid until somebody deliberately replaces it, which
+        is why how you keep it matters more, not less.
       </p>
       <p>It is scoped to this website alone, and there are three rules.</p>
       <p>
@@ -470,9 +471,9 @@
 
       <h3>Getting in</h3>
       <p>
-        Go to <span class="mono">theavidfoundation.org/admin</span>. Choose the
-        option to sign in with a <strong>personal access token</strong> and paste
-        in the token your developer gave you.
+        Go to <span class="mono">theavidfoundation.org/admin</span>, click
+        <strong>Sign In Using Access Token</strong>, and paste in the token your
+        developer gave you. That is the only way in, by design.
       </p>
       <p>
         Do this once now, while nothing is urgent, so you know it works and you
@@ -783,7 +784,7 @@
 
     <section class="part" id="p7">
       <div class="part-head"><span class="part-n">Part 07</span><h2>The yearly calendar</h2></div>
-      <p>Eight recurring items. Put them in a shared calendar rather than one person's head.</p>
+      <p>Nine recurring items. Put them in a shared calendar rather than one person's head.</p>
       <div class="table-wrap">
         <table>
           <thead><tr><th>When</th><th>What</th></tr></thead>
@@ -792,6 +793,7 @@
             <tr><td><strong>Now</strong></td><td>Access token in the password manager, deleted from chat and email</td></tr>
             <tr><td><strong>Now</strong></td><td>Second director has Dynadot access, and access to the site</td></tr>
             <tr><td><strong>Same day, if it ever gets out</strong></td><td>Ask your developer to replace the token</td></tr>
+            <tr><td><strong>At least once a year</strong></td><td>Sign in to /admin, even with nothing to change. GitHub deletes a token left unused for a year</td></tr>
             <tr><td><strong>Yearly, before renewal</strong></td><td>Check the Dynadot payment went through</td></tr>
             <tr><td><strong>Monthly, weekly in a campaign</strong></td><td>Glance at Formspree usage</td></tr>
             <tr><td><strong>Yearly</strong></td><td>Review the privacy policy and terms with a lawyer</td></tr>
@@ -862,11 +864,14 @@
       <div class="fault">
         <h3>I cannot sign in to /admin</h3>
         <p>
-          The token does not expire, so the usual cause is a copy-paste that
-          dropped a character. Paste it again straight from your password
-          manager. If it still refuses, it has probably been replaced, so ask
-          your developer. Nothing is lost either way: a token that will not sign
-          in stops you editing, it does not touch anything already published.
+          First paste the token again straight from your password manager: a
+          dropped character is the most common cause. If the message says you
+          <strong>do not have access to the repository</strong>, the token itself
+          is the wrong kind or is missing a permission. That is a job for your
+          developer, not something you did wrong. The same goes if it was
+          replaced, or went a year unused. Nothing is lost either way: a token
+          that will not sign in stops you editing, it does not touch anything
+          already published.
         </p>
       </div>
       <div class="fault">
@@ -913,6 +918,7 @@
         <li>Adding a phone number or social media links</li>
         <li>A new page, or a change to how a page is laid out</li>
         <li>Restoring something deleted by accident</li>
+        <li>Updating the editor at /admin. It is fixed to one version on purpose, so it never changes under you without someone checking it first</li>
         <li>Anything where the build has failed and the message is not clear</li>
       </ul>
 
@@ -942,7 +948,7 @@
       <h2>The short version</h2>
       <p>If you remember five things:</p>
       <ol>
-        <li><strong>Keep your access token in a password manager, and never forward it.</strong> It does not expire, so it is only ever as safe as you keep it. Sign in once this week so you know it works.</li>
+        <li><strong>Keep your access token in a password manager, and never forward it.</strong> It does not expire, but it must be used at least once a year. Sign in once this week so you know it works.</li>
         <li><strong>Keep the domain paid.</strong> It is the only unrecoverable failure.</li>
         <li><strong>Add every library to the Libraries section.</strong> The impact numbers count themselves from it.</li>
         <li><strong>Never publish a photograph of a child without written consent.</strong> The site will stop you, and it is right to.</li>
